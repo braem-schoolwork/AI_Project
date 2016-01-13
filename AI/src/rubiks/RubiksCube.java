@@ -1,21 +1,60 @@
 package rubiks;
 
+//Directions: CW and CCW
+//X, Y, Z axis
+//0..S-1 slices per axis of rotation
+//which means numMovesPossible = #axis * #directions * size;
+
 public class RubiksCube implements Searchable
 {
 	private int size; //size=2 when dealing 2x2x2 cube & vice versa
-	private Node[] cube;
+	private String cube;
+	private int numMovesPossible;
 	
-	//3x3x3 cube is represented by a 3*3*6=54 element vector
-	//2x2x2 by 2*2*6=24 element vector
 	public RubiksCube(int size) {
 		this.size = size;
-		cube = new Node[size*size*6];
+		cube = createSolvedCube();
+		numMovesPossible = 3*2*size;
 	}
 
-	@Override
-	public Node[] getNodes() {
-		return cube;
+	//GGGGRRRRWWWWYYYYBBBBOOOO
+	private String createSolvedCube() {
+		String cubeStr = "";
+		for(int i=0; i<6; i++) {
+			String color = "";
+			switch(i) {
+			case 0: color = "G"; break;
+			case 1: color = "R"; break;
+			case 2: color = "W"; break;
+			case 3: color = "Y"; break;
+			case 4: color = "B"; break;
+			case 5: color = "O"; break;
+			}
+			for(int j=0; j<size*size; j++) {
+				cubeStr += color;
+			}
+		}
+		return cubeStr;
 	}
 	
+	public boolean isSolved() {
+		String cubeCopy = cube;
+		String testStr = "";
+		int i = 0;
+		while(!cubeCopy.isEmpty()) {
+			System.out.println(cubeCopy);
+			testStr = cubeCopy.substring(0, size*size);
+			System.out.println(testStr);
+			char tmp = cubeCopy.charAt(0);
+			for(int j=1; j<size*size; j++)
+				if(tmp != testStr.charAt(j))
+					return false;
+			cubeCopy = cubeCopy.substring(size*size, cubeCopy.length());
+		}
+		return true;
+	}
 	
+	public String getCube() {
+		return cube;
+	}
 }

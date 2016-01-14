@@ -3,7 +3,7 @@ package rubiks;
 //Directions: CW and CCW
 //X, Y, Z axis
 //0..S-1 slices per axis of rotation
-//which means numMovesPossible = #axis * #directions * size;
+//which means numMovesPossible = #axis * #directions * #slices;
 
 
 /*
@@ -22,20 +22,22 @@ public class RubiksCube implements Searchable
 {
 	private int size; //size=2 when dealing 2x2x2 cube & vice versa
 	//representations of cube
-	private char[] cubeStr;
+	private char[][][] cube;
 	private int numMovesPossible; //cap on the amount of moves possible
 	
+	
 	public RubiksCube(int size) {
+		//if size>=2 throw illegalsizeexception
 		this.size = size;
-		cubeStr = createSolvedCube();
-		numMovesPossible = 3*2*size;
+		cube = createSolvedCube(size);
+		numMovesPossible = 6*size;
 	}
 
 	//GGGGRRRRWWWWYYYYBBBBOOOO
-	private char[] createSolvedCube() {
-		char[] cubeStr = new char[size*size*6];
-		for(int i=0; i<6; i++) {
-			char color = ' ';
+	public static char[][][] createSolvedCube(int size) {
+		char[][][] cubeStr = new char[6][size][size];
+		for(int i=0; i<cubeStr.length; i++) {
+			char color;
 			switch(i) {
 			case 0: color = 'G'; break;
 			case 1: color = 'R'; break;
@@ -43,32 +45,33 @@ public class RubiksCube implements Searchable
 			case 3: color = 'Y'; break;
 			case 4: color = 'B'; break;
 			case 5: color = 'O'; break;
+			default: color = ' '; //never gets here
 			}
-			for(int j=0; j<size*size; j++) {
-				cubeStr[j] = color;
-			}
+			for(int j=0; j<cubeStr[i].length; j++)
+				for(int k=0; k<cubeStr[i][j].length; k++)
+					cubeStr[i][j][k] = color;
 		}
 		return cubeStr;
 	}
 	
-	public boolean isSolved() {
-		char[] cubeCopy = cubeStr;
-		char[] testStr = new char[size*size*6];
-		int i = 0;
-		while() { //while(cube isnt empty)
-			System.out.println(cubeCopy);
-			testStr = cubeCopy.substring(0, size*size);
-			System.out.println(testStr);
-			char tmp = cubeCopy.charAt(0);
-			for(int j=1; j<size*size; j++)
-				if(tmp != testStr.charAt(j))
-					return false;
-			cubeCopy = cubeCopy.substring(size*size, cubeCopy.length());
+	public static boolean isSolved(char[][][] cube) {
+		for(int i=0; i<cube.length; i++) {
+			char color = cube[i][0][0];
+			for(int j=1; j<cube[i].length; j++)
+				for(int k=1; k<cube[i][j].length; k++)
+					if(color != cube[i][j][k])
+						return false;
 		}
 		return true;
 	}
+	public boolean isSolved() {
+		return isSolved(this.cube);
+	}
 	
-	public char[] getCube() {
-		return cubeStr;
+	public char[][][] getCube() {
+		return cube;
+	}
+	public int getSize() {
+		return size;
 	}
 }

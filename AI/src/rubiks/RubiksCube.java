@@ -1,5 +1,7 @@
 package rubiks;
 
+import java.util.Arrays;
+
 //Directions: CW and CCW
 //X, Y, Z axis
 //0..S-1 slices per axis of rotation
@@ -31,6 +33,13 @@ public class RubiksCube implements Searchable
 		this.size = size;
 		cube = createSolvedCube(size);
 		numMovesPossible = 6*size;
+	}
+	
+	public boolean equals(RubiksCube cube) {
+		if(Arrays.deepEquals(this.cube, cube.getCube()))
+			return true;
+		else
+			return false;
 	}
 
 	//GGGGRRRRWWWWYYYYBBBBOOOO
@@ -73,5 +82,10 @@ public class RubiksCube implements Searchable
 	}
 	public int getSize() {
 		return size;
+	}
+	
+	@Override
+	public String toString() {
+		return Arrays.deepToString(cube);
 	}
 }

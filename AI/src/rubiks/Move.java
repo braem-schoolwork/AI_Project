@@ -20,7 +20,7 @@ public class Move
 		
 		//TODO deal with edge cases
 		boolean isEdgeCase;
-		if(sliceNum == 0 && sliceNum == size-1)
+		if(sliceNum == 0 || sliceNum == size-1)
 			isEdgeCase = true;
 		else
 			isEdgeCase = false;
@@ -67,6 +67,28 @@ public class Move
 				value_bfr[k] = tmp; //write new value to buffer
 			}
 		}
+	}
+	
+	public static void rotate(char[][] face, Direction dir) {
+		int n = face.length;
+		for(int i=0; i<=(n-1)/2; i++)
+			for(int j=i; j<n-i-1; j++) {
+				char tmp;
+				if(dir.equals(Direction.CW)) {
+					tmp = face[i][j];
+					face[i][j] = face[n-j-1][i];
+					face[n-i-1][n-j-1] = face[j][n-i-1];
+					face[n-j-1][i] = face[n-i-1][n-j-1];
+					face[j][n-i-1] = tmp;
+				}
+				else {
+					tmp = face[i][j];
+					face[i][j] = face[j][n-i-1];
+					face[j][n-i-1] = face[n-i-1][n-j-1];
+					face[n-i-1][n-j-1] = face[n-j-1][i];
+					face[n-j-1][i] = tmp;
+				}
+			}
 	}
 	
 	private static int[] findEffectedFaces(Axis axis) {

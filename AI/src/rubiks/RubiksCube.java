@@ -27,12 +27,17 @@ public class RubiksCube implements Searchable
 	private char[][][] cube;
 	private int numMovesPossible; //cap on the amount of moves possible
 	
-	
 	public RubiksCube(int size) {
 		//if size>=2 throw illegalsizeexception
 		this.size = size;
 		cube = createSolvedCube(size);
-		numMovesPossible = 6*size;
+		//when size is odd, we can't move middle slices, which decreases
+		//the amount of moves possible. More precisely, decreases it by
+		//2 * #numAxis == 6
+		if(size%2 == 1)
+			numMovesPossible = 3*2*size - 2*3;
+		else
+			numMovesPossible = 3*2*size;
 	}
 	
 	public boolean equals(RubiksCube cube) {
@@ -73,9 +78,8 @@ public class RubiksCube implements Searchable
 		}
 		return true;
 	}
-	public boolean isSolved() {
-		return isSolved(this.cube);
-	}
+	
+
 	
 	public char[][][] getCube() {
 		return cube;
@@ -85,7 +89,24 @@ public class RubiksCube implements Searchable
 	}
 	
 	@Override
+	public Searchable[] genChildren() {
+		Searchable[] allChildren = new Searchable[numMovesPossible];
+		
+		//TODO add watch for odd size arrays
+		
+		//
+		
+		return null;
+	}
+	
+	@Override
+	public boolean isSolved() {
+		return isSolved(this.cube);
+	}
+	
+	@Override
 	public String toString() {
 		return Arrays.deepToString(cube);
 	}
+
 }

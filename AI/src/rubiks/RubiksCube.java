@@ -22,14 +22,16 @@ import java.util.Arrays;
  */
 public class RubiksCube implements Searchable
 {
-	private int size; //size=2 when dealing 2x2x2 cube & vice versa
+	private final int size; //size=2 when dealing 2x2x2 cube & vice versa
 	//representations of cube
 	private char[][][] cube;
-	private int numMovesPossible; //cap on the amount of moves possible
+	private final int numMovesPossible; //cap on the amount of moves possible
 	
 	public RubiksCube(int size) {
-		//if size>=2 throw illegalsizeexception
-		this.size = size;
+		if(size < 2)
+			throw new IllegalSizeException("Size for Rubiks Cube is less than 2");
+		else
+			this.size = size;
 		cube = createSolvedCube(size);
 		//when size is odd, we can't move middle slices, which decreases
 		//the amount of moves possible. More precisely, decreases it by
@@ -44,31 +46,29 @@ public class RubiksCube implements Searchable
 		this.size = rubiksCube.getSize();
 		char[][][] cube = rubiksCube.getCube();
 		char[][][] newCube = new char[6][size][size];
-		for(int i=0; i<cube.length; i++) {
-			for(int j=0; j<cube[i].length; j++) {
-				for(int k=0; k<cube[j].length; k++) {
+		//deep copy
+		for(int i=0; i<cube.length; i++)
+			for(int j=0; j<cube[i].length; j++)
+				for(int k=0; k<cube[j].length; k++)
 					newCube[i][j][k] = cube[i][j][k];
-				}
-			}
-		}
 		this.cube = newCube;
 		this.numMovesPossible = rubiksCube.getNumMovesPossible();
 	}
 	
-	@Override
-	public boolean equals(Searchable cube) {
-		if(!(cube instanceof RubiksCube))
-			return false;
-		
-		RubiksCube copy = (RubiksCube)cube;
-		if(Arrays.deepEquals(this.cube, copy.getCube()))
-			return true;
-		else
-			return false;
+	public char[][][] getCube() {
+		return cube;
+	}
+	public int getSize() {
+		return size;
+	}
+	public int getNumMovesPossible() {
+		return numMovesPossible;
+	} 
+	public void setCube(char[][][] cube) {
+		this.cube = cube;
 	}
 
-	//GGGGRRRRWWWWYYYYBBBBOOOO
-	public static char[][][] createSolvedCube(int size) {
+	private static char[][][] createSolvedCube(int size) {
 		char[][][] cubeStr = new char[6][size][size];
 		for(int i=0; i<cubeStr.length; i++) {
 			char color;
@@ -88,7 +88,7 @@ public class RubiksCube implements Searchable
 		return cubeStr;
 	}
 	
-	public static boolean isSolved(char[][][] cube) {
+	private static boolean isSolved(char[][][] cube) {
 		for(int i=0; i<cube.length; i++) {
 			char color = cube[i][0][0];
 			for(int j=1; j<cube[i].length; j++)
@@ -97,18 +97,6 @@ public class RubiksCube implements Searchable
 						return false;
 		}
 		return true;
-	}
-	
-
-	
-	public char[][][] getCube() {
-		return cube;
-	}
-	public int getSize() {
-		return size;
-	}
-	public int getNumMovesPossible() {
-		return numMovesPossible;
 	}
 	
 	@Override
@@ -121,11 +109,14 @@ public class RubiksCube implements Searchable
 				for(int i=0; i<size; i++) {
 					RubiksCube copy = new RubiksCube(this);
 					if(size%2 == 1 && i%size == size/2) { //if odd sized rubiks cube
-						Move.move(copy, size, (i%size)+1, axis, dir);
+						Move move = new Move(copy, size, (i%size)+1, axis, dir);
+						move.apply();
 						i++;
 					}
-					else //even sized
-						Move.move(copy, size, i%size, axis, dir);
+					else { //even sized
+						Move move = new Move(copy, size, i%size, axis, dir);
+						move.apply();
+					}
 					//add to array
 					allChildren[ctr] = copy;
 					ctr++;
@@ -133,6 +124,18 @@ public class RubiksCube implements Searchable
 			}
 		}
 		return allChildren;
+	}
+	
+	@Override
+	public boolean equals(Searchable cube) {
+		if(!(cube instanceof RubiksCube))
+			return false;
+		
+		RubiksCube copy = (RubiksCube)cube;
+		if(Arrays.deepEquals(this.cube, copy.getCube()))
+			return true;
+		else
+			return false;
 	}
 	
 	@Override

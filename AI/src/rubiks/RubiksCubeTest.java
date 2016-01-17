@@ -31,9 +31,11 @@ public class RubiksCubeTest {
 	
 	@Test
 	public void isSolvedTest3() {
+		RubiksCube rubiksCube = new RubiksCube(2);
 		char[][][] cube = { {{'R', 'R'}, {'R', 'R'}}, {{'G', 'G'}, {'G', 'G'}}, {{'B', 'B'}, {'B', 'B'}},
 				{{'Y', 'Y'}, {'Y', 'Y'}}, {{'W', 'W'}, {'W', 'W'}}, {{'O', 'O'}, {'O', 'O'}} };
-		assertTrue(RubiksCube.isSolved(cube));
+		rubiksCube.setCube(cube);
+		assertTrue(rubiksCube.isSolved());
 	}
 	
 	@Test

@@ -2,10 +2,23 @@ package rubiks;
 
 public class Move
 {	
+	private RubiksCube cube;
+	private int size;
+	private int sliceNum;
+	private Axis axis;
+	private Direction dir;
+	public Move(RubiksCube cube, int size, int sliceNum, Axis axis, Direction dir) {
+		this.cube = cube;
+		this.size = size;
+		this.sliceNum = sliceNum;
+		this.axis = axis;
+		this.dir = dir;
+	}
+	
 	/*
 	 * METHOD FOR ALL MOVES
 	 */
-	public static void move(RubiksCube cube, int size, int sliceNum, Axis axis, Direction dir) {
+	public void apply() {
 		//checks
 		if(size%2 == 1 && sliceNum == size/2)
 			throw new IllegalMoveException("ATTEMPT TO MOVE MIDDLE SLICE OF AN ODD RUBIK'S CUBE");
@@ -14,7 +27,7 @@ public class Move
 		int from_face, to_face, from_row, to_row, from_col, to_col;
 		char[][][] cubeArr = cube.getCube();
 		char values[][] = new char[4][size];
-		int[] effectedFaces = findEffectedFaces(axis, dir);
+		int[] effectedFaces = findEffectedFaces();
 		
 		/* Dealing with edge cases */
 		boolean isEdgeCase;
@@ -24,8 +37,8 @@ public class Move
 			isEdgeCase = false;
 		//if it is an edge case, rotate the respective face by the respective direction
 		if(isEdgeCase) {
-			int f = findEffectedEdgeFace(axis, sliceNum);
-			rotate(cubeArr[f], dir);
+			int f = findEffectedEdgeFace();
+			rotate(cubeArr[f]);
 		}
 		
 		/* store needed values for turning */
@@ -130,7 +143,7 @@ public class Move
 	 */
 	//rotates a two-dimensional array in a direction
 	//used to implement edge cases
-	private static void rotate(char[][] face, Direction dir) {
+	private void rotate(char[][] face) {
 		int n = face.length;
 		for(int i=0; i<=(n-1)/2; i++)
 			for(int j=i; j<n-i-1; j++) {
@@ -152,7 +165,7 @@ public class Move
 			}
 	}
 	//faces effected by edge moves
-	private static int findEffectedEdgeFace(Axis axis, int sliceNum) {
+	private int findEffectedEdgeFace() {
 		switch(axis) {
 		case X:
 			if(sliceNum == 0)
@@ -173,7 +186,7 @@ public class Move
 		}
 	}
 	//faces effected on move
-	private static int[] findEffectedFaces(Axis axis, Direction dir) {
+	private int[] findEffectedFaces() {
 		switch(axis) {
 		case X:
 			if(dir.equals(Direction.CW)) {

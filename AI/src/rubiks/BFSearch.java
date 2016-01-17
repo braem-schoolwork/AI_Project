@@ -5,8 +5,8 @@ import java.util.Queue;
 
 public class BFSearch implements Search
 {
-	public static Searchable search(Searchable startState) {
-		
+	public static Searchable search(Searchable startState)
+	{
 		//queue for objects to be searched
 		Queue<Searchable> openList = new LinkedList<Searchable>();
 		//queue for objects that have already been searched
@@ -15,7 +15,8 @@ public class BFSearch implements Search
 		openList.add(startState); //add start state to the queue of objects to be searched
 		
 		//search loop
-		while(!openList.isEmpty()) {
+		while(!openList.isEmpty())
+		{
 			Searchable current = openList.poll(); //get the next unexplored obj
 			closedList.add(current); //explored this
 			
@@ -40,13 +41,12 @@ public class BFSearch implements Search
 				
 				if(addChild) //if we should add the child
 					//check the items that have been searched
-					for(Searchable item : closedList) {
+					for(Searchable item : closedList)
 						//if we find the same item, dont bother searching it
 						if(child.equals(item)) {
 							addChild = false;
 							break;
 						}
-					}
 				
 				//if we should add the child
 				if(addChild)

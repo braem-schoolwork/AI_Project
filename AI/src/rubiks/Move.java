@@ -16,7 +16,8 @@ public class Move
 	}
 	
 	/*
-	 * METHOD FOR ALL MOVES
+	 * APPLY Method
+	 * applies this move
 	 */
 	public void apply() {
 		//checks

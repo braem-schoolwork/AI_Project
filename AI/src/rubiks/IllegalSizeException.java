@@ -2,6 +2,10 @@ package rubiks;
 
 public class IllegalSizeException extends RuntimeException
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1694655347436827898L;
 	public IllegalSizeException() {
 		super();
 	}

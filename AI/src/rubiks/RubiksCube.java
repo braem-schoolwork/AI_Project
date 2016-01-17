@@ -20,8 +20,17 @@ import java.util.Arrays;
  * the coordinates represent the cubies
  * 
  */
+
+//TODO add method for generating all moves
+//use the list of moves to create random moves (by index)
+//remove/add moves to ensure the depth of moves properly increases runtime complexity
+
 public class RubiksCube implements Searchable
 {
+	//for searching
+	private RubiksCube parent; //parent 'node'
+	private Move moveAppliedToParent; //move applied to parent node to get this
+	
 	private final int size; //size=2 when dealing 2x2x2 cube & vice versa
 	//representations of cube
 	private char[][][] cube;
@@ -43,6 +52,7 @@ public class RubiksCube implements Searchable
 	}
 	//copy constructor
 	public RubiksCube(RubiksCube rubiksCube) {
+		this.parent = rubiksCube;
 		this.size = rubiksCube.getSize();
 		char[][][] cube = rubiksCube.getCube();
 		char[][][] newCube = new char[6][size][size];
@@ -64,6 +74,12 @@ public class RubiksCube implements Searchable
 	public int getNumMovesPossible() {
 		return numMovesPossible;
 	} 
+	public RubiksCube getParent() {
+		return parent;
+	}
+	public Move getMoveAppliedToParent() {
+		return moveAppliedToParent;
+	}
 	public void setCube(char[][][] cube) {
 		this.cube = cube;
 	}
@@ -107,18 +123,20 @@ public class RubiksCube implements Searchable
 		for(Axis axis : Axis.values()) {
 			for(Direction dir : Direction.values()) {
 				for(int i=0; i<size; i++) {
-					RubiksCube copy = new RubiksCube(this);
+					RubiksCube child = new RubiksCube(this);
 					if(size%2 == 1 && i%size == size/2) { //if odd sized rubiks cube
-						Move move = new Move(copy, size, (i%size)+1, axis, dir);
+						Move move = new Move(child, size, (i%size)+1, axis, dir);
+						moveAppliedToParent = move;
 						move.apply();
 						i++;
 					}
 					else { //even sized
-						Move move = new Move(copy, size, i%size, axis, dir);
+						Move move = new Move(child, size, i%size, axis, dir);
+						moveAppliedToParent = move;
 						move.apply();
 					}
 					//add to array
-					allChildren[ctr] = copy;
+					allChildren[ctr] = child;
 					ctr++;
 				}
 			}

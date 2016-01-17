@@ -2,6 +2,8 @@ package rubiks;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 public class BFSearchTest {
@@ -15,7 +17,10 @@ public class BFSearchTest {
 		move2.apply();
 		Move move3 = new Move(cube, cube.getSize(), 0, Axis.X, Direction.CW);
 		move3.apply();
-		assertTrue(BFSearch.search(cube).isSolved());
+		BFSearch bfSearch = new BFSearch();
+		Searchable searchResult = bfSearch.search(cube);
+		assertTrue(bfSearch.getMovesDone() == 3);
+		assertTrue(searchResult.isSolved());
 	}
 	
 	@Test
@@ -27,7 +32,10 @@ public class BFSearchTest {
 		move2.apply();
 		Move move3 = new Move(cube, cube.getSize(), 0, Axis.Y, Direction.CCW);
 		move3.apply();
-		assertTrue(BFSearch.search(cube).isSolved());
+		BFSearch bfSearch = new BFSearch();
+		Searchable searchResult = bfSearch.search(cube);
+		assertTrue(bfSearch.getMovesDone() == 3);
+		assertTrue(searchResult.isSolved());
 	}
 	
 	@Test
@@ -37,6 +45,9 @@ public class BFSearchTest {
 		move1.apply();
 		Move move2 = new Move(cube, cube.getSize(), 0, Axis.Y, Direction.CCW);
 		move2.apply();
-		assertTrue(BFSearch.search(cube).isSolved());
+		BFSearch bfSearch = new BFSearch();
+		Searchable searchResult = bfSearch.search(cube);
+		assertTrue(bfSearch.getMovesDone() == 2);
+		assertTrue(searchResult.isSolved());
 	}
 }

@@ -10,7 +10,6 @@ public class RubiksCubeTest {
 
 	@Test
 	public void RubiksCubeConstructorTest() {
-		//GGGGRRRRWWWWYYYYBBBBOOOO
 		RubiksCube rubiksCube = new RubiksCube(2);
 		char[][][] cube1 = rubiksCube.getCube();
 		char[][][] cube2 = { {{'G', 'G'}, {'G', 'G'}}, {{'R', 'R'}, {'R', 'R'}}, {{'W', 'W'}, {'W', 'W'}},
@@ -39,25 +38,35 @@ public class RubiksCubeTest {
 	
 	@Test
 	public void genChildrenTest() {
+		//make sure no 2 children are the same
+		//proves all moves are unique
 		RubiksCube cube = new RubiksCube(2);
 		Searchable[] children = cube.genChildren();
+		assertTrue(children.length == 12);
 		boolean flag = true;
 		for(int i=0; i<children.length; i++)
 			for(int j=0; j<children.length; j++)
-				if(children[i].equals(children[j]) && i!=j)
+				if(children[i].equals(children[j]) && i!=j) {
 					flag = false;
+					break;
+				}
 		assertTrue(flag);
 	}
 	
 	@Test
 	public void genChildrenTest2() {
+		//make sure no 2 children are the same
+		//proves all moves are unique
 		RubiksCube cube = new RubiksCube(3);
 		Searchable[] children = cube.genChildren();
+		assertTrue(children.length == 12);
 		boolean flag = true;
 		for(int i=0; i<children.length; i++)
 			for(int j=0; j<children.length; j++)
-				if(children[i].equals(children[j]) && i!=j)
+				if(children[i].equals(children[j]) && i!=j) {
 					flag = false;
+					break;
+				}
 		assertTrue(flag);
 	}
 }

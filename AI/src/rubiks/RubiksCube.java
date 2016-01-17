@@ -55,8 +55,13 @@ public class RubiksCube implements Searchable
 		this.numMovesPossible = rubiksCube.getNumMovesPossible();
 	}
 	
-	public boolean equals(RubiksCube cube) {
-		if(Arrays.deepEquals(this.cube, cube.getCube()))
+	@Override
+	public boolean equals(Searchable cube) {
+		if(!(cube instanceof RubiksCube))
+			return false;
+		
+		RubiksCube copy = (RubiksCube)cube;
+		if(Arrays.deepEquals(this.cube, copy.getCube()))
 			return true;
 		else
 			return false;
@@ -110,25 +115,22 @@ public class RubiksCube implements Searchable
 	public Searchable[] genChildren() {
 		//2x2 and 3x3 have same number of moves (12)
 		Searchable[] allChildren = new Searchable[numMovesPossible];
-		for(int i=0; i<numMovesPossible; i++) {
-			RubiksCube copy = new RubiksCube(this);
-			Axis axis = null;
-			Direction dir = null;
-			switch(i%3) { //determine axis
-			case 0: axis = Axis.X; break;
-			case 1: axis = Axis.Y; break;
-			case 2: axis = Axis.Z; break;
+		int ctr = 0;
+		for(Axis axis : Axis.values()) {
+			for(Direction dir : Direction.values()) {
+				for(int i=0; i<size; i++) {
+					RubiksCube copy = new RubiksCube(this);
+					if(size%2 == 1 && i%size == size/2) { //if odd sized rubiks cube
+						Move.move(copy, size, (i%size)+1, axis, dir);
+						i++;
+					}
+					else //even sized
+						Move.move(copy, size, i%size, axis, dir);
+					//add to array
+					allChildren[ctr] = copy;
+					ctr++;
+				}
 			}
-			switch(i%2) { //determine direction
-			case 0: dir = Direction.CW; break;
-			case 1: dir = Direction.CCW; break;
-			}
-			if(size%2 == 1 && i%size == size/2) //if odd sized rubiks cube
-				Move.move(copy, size, (i%size)+1, axis, dir);
-			else //even sized
-				Move.move(copy, size, i%size, axis, dir);
-			//add to array
-			allChildren[i] = copy;
 		}
 		return allChildren;
 	}

@@ -14,6 +14,13 @@ public class Move
 		this.axis = axis;
 		this.dir = dir;
 	}
+	public Move(int sliceNum, Axis axis, Direction dir) {
+		this.cube = null;
+		this.size = 0;
+		this.sliceNum = sliceNum;
+		this.axis = axis;
+		this.dir = dir;
+	}
 	
 	/*
 	 * APPLY Method

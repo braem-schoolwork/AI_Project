@@ -24,6 +24,7 @@ import java.util.Arrays;
 //TODO add method for generating all moves
 //use the list of moves to create random moves (by index)
 //remove/add moves to ensure the depth of moves properly increases runtime complexity
+//TODO implement exception to handle applying a move to nothing (no cube is set)
 
 public class RubiksCube implements Searchable
 {

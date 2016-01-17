@@ -39,6 +39,12 @@ public class RubiksCube implements Searchable
 		else
 			numMovesPossible = 3*2*size;
 	}
+	//copy constructor
+	public RubiksCube(RubiksCube cube) {
+		this.size = cube.getSize();
+		this.cube = cube.getCube();
+		this.numMovesPossible = cube.getNumMovesPossible();
+	}
 	
 	public boolean equals(RubiksCube cube) {
 		if(Arrays.deepEquals(this.cube, cube.getCube()))
@@ -87,16 +93,47 @@ public class RubiksCube implements Searchable
 	public int getSize() {
 		return size;
 	}
+	public int getNumMovesPossible() {
+		return numMovesPossible;
+	}
 	
 	@Override
 	public Searchable[] genChildren() {
 		Searchable[] allChildren = new Searchable[numMovesPossible];
-		
 		//TODO add watch for odd size arrays
-		
 		//
+		for(int i=0; i<allChildren.length; i++) {
+			RubiksCube copy = new RubiksCube(this);
+			
+			switch(i%3) {
+			case 0:
+				if(i%2 == 0)
+					Move.move(copy, size, i%size, Axis.X, Direction.CW);
+				else
+					Move.move(copy, size, i%size, Axis.X, Direction.CCW);
+				break;
+			case 1:
+				if(i%2 == 0)
+					Move.move(copy, size, i%size, Axis.Y, Direction.CW);
+				else
+					Move.move(copy, size, i%size, Axis.Y, Direction.CCW);
+				break;
+			case 2:
+				if(i%2 == 0)
+					Move.move(copy, size, i%size, Axis.Z, Direction.CW);
+				else
+					Move.move(copy, size, i%size, Axis.Z, Direction.CCW);
+				break;
+			default:
+				break;
+			}
+			
+			//add to array
+			allChildren[i] = copy;
+		}
 		
-		return null;
+		
+		return allChildren;
 	}
 	
 	@Override

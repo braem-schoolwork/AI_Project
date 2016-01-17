@@ -14,9 +14,9 @@ public class Move
 			throw new IllegalMoveException("ATTEMPT TO MOVE MIDDLE SLICE OF AN ODD RUBIK'S CUBE");
 		
 		//initializations
-		int from_face, to_face, from_row = -40, to_row, from_col = -40, to_col;
+		int from_face, to_face, from_row, to_row, from_col, to_col;
 		char[][][] cubeArr = cube.getCube();
-		char value_bfr[] = new char[size];
+		char values[][] = new char[4][size];
 		int[] effectedFaces = findEffectedFaces(axis, dir);
 		
 		/* Dealing with edge cases */
@@ -31,81 +31,88 @@ public class Move
 			rotate(cubeArr[f], dir);
 		}
 		
-		for(int i=0, j=effectedFaces.length; i<effectedFaces.length && j>0 ;i++, j--) {
-			/*set from_face and to_face based on direction*/
+		/* store needed values for turning */
+		for(int i=0; i<effectedFaces.length; i++) {
+			switch(axis) {
+			case X:
+				for(int k=0; k<values[i].length; k++)
+					values[i][k] = cubeArr[effectedFaces[i]][k][sliceNum];
+				break;
+			case Y:
+				for(int k=0; k<values[i].length; k++)
+					values[i][k] = cubeArr[effectedFaces[i]][size-1-sliceNum][k];
+				break;
+			case Z:
+				for(int k=0; k<values[i].length; k++)
+					if(effectedFaces[i]==0 || effectedFaces[i]==1)
+						values[i][k] = cubeArr[effectedFaces[i]][k][size-1-sliceNum];
+					else
+						values[i][k] = cubeArr[effectedFaces[i]][sliceNum][k];
+				//System.out.println(Arrays.deepToString(values));
+				break;
+			}
+		}
+		
+		
+		/* 
+		 * Loop to do the move 
+		 */
+		for(int i=0; i<effectedFaces.length; i++) {
+			/*set from_face and to_face*/
 			from_face = effectedFaces[i];
 			if(i == effectedFaces.length-1)
 				to_face = effectedFaces[0];
 			else
 				to_face = effectedFaces[i+1];
-			System.out.println(from_face+" "+to_face+" "+axis);
-			
-			/* Varies based on axis section */
-			//store the values of the face in the value buffer if this
-			//is the first face explored
-			if(i==0 || j==effectedFaces.length){
-				for(int k=0; k<size; k++)
-					switch(axis) {
-					case X:
-						value_bfr[k] = cubeArr[from_face][k][sliceNum];
-						break;
-					case Y: 
-						value_bfr[k] = cubeArr[from_face][size-1-sliceNum][k];
-						break;
-					case Z:
-						value_bfr[k] = cubeArr[from_face][sliceNum][k];
-						break;
-					}
-			}
-					
-			//get the faces values then move?
-			
+			//System.out.println(from_face+" "+to_face+" "+axis);
 			
 			//do the actual moving of rows/columns, juggling of characters, etc.
-			for(int k=0, l=size; k<size && l>0; k++, l--) {
+			for(int k=0; k<size; k++) {
 				switch(axis) {
 				case X:
 					from_row = k;
 					from_col = sliceNum;
 					to_col = from_col;
 					//[even to even] OR [odd to odd]
-					if((from_face%2==0 && to_face%2==0) || (from_face%2==1 && to_face%2==1)) {
+					if((from_face%2==0 && to_face%2==0) || (from_face%2==1 && to_face%2==1))
 						to_row = from_row;
-					}
-					else {
+					else
 						to_row = size-1-from_row;
-					}
 					break;
 				case Y: 
 					from_row = size-1-sliceNum;
 					from_col = k;
 					to_row = from_row;
-					if((from_face%2==0 && to_face%2==0) || (from_face%2==1 && to_face%2==1)) {
+					if((from_face%2==0 && to_face%2==0) || (from_face%2==1 && to_face%2==1))
 						to_col = from_col;
-					}
-					else {
+					else
 						to_col = size-1-from_col;
-					}
 					break;
 				case Z:
-					if(from_face==3 || from_face==2) {
-						from_row = sliceNum;
-						from_col = k;
-					}
-					//from 1 to 2 switch columns
-					//3 to 0 switch rows
-					else { //1,0
+					if(from_face == 1 || from_face == 0) {
 						from_row = k;
 						from_col = size-1-sliceNum;
 					}
+					else {
+						from_row = sliceNum;
+						from_col = k;
+					}
 					if((from_face%2==0 && to_face%2==0) || (from_face%2==1 && to_face%2==1)) {
-						to_row = from_col;
-						to_col = size-1-from_row;
+						if(from_face == 1 || from_face == 0) {
+							to_row = size-1-from_col;
+							to_col = from_row;
+						}
+						else {
+							to_row = from_col;
+							to_col = size-1-from_row;
+						}
 					}
 					else {
-						to_row = size-1-from_col;
 						to_col = size-1-from_row;
+						to_row = size-1-from_col;
 					}
+					//System.out.println(from_face+" "+from_row+" "+from_col+" FROM "+axis);
+					//System.out.println(to_face+" "+to_row+" "+to_col+" TO "+axis);
 					break;
 				default:
 					from_row = -1;
@@ -114,16 +121,8 @@ public class Move
 					to_col = -1;
 					break;
 				}
-
-				System.out.println(from_row+" "+from_col+" FROM "+axis+".. BUFFER: "+Arrays.toString(value_bfr));
-				System.out.println(to_row+" "+to_col+" TO "+axis);
-				
-				char tmp = cubeArr[to_face][to_row][to_col]; //new to_face value
-				cubeArr[to_face][to_row][to_col] = value_bfr[k]; //fill to_face value with from_face value
-				value_bfr[k] = tmp; //write new value to buffer
-				
+				cubeArr[to_face][to_row][to_col] = values[i][k]; //set value here
 			}//for moving of rows/columns
-			
 		}//for all effected faces
 	}
 	

@@ -40,10 +40,19 @@ public class RubiksCube implements Searchable
 			numMovesPossible = 3*2*size;
 	}
 	//copy constructor
-	public RubiksCube(RubiksCube cube) {
-		this.size = cube.getSize();
-		this.cube = cube.getCube();
-		this.numMovesPossible = cube.getNumMovesPossible();
+	public RubiksCube(RubiksCube rubiksCube) {
+		this.size = rubiksCube.getSize();
+		char[][][] cube = rubiksCube.getCube();
+		char[][][] newCube = new char[6][size][size];
+		for(int i=0; i<cube.length; i++) {
+			for(int j=0; j<cube[i].length; j++) {
+				for(int k=0; k<cube[j].length; k++) {
+					newCube[i][j][k] = cube[i][j][k];
+				}
+			}
+		}
+		this.cube = newCube;
+		this.numMovesPossible = rubiksCube.getNumMovesPossible();
 	}
 	
 	public boolean equals(RubiksCube cube) {
@@ -99,40 +108,28 @@ public class RubiksCube implements Searchable
 	
 	@Override
 	public Searchable[] genChildren() {
+		//2x2 and 3x3 have same number of moves (12)
 		Searchable[] allChildren = new Searchable[numMovesPossible];
-		//TODO add watch for odd size arrays
-		//
-		for(int i=0; i<allChildren.length; i++) {
+		for(int i=0; i<numMovesPossible; i++) {
 			RubiksCube copy = new RubiksCube(this);
-			
-			switch(i%3) {
-			case 0:
-				if(i%2 == 0)
-					Move.move(copy, size, i%size, Axis.X, Direction.CW);
-				else
-					Move.move(copy, size, i%size, Axis.X, Direction.CCW);
-				break;
-			case 1:
-				if(i%2 == 0)
-					Move.move(copy, size, i%size, Axis.Y, Direction.CW);
-				else
-					Move.move(copy, size, i%size, Axis.Y, Direction.CCW);
-				break;
-			case 2:
-				if(i%2 == 0)
-					Move.move(copy, size, i%size, Axis.Z, Direction.CW);
-				else
-					Move.move(copy, size, i%size, Axis.Z, Direction.CCW);
-				break;
-			default:
-				break;
+			Axis axis = null;
+			Direction dir = null;
+			switch(i%3) { //determine axis
+			case 0: axis = Axis.X; break;
+			case 1: axis = Axis.Y; break;
+			case 2: axis = Axis.Z; break;
 			}
-			
+			switch(i%2) { //determine direction
+			case 0: dir = Direction.CW; break;
+			case 1: dir = Direction.CCW; break;
+			}
+			if(size%2 == 1 && i%size == size/2) //if odd sized rubiks cube
+				Move.move(copy, size, (i%size)+1, axis, dir);
+			else //even sized
+				Move.move(copy, size, i%size, axis, dir);
 			//add to array
 			allChildren[i] = copy;
 		}
-		
-		
 		return allChildren;
 	}
 	

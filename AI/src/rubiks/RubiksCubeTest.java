@@ -39,11 +39,25 @@ public class RubiksCubeTest {
 	
 	@Test
 	public void genChildrenTest() {
-		RubiksCube rubiksCube = new RubiksCube(2);
-		Searchable[] children = rubiksCube.genChildren();
-		for(Searchable child : children) {
-			System.out.println();
-			System.out.println(child);
-		}
+		RubiksCube cube = new RubiksCube(2);
+		Searchable[] children = cube.genChildren();
+		boolean flag = true;
+		for(int i=0; i<children.length; i++)
+			for(int j=0; j<children.length; j++)
+				if(children[i].equals(children[j]) && i!=j)
+					flag = false;
+		assertTrue(flag);
+	}
+	
+	@Test
+	public void genChildrenTest2() {
+		RubiksCube cube = new RubiksCube(3);
+		Searchable[] children = cube.genChildren();
+		boolean flag = true;
+		for(int i=0; i<children.length; i++)
+			for(int j=0; j<children.length; j++)
+				if(children[i].equals(children[j]) && i!=j)
+					flag = false;
+		assertTrue(flag);
 	}
 }

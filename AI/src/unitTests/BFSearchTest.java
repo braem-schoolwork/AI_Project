@@ -2,13 +2,12 @@ package unitTests;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-
 import org.junit.Test;
 
 import rubiks.*;
 
 import search.BFSearch;
+
 import search.Searchable;
 
 public class BFSearchTest {

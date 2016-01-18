@@ -1,6 +1,7 @@
 package rubiks;
 
 import java.util.Arrays;
+import search.Searchable;
 
 //Directions: CW and CCW
 //X, Y, Z axis

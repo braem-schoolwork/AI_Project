@@ -1,7 +1,7 @@
 package program;
 
-import rubiks.RubiksCube;
-import rubiks.Move;
+import rubiks.*;
+import search.*;
 
 public class Main {
 

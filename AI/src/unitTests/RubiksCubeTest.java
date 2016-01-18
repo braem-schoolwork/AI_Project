@@ -1,10 +1,11 @@
-package rubiks;
+package unitTests;
 
 import static org.junit.Assert.*;
-
-import java.util.Arrays;
+import rubiks.*;
 
 import org.junit.Test;
+
+import java.util.Arrays;
 
 public class RubiksCubeTest {
 
@@ -65,7 +66,7 @@ public class RubiksCubeTest {
 		//make sure no 2 children are the same
 		//proves all moves are unique
 		RubiksCube cube = new RubiksCube(2);
-		Searchable[] children = cube.genChildren();
+		RubiksCube[] children = (RubiksCube[]) cube.genChildren();
 		assertTrue(children.length == 12);
 		boolean flag = true;
 		for(int i=0; i<children.length; i++)
@@ -82,7 +83,7 @@ public class RubiksCubeTest {
 		//make sure no 2 children are the same
 		//proves all moves are unique
 		RubiksCube cube = new RubiksCube(3);
-		Searchable[] children = cube.genChildren();
+		RubiksCube[] children = (RubiksCube[]) cube.genChildren();
 		assertTrue(children.length == 12);
 		boolean flag = true;
 		for(int i=0; i<children.length; i++)

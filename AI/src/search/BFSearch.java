@@ -1,8 +1,9 @@
-package rubiks;
+package search;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+import rubiks.Move;
 
 /*
  * Standard Breadth-First Search
@@ -105,3 +106,4 @@ public class BFSearch implements Search
 	}
 	
 }
+

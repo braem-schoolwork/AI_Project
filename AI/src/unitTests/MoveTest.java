@@ -1,8 +1,10 @@
-package rubiks;
+package unitTests;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import rubiks.*;
 
 public class MoveTest {
 

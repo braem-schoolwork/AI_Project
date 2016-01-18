@@ -39,6 +39,28 @@ public class RubiksCubeTest {
 	}
 	
 	@Test
+	public void genAllMovesTest() {
+		RubiksCube rubiksCube = new RubiksCube(2);
+		Move[] moves1 = rubiksCube.genAllMoves();
+		Move[] moves2 = new Move[12];
+		moves2[0] = new Move(0, Axis.X, Direction.CW);
+		moves2[1] = new Move(1, Axis.X, Direction.CW);
+		moves2[2] = new Move(0, Axis.X, Direction.CCW);
+		moves2[3] = new Move(1, Axis.X, Direction.CCW);
+		moves2[4] = new Move(0, Axis.Y, Direction.CW);
+		moves2[5] = new Move(1, Axis.Y, Direction.CW);
+		moves2[6] = new Move(0, Axis.Y, Direction.CCW);
+		moves2[7] = new Move(1, Axis.Y, Direction.CCW);
+		moves2[8] = new Move(0, Axis.Z, Direction.CW);
+		moves2[9] = new Move(1, Axis.Z, Direction.CW);
+		moves2[10] = new Move(0, Axis.Z, Direction.CCW);
+		moves2[11] = new Move(1, Axis.Z, Direction.CCW);
+		for(int i=0; i<moves1.length; i++) {
+			assertTrue(moves1[i].equals(moves2[i]));
+		}
+	}
+	
+	@Test
 	public void genChildrenTest() {
 		//make sure no 2 children are the same
 		//proves all moves are unique

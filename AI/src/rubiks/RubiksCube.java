@@ -21,10 +21,8 @@ import java.util.Arrays;
  * 
  */
 
-//TODO add method for generating all moves
-//use the list of moves to create random moves (by index)
+//TODO use the list of moves to create random moves (by index)
 //remove/add moves to ensure the depth of moves properly increases runtime complexity
-//TODO implement exception to handle applying a move to nothing (no cube is set)
 
 public class RubiksCube implements Searchable
 {
@@ -84,6 +82,9 @@ public class RubiksCube implements Searchable
 	public void setCube(char[][][] cube) {
 		this.cube = cube;
 	}
+	public void setMoveAppliedToParent(Move move) {
+		this.moveAppliedToParent = move;
+	}
 
 	private static char[][][] createSolvedCube(int size) {
 		char[][][] cubeStr = new char[6][size][size];
@@ -119,30 +120,39 @@ public class RubiksCube implements Searchable
 	@Override
 	public Searchable[] genChildren() {
 		//2x2 and 3x3 have same number of moves (12)
-		Searchable[] allChildren = new Searchable[numMovesPossible];
+		RubiksCube[] allChildren = new RubiksCube[numMovesPossible];
+		Move[] moveList = this.genAllMoves();
+		for(int i=0; i<moveList.length; i++) {
+			Move move = moveList[i];
+			RubiksCube cubeCopy = new RubiksCube(this);
+			move.setCube(cubeCopy);
+			move.apply();
+			allChildren[i] = move.getCube();
+			allChildren[i].setMoveAppliedToParent(move);
+		}
+		return allChildren;
+	}
+	
+	public Move[] genAllMoves() {
+		Move[] moveList = new Move[numMovesPossible];
 		int ctr = 0;
-		for(Axis axis : Axis.values()) {
-			for(Direction dir : Direction.values()) {
-				for(int i=0; i<size; i++) {
-					RubiksCube child = new RubiksCube(this);
+		for(Axis axis : Axis.values())
+			for(Direction dir : Direction.values())
+				for(int i=0; i<size; i++)
 					if(size%2 == 1 && i%size == size/2) { //if odd sized rubiks cube
-						Move move = new Move(child, size, (i%size)+1, axis, dir);
-						moveAppliedToParent = move;
-						move.apply();
+						Move move = new Move((i%size)+1, axis, dir);
+						//add to array
+						moveList[ctr] = move;
+						ctr++;
 						i++;
 					}
 					else { //even sized
-						Move move = new Move(child, size, i%size, axis, dir);
-						moveAppliedToParent = move;
-						move.apply();
+						Move move = new Move(i%size, axis, dir);
+						//add to array
+						moveList[ctr] = move;
+						ctr++;
 					}
-					//add to array
-					allChildren[ctr] = child;
-					ctr++;
-				}
-			}
-		}
-		return allChildren;
+		return moveList;
 	}
 	
 	@Override

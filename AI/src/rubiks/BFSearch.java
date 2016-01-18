@@ -1,18 +1,26 @@
 package rubiks;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/*
+ * Standard Breadth-First Search
+ * 
+ * Path is recorded through keeping track of parent & moves from the parent
+ * in the RubiksCube class
+ * 
+ * 2x2x2 at depth 3 takes ~0.1-0.2 seconds
+ * 2x2x2 at depth 4 takes ~80-100 seconds
+ */
 public class BFSearch implements Search
 {
 	private ArrayList<Searchable> path;
+	private ArrayList<Move> moves;
 	private int movesDone = 0;
 	public BFSearch() {
 		path = new ArrayList<Searchable>();
+		moves = new ArrayList<Move>();
 	}
 	
 	public ArrayList<Searchable> getPath() {
@@ -20,6 +28,9 @@ public class BFSearch implements Search
 	}
 	public int getMovesDone() {
 		return movesDone;
+	}
+	public ArrayList<Move> getMoves() {
+		return moves;
 	}
 	
 	public Searchable search(Searchable startState)
@@ -77,13 +88,20 @@ public class BFSearch implements Search
 		return null; //search failed
 	}//end search
 	
+	//TODO remove moves && trace those later when Searchable is cast to RubiksCube
 	//backtrace the path of the BFSearch
 	private void backTrace(Searchable start, Searchable end) {
 		path.add(end);
-		while(!path.get(0).equals(start)) {
-			path.add(0, path.get(0).getParent());
+		boolean isStartState = false;
+		while(!isStartState) {
+			Searchable parent = path.get(0).getParent();
+			if(parent.equals(start)) {
+				isStartState = true;
+			}
+			moves.add(0, path.get(0).getMoveAppliedToParent());
+			path.add(0, parent);
 		}
-		movesDone = path.size()-1;
+		movesDone = moves.size();
 	}
 	
 }

@@ -22,12 +22,39 @@ public class Move
 		this.dir = dir;
 	}
 	
+	public void setCube(RubiksCube cube) {
+		this.cube = cube;
+		this.size = cube.getSize();
+	}
+	public RubiksCube getCube() {
+		return cube;
+	}
+	public int getSliceNum() {
+		return sliceNum;
+	}
+	public Axis getAxis() {
+		return axis;
+	}
+	public Direction getDirection() {
+		return dir;
+	}
+	
+	public boolean equals(Move move) {
+		if(this.sliceNum == move.getSliceNum() && this.axis.equals(move.getAxis()) &&
+				this.dir.equals(move.getDirection())) 
+			return true;
+		else
+			return false;
+	}
+	
 	/*
 	 * APPLY Method
 	 * applies this move
 	 */
 	public void apply() {
 		//checks
+		if(cube == null)
+			throw new IllegalMoveException("ATTEMPT TO APPLY A MOVE WHEN NO RUBIKS CUBE IS SET");
 		if(size%2 == 1 && sliceNum == size/2)
 			throw new IllegalMoveException("ATTEMPT TO MOVE MIDDLE SLICE OF AN ODD RUBIK'S CUBE");
 		
@@ -225,5 +252,10 @@ public class Move
 			}
 		default: return null;
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return "("+sliceNum+", "+axis+", "+dir+")";
 	}
 }

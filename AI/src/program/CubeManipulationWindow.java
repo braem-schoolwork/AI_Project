@@ -1,6 +1,5 @@
 package program;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -8,13 +7,9 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import rubiks.*;
 import search.BFSearch;
-import search.Searchable;
 
-import javax.swing.JTextArea;
-import javax.swing.JScrollBar;
 import java.awt.TextArea;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.awt.Font;
 import javax.swing.JButton;
 import javax.swing.JTextPane;
@@ -27,6 +22,10 @@ import java.awt.Color;
 
 public class CubeManipulationWindow extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -28901547254239848L;
 	private RubiksCube cube;
 	private JFrame thisFrame = this;
 	private JPanel contentPane;

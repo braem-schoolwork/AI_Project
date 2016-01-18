@@ -52,6 +52,7 @@ public class ExperimentsWindow extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
+		//TODO JComboBox<Experiment>
 		JComboBox comboBox = new JComboBox();
 		comboBox.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		comboBox.setModel(new DefaultComboBoxModel(new String[] {".txt", ".csv"}));

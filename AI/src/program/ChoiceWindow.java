@@ -1,6 +1,5 @@
 package program;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -13,6 +12,10 @@ import java.awt.event.ActionEvent;
 
 public class ChoiceWindow extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -606638665140433493L;
 	private JFrame thisFrame = this;
 	private JPanel contentPane;
 

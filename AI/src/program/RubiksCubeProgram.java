@@ -1,10 +1,5 @@
 package program;
 
-import java.awt.EventQueue;
-
-import rubiks.*;
-import search.*;
-
 public class RubiksCubeProgram
 {
 

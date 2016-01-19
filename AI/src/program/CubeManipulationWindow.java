@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 
@@ -57,6 +58,7 @@ public class CubeManipulationWindow extends JFrame {
 	private JButton btnPerturb;
 	private JLabel lblInvalidDepth;
 	ArrayList<Move> recommendedMoves;
+	private JTextField BFSearchTimeTextField;
 
 	/**
 	 * Launch the application.
@@ -143,7 +145,10 @@ public class CubeManipulationWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				BFSearch bfSearch = new BFSearch();
 				//search to get goal state
-				RubiksCube searchResult = (RubiksCube)bfSearch.search(cube);
+				double startTime = System.nanoTime();
+				RubiksCube searchResult = (RubiksCube)bfSearch.search(cube, RubiksCube.createSolvedRubiksCube(cube.getSize()));
+				double endTime = System.nanoTime();
+				double duration = (endTime - startTime)/1000000000;
 				if(searchResult == null)
 					recommendedMovesTextPane.setText("Search did not\nfind a result");
 				else {
@@ -151,6 +156,9 @@ public class CubeManipulationWindow extends JFrame {
 					for(Move move : recommendedMoves) {
 						recommendedMovesTextPane.setText(recommendedMovesTextPane.getText()+move+"\n");
 					}
+					String pattern = "####.###";
+					DecimalFormat decimalFormat = new DecimalFormat(pattern);
+					BFSearchTimeTextField.setText(decimalFormat.format(duration)+"sec.");
 				}
 			}
 		});
@@ -410,14 +418,11 @@ public class CubeManipulationWindow extends JFrame {
 		btnPerturb.setBounds(630, 271, 184, 46);
 		contentPane.add(btnPerturb);
 		
-		JButton btnManipulate = new JButton("Manipulate");
-		btnManipulate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				//TODO let user determine faces
-			}
-		});
-		btnManipulate.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		btnManipulate.setBounds(659, 374, 155, 108);
-		contentPane.add(btnManipulate);
+		BFSearchTimeTextField = new JTextField();
+		BFSearchTimeTextField.setEditable(false);
+		BFSearchTimeTextField.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		BFSearchTimeTextField.setBounds(654, 436, 160, 46);
+		contentPane.add(BFSearchTimeTextField);
+		BFSearchTimeTextField.setColumns(10);
 	}
 }

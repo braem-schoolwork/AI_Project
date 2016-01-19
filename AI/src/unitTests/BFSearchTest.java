@@ -13,43 +13,38 @@ public class BFSearchTest {
 	@Test
 	public void searchTest1() {
 		RubiksCube cube = new RubiksCube(2);
-		Move move1 = new Move(cube, cube.getSize(), 0, Axis.Z, Direction.CCW);
-		move1.apply();
-		Move move2 = new Move(cube, cube.getSize(), 0, Axis.Y, Direction.CCW);
-		move2.apply();
-		Move move3 = new Move(cube, cube.getSize(), 0, Axis.X, Direction.CW);
-		move3.apply();
+		cube.perturb(3);
 		BFSearch bfSearch = new BFSearch();
-		RubiksCube searchResult = (RubiksCube)bfSearch.search(cube);
+		long startTime = System.nanoTime();
+		RubiksCube searchResult = (RubiksCube)bfSearch.search(cube, RubiksCube.createSolvedRubiksCube(cube.getSize()));
+		long endTime = System.nanoTime();
 		assertTrue(bfSearch.getPath().size() == 4);
 		assertTrue(searchResult.isSolved());
+		long duration = (endTime - startTime)/1000000;
+		System.out.println(duration);
 	}
 	
 	@Test
 	public void searchTest2() {
 		RubiksCube cube = new RubiksCube(3);
-		Move move1 = new Move(cube, cube.getSize(), 0, Axis.X, Direction.CW);
-		move1.apply();
-		Move move2 = new Move(cube, cube.getSize(), 0, Axis.Z, Direction.CCW);
-		move2.apply();
-		Move move3 = new Move(cube, cube.getSize(), 0, Axis.Y, Direction.CCW);
-		move3.apply();
+		cube.perturb(3);
 		BFSearch bfSearch = new BFSearch();
-		RubiksCube searchResult = (RubiksCube)bfSearch.search(cube);
+		double startTime = System.nanoTime();
+		RubiksCube searchResult = (RubiksCube)bfSearch.search(cube, RubiksCube.createSolvedRubiksCube(cube.getSize()));
+		double endTime = System.nanoTime();
 		assertTrue(bfSearch.getPath().size() == 4);
 		assertTrue(searchResult.isSolved());
+		double duration = (endTime - startTime)/1000000000;
+		System.out.println(duration);
 	}
 	
 	@Test
 	public void searchTest3() {
 		RubiksCube cube = new RubiksCube(4);
-		Move move1 = new Move(cube, cube.getSize(), 0, Axis.X, Direction.CW);
-		move1.apply();
-		Move move2 = new Move(cube, cube.getSize(), 0, Axis.Y, Direction.CCW);
-		move2.apply();
+		cube.perturb(2);
 		BFSearch bfSearch = new BFSearch();
-		RubiksCube searchResult = (RubiksCube)bfSearch.search(cube);
-		assertTrue(bfSearch.getPath().size() == 4);
+		RubiksCube searchResult = (RubiksCube)bfSearch.search(cube, RubiksCube.createSolvedRubiksCube(cube.getSize()));
+		assertTrue(bfSearch.getPath().size() <= 3);
 		assertTrue(searchResult.isSolved());
 	}
 }

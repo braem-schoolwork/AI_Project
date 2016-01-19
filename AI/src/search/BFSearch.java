@@ -24,7 +24,7 @@ public class BFSearch implements Search
 		return path;
 	}
 	
-	public Searchable search(Searchable startState)
+	public Searchable search(Searchable startState, Searchable goalState)
 	{
 		//queue for objects to be searched
 		Queue<Searchable> openList = new LinkedList<Searchable>();
@@ -40,11 +40,12 @@ public class BFSearch implements Search
 			closedList.add(current); //explored this
 			
 			//check if current state is a goal state
-			if(current.isSolved()) {
+			if(current.equals(goalState)) {
 				backTrace(startState, current);
 				return current;
 			}
 			
+			//TODO change data structure and initialize outside of loop
 			//generate every possible object adjacent to this object
 			Searchable[] childList = current.genChildren();
 			

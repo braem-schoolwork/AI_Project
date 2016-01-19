@@ -30,6 +30,7 @@ public class RubiksCube implements Searchable
 	//for searching
 	private RubiksCube parent; //parent 'node'
 	private Move moveAppliedToParent; //move applied to parent node to get this
+	private int costSoFar;
 	
 	private final int size; //size=2 when dealing 2x2x2 cube & vice versa
 	//representations of cube
@@ -39,6 +40,8 @@ public class RubiksCube implements Searchable
 	public RubiksCube(int size) {
 		this.parent = null;
 		this.moveAppliedToParent = null;
+		this.costSoFar = 0;
+		
 		if(size < 2)
 			throw new IllegalSizeException("Size for Rubiks Cube is less than 2");
 		else
@@ -54,6 +57,7 @@ public class RubiksCube implements Searchable
 	}
 	//copy constructor
 	public RubiksCube(RubiksCube rubiksCube) {
+		this.costSoFar = rubiksCube.getCostSoFar();
 		this.parent = rubiksCube;
 		this.size = rubiksCube.getSize();
 		char[][][] cube = rubiksCube.getCube();
@@ -81,6 +85,9 @@ public class RubiksCube implements Searchable
 	}
 	public Move getMoveAppliedToParent() {
 		return moveAppliedToParent;
+	}
+	public int getCostSoFar() {
+		return costSoFar;
 	}
 	public void setCube(char[][][] cube) {
 		this.cube = cube;
@@ -114,7 +121,6 @@ public class RubiksCube implements Searchable
 		//check
 		if(depth <= 0 || depth > numMovesPossible)
 			throw new IllegalDepthException();
-		
 		//variables
 		Move[] moveList = this.genAllMoves();
 		int consecutiveMoves = 0; //counts consecutive same moves
@@ -199,6 +205,10 @@ public class RubiksCube implements Searchable
 		return moveList;
 	}
 	
+	public static RubiksCube createSolvedRubiksCube(int size) {
+		return new RubiksCube(size);
+	}
+	
 	private static char[][][] createSolvedCube(int size) {
 		char[][][] cubeStr = new char[6][size][size];
 		for(int i=0; i<cubeStr.length; i++) {
@@ -250,6 +260,17 @@ public class RubiksCube implements Searchable
 	@Override
 	public String toString() {
 		return Arrays.deepToString(cube);
+	}
+	
+	//Cost function, f(x)
+	//f(x) = g(x) + h(x)
+	@Override
+	public int getCost() {
+		return costSoFar + h();
+	}
+	
+	public int h() {
+		return 0;
 	}
 
 }

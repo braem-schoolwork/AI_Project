@@ -1,6 +1,9 @@
 package rubiks;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
+
 import search.Searchable;
 
 //Directions: CW and CCW
@@ -22,9 +25,6 @@ import search.Searchable;
  * 
  */
 
-//TODO use the list of moves to create random moves (by index)
-//remove/add moves to ensure the depth of moves properly increases runtime complexity
-
 public class RubiksCube implements Searchable
 {
 	//for searching
@@ -37,6 +37,8 @@ public class RubiksCube implements Searchable
 	private final int numMovesPossible; //cap on the amount of moves possible
 	
 	public RubiksCube(int size) {
+		this.parent = null;
+		this.moveAppliedToParent = null;
 		if(size < 2)
 			throw new IllegalSizeException("Size for Rubiks Cube is less than 2");
 		else
@@ -86,36 +88,77 @@ public class RubiksCube implements Searchable
 	public void setMoveAppliedToParent(Move move) {
 		this.moveAppliedToParent = move;
 	}
-
-	private static char[][][] createSolvedCube(int size) {
-		char[][][] cubeStr = new char[6][size][size];
-		for(int i=0; i<cubeStr.length; i++) {
-			char color;
-			switch(i) {
-			case 0: color = 'G'; break;
-			case 1: color = 'R'; break;
-			case 2: color = 'W'; break;
-			case 3: color = 'Y'; break;
-			case 4: color = 'B'; break;
-			case 5: color = 'O'; break;
-			default: color = ' '; //never gets here
-			}
-			for(int j=0; j<cubeStr[i].length; j++)
-				for(int k=0; k<cubeStr[i][j].length; k++)
-					cubeStr[i][j][k] = color;
+	
+	public ArrayList<Move> traceMoves() {
+		if(this.parent == null)
+			return null;
+		//assume this is the end state of a search
+		RubiksCube parent = this.parent;
+		ArrayList<Move> moves = new ArrayList<Move>();
+		moves.add(moveAppliedToParent);
+		while(!(parent.getParent() == null)) {
+			moves.add(0, parent.getMoveAppliedToParent());
+			parent = parent.getParent();
 		}
-		return cubeStr;
+		return moves;
 	}
 	
-	private static boolean isSolved(char[][][] cube) {
-		for(int i=0; i<cube.length; i++) {
-			char color = cube[i][0][0];
-			for(int j=1; j<cube[i].length; j++)
-				for(int k=1; k<cube[i][j].length; k++)
-					if(color != cube[i][j][k])
-						return false;
+	
+	/* 
+	 * The aim is to perturb the cube by applying depth random moves
+	 * 
+	 * try to preserve the integrity of perturbation by making sure moves
+	 * dont roll back to a previous state
+	 */
+	public void perturb(int depth) {
+		//check
+		if(depth <= 0 || depth > numMovesPossible)
+			throw new IllegalDepthException();
+		
+		//variables
+		Move[] moveList = this.genAllMoves();
+		int consecutiveMoves = 0; //counts consecutive same moves
+		Random rand = new Random();
+		int randomMove; //index for a move in the list
+		//set moves to reference this cube
+		for(Move move : moveList)
+			move.setCube(this);
+		
+		//apply a randomMove
+		randomMove = rand.nextInt(numMovesPossible);
+		Move moveToApply = moveList[randomMove];
+		//copy this instead
+		Move lastMoveApplied = moveToApply;
+		moveToApply.apply();
+		//attempt to preserve depth integrity
+		for(int i=1; i<depth; i++) {
+			randomMove = rand.nextInt(numMovesPossible);
+			moveToApply = moveList[randomMove];
+			//same axis && same sliceNum
+			if( lastMoveApplied.getAxis().equals(moveToApply.getAxis()) && lastMoveApplied.getSliceNum()==moveToApply.getSliceNum() )
+				if(!lastMoveApplied.getDirection().equals(lastMoveApplied.getDirection())) {//not same direction (undos previous move)
+					if(randomMove == moveList.length-1) //apply different move
+						moveToApply = moveList[0];
+					else
+						moveToApply = moveList[randomMove+1];
+					consecutiveMoves = 0;
+				}
+				else { //same move as previous
+					if(consecutiveMoves == 2) { //2 of the same moves applied already
+						if(randomMove == moveList.length-1) //apply different move
+							moveToApply = moveList[0];
+						else
+							moveToApply = moveList[randomMove+1];
+						consecutiveMoves = 0;
+					}
+					else //count consecutiveMoves
+						consecutiveMoves++;
+				}
+			else
+				consecutiveMoves = 0;
+			moveToApply.apply();
+			lastMoveApplied = moveToApply;
 		}
-		return true;
 	}
 	
 	@Override
@@ -154,6 +197,37 @@ public class RubiksCube implements Searchable
 						ctr++;
 					}
 		return moveList;
+	}
+	
+	private static char[][][] createSolvedCube(int size) {
+		char[][][] cubeStr = new char[6][size][size];
+		for(int i=0; i<cubeStr.length; i++) {
+			char color;
+			switch(i) {
+			case 0: color = 'G'; break;
+			case 1: color = 'R'; break;
+			case 2: color = 'W'; break;
+			case 3: color = 'Y'; break;
+			case 4: color = 'B'; break;
+			case 5: color = 'O'; break;
+			default: color = ' '; //never gets here
+			}
+			for(int j=0; j<cubeStr[i].length; j++)
+				for(int k=0; k<cubeStr[i][j].length; k++)
+					cubeStr[i][j][k] = color;
+		}
+		return cubeStr;
+	}
+	
+	private static boolean isSolved(char[][][] cube) {
+		for(int i=0; i<cube.length; i++) {
+			char color = cube[i][0][0];
+			for(int j=1; j<cube[i].length; j++)
+				for(int k=1; k<cube[i][j].length; k++)
+					if(color != cube[i][j][k])
+						return false;
+		}
+		return true;
 	}
 	
 	@Override

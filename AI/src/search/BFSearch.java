@@ -3,7 +3,6 @@ package search;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-import rubiks.Move;
 
 /*
  * Standard Breadth-First Search
@@ -17,21 +16,12 @@ import rubiks.Move;
 public class BFSearch implements Search
 {
 	private ArrayList<Searchable> path;
-	private ArrayList<Move> moves;
-	private int movesDone = 0;
 	public BFSearch() {
 		path = new ArrayList<Searchable>();
-		moves = new ArrayList<Move>();
 	}
 	
 	public ArrayList<Searchable> getPath() {
 		return path;
-	}
-	public int getMovesDone() {
-		return movesDone;
-	}
-	public ArrayList<Move> getMoves() {
-		return moves;
 	}
 	
 	public Searchable search(Searchable startState)
@@ -96,13 +86,10 @@ public class BFSearch implements Search
 		boolean isStartState = false;
 		while(!isStartState) {
 			Searchable parent = path.get(0).getParent();
-			if(parent.equals(start)) {
+			if(parent.equals(start))
 				isStartState = true;
-			}
-			moves.add(0, path.get(0).getMoveAppliedToParent());
 			path.add(0, parent);
 		}
-		movesDone = moves.size();
 	}
 	
 }

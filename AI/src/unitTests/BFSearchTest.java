@@ -8,8 +8,6 @@ import rubiks.*;
 
 import search.BFSearch;
 
-import search.Searchable;
-
 public class BFSearchTest {
 
 	@Test
@@ -22,8 +20,8 @@ public class BFSearchTest {
 		Move move3 = new Move(cube, cube.getSize(), 0, Axis.X, Direction.CW);
 		move3.apply();
 		BFSearch bfSearch = new BFSearch();
-		Searchable searchResult = bfSearch.search(cube);
-		assertTrue(bfSearch.getMovesDone() == 3);
+		RubiksCube searchResult = (RubiksCube)bfSearch.search(cube);
+		assertTrue(bfSearch.getPath().size() == 4);
 		assertTrue(searchResult.isSolved());
 	}
 	
@@ -37,8 +35,8 @@ public class BFSearchTest {
 		Move move3 = new Move(cube, cube.getSize(), 0, Axis.Y, Direction.CCW);
 		move3.apply();
 		BFSearch bfSearch = new BFSearch();
-		Searchable searchResult = bfSearch.search(cube);
-		assertTrue(bfSearch.getMovesDone() == 3);
+		RubiksCube searchResult = (RubiksCube)bfSearch.search(cube);
+		assertTrue(bfSearch.getPath().size() == 4);
 		assertTrue(searchResult.isSolved());
 	}
 	
@@ -50,8 +48,8 @@ public class BFSearchTest {
 		Move move2 = new Move(cube, cube.getSize(), 0, Axis.Y, Direction.CCW);
 		move2.apply();
 		BFSearch bfSearch = new BFSearch();
-		Searchable searchResult = bfSearch.search(cube);
-		assertTrue(bfSearch.getMovesDone() == 2);
+		RubiksCube searchResult = (RubiksCube)bfSearch.search(cube);
+		assertTrue(bfSearch.getPath().size() == 4);
 		assertTrue(searchResult.isSolved());
 	}
 }

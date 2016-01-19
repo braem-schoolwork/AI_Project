@@ -53,8 +53,8 @@ public class CubeManipulationWindow extends JFrame {
 	private JButton btnApplyAllMoves;
 	private JButton btnApplyOneMove;
 	private JTextPane recommendedMovesTextPane;
-	private JTextField perterbDepthTextField;
-	private JButton btnPerterb;
+	private JTextField perturbDepthTextField;
+	private JButton btnPerturb;
 	private JLabel lblInvalidDepth;
 	ArrayList<Move> recommendedMoves;
 
@@ -78,6 +78,7 @@ public class CubeManipulationWindow extends JFrame {
 		this.setVisible(true);
 	}
 	
+	//TODO change for perspective
 	private String buildString(char[][] arr) {
 		String rtnStr = "";
 		for(int i=0; i<arr.length; i++) {
@@ -111,7 +112,7 @@ public class CubeManipulationWindow extends JFrame {
 	public CubeManipulationWindow(RubiksCube rubiksCube) {
 		setTitle("Rubiks Cube Manipulation");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 862, 728);
+		setBounds(100, 100, 862, 744);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -141,20 +142,25 @@ public class CubeManipulationWindow extends JFrame {
 		btnBfsearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				BFSearch bfSearch = new BFSearch();
-				bfSearch.search(cube);
-				recommendedMoves = bfSearch.getMoves();
-				for(Move move : recommendedMoves) {
-					recommendedMovesTextPane.setText(recommendedMovesTextPane.getText()+move+"\n");
+				//search to get goal state
+				RubiksCube searchResult = (RubiksCube)bfSearch.search(cube);
+				if(searchResult == null)
+					recommendedMovesTextPane.setText("Search did not\nfind a result");
+				else {
+					recommendedMoves = searchResult.traceMoves();
+					for(Move move : recommendedMoves) {
+						recommendedMovesTextPane.setText(recommendedMovesTextPane.getText()+move+"\n");
+					}
 				}
 			}
 		});
 		btnBfsearch.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		btnBfsearch.setBounds(469, 431, 266, 46);
+		btnBfsearch.setBounds(378, 436, 266, 46);
 		contentPane.add(btnBfsearch);
 		
 		JButton btnASearch = new JButton("A* Search");
 		btnASearch.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		btnASearch.setBounds(516, 366, 164, 46);
+		btnASearch.setBounds(378, 374, 164, 46);
 		contentPane.add(btnASearch);
 		
 		face1TextArea = new TextArea();
@@ -372,30 +378,46 @@ public class CubeManipulationWindow extends JFrame {
 		recommendedMovesTextPane.setBounds(378, 545, 199, 125);
 		contentPane.add(recommendedMovesTextPane);
 		
-		perterbDepthTextField = new JTextField();
-		perterbDepthTextField.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		perterbDepthTextField.setBounds(504, 272, 116, 46);
-		contentPane.add(perterbDepthTextField);
-		perterbDepthTextField.setColumns(10);
+		perturbDepthTextField = new JTextField();
+		perturbDepthTextField.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		perturbDepthTextField.setBounds(504, 272, 116, 46);
+		contentPane.add(perturbDepthTextField);
+		perturbDepthTextField.setColumns(10);
 		
-		btnPerterb = new JButton("Perterb");
-		btnPerterb.addActionListener(new ActionListener() {
+		btnPerturb = new JButton("Perturb");
+		btnPerturb.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int depth = 0;
 				boolean isValid = false;
 				try {
-					depth = Integer.parseInt(perterbDepthTextField.getText());
+					depth = Integer.parseInt(perturbDepthTextField.getText());
 					isValid = true;
 				} catch(Exception exc) {
 					lblInvalidDepth.setVisible(true);
 				}
 				if(isValid) {
-					//TODO perterb cube
+					lblInvalidDepth.setVisible(false);
+					try {
+						cube.perturb(depth);
+						repaintCube(cube);
+					} catch(IllegalDepthException exc) {
+						lblInvalidDepth.setVisible(true);
+					}
 				}
 			}
 		});
-		btnPerterb.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		btnPerterb.setBounds(630, 271, 184, 46);
-		contentPane.add(btnPerterb);
+		btnPerturb.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		btnPerturb.setBounds(630, 271, 184, 46);
+		contentPane.add(btnPerturb);
+		
+		JButton btnManipulate = new JButton("Manipulate");
+		btnManipulate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//TODO let user determine faces
+			}
+		});
+		btnManipulate.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		btnManipulate.setBounds(659, 374, 155, 108);
+		contentPane.add(btnManipulate);
 	}
 }

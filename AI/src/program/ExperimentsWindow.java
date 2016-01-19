@@ -14,7 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import experiments.*;
-import search.AstarSearch;
+import search.*;
 import search.BFSearch;
 
 public class ExperimentsWindow extends JFrame {

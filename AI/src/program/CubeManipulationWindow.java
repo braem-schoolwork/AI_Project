@@ -164,8 +164,8 @@ public class CubeManipulationWindow extends JFrame {
 		btnBfsearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				BFSearch bfSearch = new BFSearch();
-				if(bfSearch.getPath()!=null && bfSearch.getPath().size() > 0) {
-					//search to get goal state
+				//search to get goal state
+				try {
 					double startTime = System.nanoTime();
 					RubiksCube searchResult = (RubiksCube)bfSearch.search(cube, RubiksCube.createSolvedRubiksCube(cube.getSize()));
 					double endTime = System.nanoTime();
@@ -181,7 +181,7 @@ public class CubeManipulationWindow extends JFrame {
 						DecimalFormat decimalFormat = new DecimalFormat(pattern);
 						BFSearchTimeTextField.setText(decimalFormat.format(duration)+"sec.");
 					}
-				}
+				} catch (Exception exc) {}
 			}
 		});
 		btnBfsearch.setFont(new Font("Tahoma", Font.PLAIN, 25));
@@ -192,8 +192,8 @@ public class CubeManipulationWindow extends JFrame {
 		btnASearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				AstarSearch AstarSearch = new AstarSearch();
-				if(AstarSearch.getPath()!=null && AstarSearch.getPath().size() > 0) {
-					//search to get goal state
+				//search to get goal state
+				try {
 					double startTime = System.nanoTime();
 					RubiksCube searchResult = (RubiksCube)AstarSearch.search(cube, RubiksCube.createSolvedRubiksCube(cube.getSize()));
 					double endTime = System.nanoTime();
@@ -209,7 +209,7 @@ public class CubeManipulationWindow extends JFrame {
 						DecimalFormat decimalFormat = new DecimalFormat(pattern);
 						AstarSearchTimeTextField.setText(decimalFormat.format(duration)+"sec.");
 					}
-				}
+				} catch(Exception exc) {}
 			}
 		});
 		btnASearch.setFont(new Font("Tahoma", Font.PLAIN, 25));

@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import rubiks.*;
+import search.AstarSearch;
 import search.BFSearch;
 
 import java.awt.TextArea;
@@ -20,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import javax.swing.DefaultComboBoxModel;
 
 public class CubeManipulationWindow extends JFrame {
 
@@ -53,12 +55,14 @@ public class CubeManipulationWindow extends JFrame {
 	private JButton btnBack;
 	private JButton btnApplyAllMoves;
 	private JButton btnApplyOneMove;
+	private JComboBox<String> PerspectiveComboBox;
 	private JTextPane recommendedMovesTextPane;
 	private JTextField perturbDepthTextField;
 	private JButton btnPerturb;
 	private JLabel lblInvalidDepth;
 	ArrayList<Move> recommendedMoves;
 	private JTextField BFSearchTimeTextField;
+	private JTextField AstarSearchTimeTextField;
 
 	/**
 	 * Launch the application.
@@ -81,11 +85,19 @@ public class CubeManipulationWindow extends JFrame {
 	}
 	
 	//TODO change for perspective
-	private String buildString(char[][] arr) {
+	private String buildString(char[][] arr, int face, String perspective) {
 		String rtnStr = "";
 		for(int i=0; i<arr.length; i++) {
 			for(int j=0; j<arr[i].length; j++) {
-				rtnStr += arr[i][j]+" ";
+				if(perspective.equals("From Top Right Corner"))
+					rtnStr += arr[i][j]+" ";
+				else
+					if(face == 0 || face == 4)
+						rtnStr += arr[i][this.cube.getSize()-1-j] + " ";
+					else if(face == 2)
+						rtnStr += arr[this.cube.getSize()-1-i][j] + " ";
+					else
+						rtnStr += arr[i][j]+" ";
 			}
 			rtnStr += "\n";
 		}
@@ -94,12 +106,12 @@ public class CubeManipulationWindow extends JFrame {
 
 	private void repaintCube(RubiksCube cube) {
 		//display new cube
-		face0Str = buildString(cube.getCube()[0]);
-		face1Str = buildString(cube.getCube()[1]);
-		face2Str = buildString(cube.getCube()[2]);
-		face3Str = buildString(cube.getCube()[3]);
-		face4Str = buildString(cube.getCube()[4]);
-		face5Str = buildString(cube.getCube()[5]);
+		face0Str = buildString(cube.getCube()[0], 0, (String)PerspectiveComboBox.getSelectedItem());
+		face1Str = buildString(cube.getCube()[1], 1, (String)PerspectiveComboBox.getSelectedItem());
+		face2Str = buildString(cube.getCube()[2], 2, (String)PerspectiveComboBox.getSelectedItem());
+		face3Str = buildString(cube.getCube()[3], 3, (String)PerspectiveComboBox.getSelectedItem());
+		face4Str = buildString(cube.getCube()[4], 4, (String)PerspectiveComboBox.getSelectedItem());
+		face5Str = buildString(cube.getCube()[5], 5, (String)PerspectiveComboBox.getSelectedItem());
 		face0TextArea.setText(face0Str);
 		face1TextArea.setText(face1Str);
 		face2TextArea.setText(face2Str);
@@ -114,11 +126,19 @@ public class CubeManipulationWindow extends JFrame {
 	public CubeManipulationWindow(RubiksCube rubiksCube) {
 		setTitle("Rubiks Cube Manipulation");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 862, 744);
+		setBounds(100, 100, 862, 753);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		
+		
+		PerspectiveComboBox = new JComboBox<String>();
+		PerspectiveComboBox.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		PerspectiveComboBox.setModel(new DefaultComboBoxModel<String>(new String[] {"From Top Right Corner", "Looking Directly at Face"}));
+		PerspectiveComboBox.setSelectedIndex(0);
+		PerspectiveComboBox.setBounds(504, 204, 310, 39);
+		contentPane.add(PerspectiveComboBox);
 		
 		this.cube = rubiksCube;
 		
@@ -126,12 +146,12 @@ public class CubeManipulationWindow extends JFrame {
 		Move[] moveset = cube.genAllMoves();
 		
 		//displaying the cube
-		face0Str = buildString(cube.getCube()[0]);
-		face1Str = buildString(cube.getCube()[1]);
-		face2Str = buildString(cube.getCube()[2]);
-		face3Str = buildString(cube.getCube()[3]);
-		face4Str = buildString(cube.getCube()[4]);
-		face5Str = buildString(cube.getCube()[5]);
+		face0Str = buildString(cube.getCube()[0], 0, (String)PerspectiveComboBox.getSelectedItem());
+		face1Str = buildString(cube.getCube()[1], 1, (String)PerspectiveComboBox.getSelectedItem());
+		face2Str = buildString(cube.getCube()[2], 2, (String)PerspectiveComboBox.getSelectedItem());
+		face3Str = buildString(cube.getCube()[3], 3, (String)PerspectiveComboBox.getSelectedItem());
+		face4Str = buildString(cube.getCube()[4], 4, (String)PerspectiveComboBox.getSelectedItem());
+		face5Str = buildString(cube.getCube()[5], 5, (String)PerspectiveComboBox.getSelectedItem());
 		
 		face0TextArea = new TextArea();
 		face0TextArea.setText(face0Str);
@@ -144,21 +164,23 @@ public class CubeManipulationWindow extends JFrame {
 		btnBfsearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				BFSearch bfSearch = new BFSearch();
-				//search to get goal state
-				double startTime = System.nanoTime();
-				RubiksCube searchResult = (RubiksCube)bfSearch.search(cube, RubiksCube.createSolvedRubiksCube(cube.getSize()));
-				double endTime = System.nanoTime();
-				double duration = (endTime - startTime)/1000000000;
-				if(searchResult == null)
-					recommendedMovesTextPane.setText("Search did not\nfind a result");
-				else {
-					recommendedMoves = searchResult.traceMoves();
-					for(Move move : recommendedMoves) {
-						recommendedMovesTextPane.setText(recommendedMovesTextPane.getText()+move+"\n");
+				if(bfSearch.getPath()!=null && bfSearch.getPath().size() > 0) {
+					//search to get goal state
+					double startTime = System.nanoTime();
+					RubiksCube searchResult = (RubiksCube)bfSearch.search(cube, RubiksCube.createSolvedRubiksCube(cube.getSize()));
+					double endTime = System.nanoTime();
+					double duration = (endTime - startTime)/1000000000;
+					if(searchResult == null)
+						recommendedMovesTextPane.setText("Search did not\nfind a result");
+					else {
+						recommendedMoves = searchResult.traceMoves();
+						for(Move move : recommendedMoves) {
+							recommendedMovesTextPane.setText(recommendedMovesTextPane.getText()+move+"\n");
+						}
+						String pattern = "####.###";
+						DecimalFormat decimalFormat = new DecimalFormat(pattern);
+						BFSearchTimeTextField.setText(decimalFormat.format(duration)+"sec.");
 					}
-					String pattern = "####.###";
-					DecimalFormat decimalFormat = new DecimalFormat(pattern);
-					BFSearchTimeTextField.setText(decimalFormat.format(duration)+"sec.");
 				}
 			}
 		});
@@ -167,8 +189,31 @@ public class CubeManipulationWindow extends JFrame {
 		contentPane.add(btnBfsearch);
 		
 		JButton btnASearch = new JButton("A* Search");
+		btnASearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				AstarSearch AstarSearch = new AstarSearch();
+				if(AstarSearch.getPath()!=null && AstarSearch.getPath().size() > 0) {
+					//search to get goal state
+					double startTime = System.nanoTime();
+					RubiksCube searchResult = (RubiksCube)AstarSearch.search(cube, RubiksCube.createSolvedRubiksCube(cube.getSize()));
+					double endTime = System.nanoTime();
+					double duration = (endTime - startTime)/1000000000;
+					if(searchResult == null)
+						recommendedMovesTextPane.setText("Search did not\nfind a result");
+					else {
+						recommendedMoves = searchResult.traceMoves();
+						for(Move move : recommendedMoves) {
+							recommendedMovesTextPane.setText(recommendedMovesTextPane.getText()+move+"\n");
+						}
+						String pattern = "####.###";
+						DecimalFormat decimalFormat = new DecimalFormat(pattern);
+						AstarSearchTimeTextField.setText(decimalFormat.format(duration)+"sec.");
+					}
+				}
+			}
+		});
 		btnASearch.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		btnASearch.setBounds(378, 374, 164, 46);
+		btnASearch.setBounds(480, 373, 164, 46);
 		contentPane.add(btnASearch);
 		
 		face1TextArea = new TextArea();
@@ -271,6 +316,23 @@ public class CubeManipulationWindow extends JFrame {
 				move.setCube(cube);
 				move.apply();
 				repaintCube(cube); //redraw cube
+				if(cube.isSolved()) {
+					recommendedMoves.clear();
+					recommendedMovesTextPane.setText("");
+				}
+				else {
+					String textPaneContents = recommendedMovesTextPane.getText();
+					recommendedMovesTextPane.setText("");
+					String[] lines = textPaneContents.split("\n");
+					if(lines[0].equals(move.toString())) {
+						recommendedMoves.remove(0);
+						for(int i=1; i<lines.length; i++) {
+							recommendedMovesTextPane.setText(recommendedMovesTextPane.getText()+lines[i] + "\n");
+						}
+						if(recommendedMoves.isEmpty())
+							recommendedMovesTextPane.setText("");
+					}
+				}
 			}
 		});
 		btnApplyMove.setFont(new Font("Tahoma", Font.PLAIN, 25));
@@ -330,20 +392,24 @@ public class CubeManipulationWindow extends JFrame {
 		contentPane.add(lblRecommendMoveSet);
 		JLabel lblPerterbDepth = new JLabel("Perterb Depth:");
 		lblPerterbDepth.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		lblPerterbDepth.setBounds(504, 230, 199, 31);
+		lblPerterbDepth.setBounds(504, 254, 199, 31);
 		contentPane.add(lblPerterbDepth);
+		JLabel lblPerspective = new JLabel("Perspective:");
+		lblPerspective.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		lblPerspective.setBounds(504, 168, 141, 31);
+		contentPane.add(lblPerspective);
 		//error msg
 		lblInvalidDepth = new JLabel("invalid depth");
 		lblInvalidDepth.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblInvalidDepth.setForeground(Color.RED);
-		lblInvalidDepth.setBounds(527, 328, 75, 15);
+		lblInvalidDepth.setBounds(528, 347, 75, 15);
 		lblInvalidDepth.setVisible(false);
 		contentPane.add(lblInvalidDepth);
 		
 		btnApplyAllMoves = new JButton("Apply all Moves");
 		btnApplyAllMoves.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(!recommendedMoves.isEmpty()) {
+				if(recommendedMoves!=null && !recommendedMoves.isEmpty()) {
 					for(Move move : recommendedMoves) {
 						move.setCube(cube);
 						move.apply();
@@ -360,7 +426,7 @@ public class CubeManipulationWindow extends JFrame {
 		btnApplyOneMove = new JButton("Apply one Move");
 		btnApplyOneMove.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(!recommendedMoves.isEmpty()) {
+				if(recommendedMoves!=null && !recommendedMoves.isEmpty()) {
 					Move move = recommendedMoves.remove(0);
 					move.setCube(cube);
 					move.apply();
@@ -388,7 +454,7 @@ public class CubeManipulationWindow extends JFrame {
 		
 		perturbDepthTextField = new JTextField();
 		perturbDepthTextField.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		perturbDepthTextField.setBounds(504, 272, 116, 46);
+		perturbDepthTextField.setBounds(504, 296, 116, 46);
 		contentPane.add(perturbDepthTextField);
 		perturbDepthTextField.setColumns(10);
 		
@@ -415,7 +481,7 @@ public class CubeManipulationWindow extends JFrame {
 			}
 		});
 		btnPerturb.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		btnPerturb.setBounds(630, 271, 184, 46);
+		btnPerturb.setBounds(630, 296, 184, 46);
 		contentPane.add(btnPerturb);
 		
 		BFSearchTimeTextField = new JTextField();
@@ -424,5 +490,23 @@ public class CubeManipulationWindow extends JFrame {
 		BFSearchTimeTextField.setBounds(654, 436, 160, 46);
 		contentPane.add(BFSearchTimeTextField);
 		BFSearchTimeTextField.setColumns(10);
+		
+		AstarSearchTimeTextField = new JTextField();
+		AstarSearchTimeTextField.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		AstarSearchTimeTextField.setEditable(false);
+		AstarSearchTimeTextField.setColumns(10);
+		AstarSearchTimeTextField.setBounds(654, 374, 160, 46);
+		contentPane.add(AstarSearchTimeTextField);
+		
+		JButton btnSwitchPerspective = new JButton("Swtich");
+		btnSwitchPerspective.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				repaintCube(cube);
+			}
+		});
+		btnSwitchPerspective.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnSwitchPerspective.setBounds(649, 170, 165, 31);
+		contentPane.add(btnSwitchPerspective);
+		
 	}
 }

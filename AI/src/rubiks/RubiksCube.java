@@ -25,7 +25,7 @@ import search.Searchable;
  * 
  */
 
-public class RubiksCube implements Searchable
+public class RubiksCube implements Searchable, Comparable<RubiksCube>
 {
 	//for searching
 	private RubiksCube parent; //parent 'node'
@@ -40,7 +40,7 @@ public class RubiksCube implements Searchable
 	public RubiksCube(int size) {
 		this.parent = null;
 		this.moveAppliedToParent = null;
-		this.costSoFar = 0;
+		this.costSoFar = 1;
 		
 		if(size < 2)
 			throw new IllegalSizeException("Size for Rubiks Cube is less than 2");
@@ -57,7 +57,7 @@ public class RubiksCube implements Searchable
 	}
 	//copy constructor
 	public RubiksCube(RubiksCube rubiksCube) {
-		this.costSoFar = rubiksCube.getCostSoFar();
+		this.costSoFar = rubiksCube.g();
 		this.parent = rubiksCube;
 		this.size = rubiksCube.getSize();
 		char[][][] cube = rubiksCube.getCube();
@@ -86,7 +86,7 @@ public class RubiksCube implements Searchable
 	public Move getMoveAppliedToParent() {
 		return moveAppliedToParent;
 	}
-	public int getCostSoFar() {
+	public int g() {
 		return costSoFar;
 	}
 	public void setCube(char[][][] cube) {
@@ -94,6 +94,9 @@ public class RubiksCube implements Searchable
 	}
 	public void setMoveAppliedToParent(Move move) {
 		this.moveAppliedToParent = move;
+	}
+	public void incrementCost() {
+		costSoFar++;
 	}
 	
 	public ArrayList<Move> traceMoves() {
@@ -175,6 +178,7 @@ public class RubiksCube implements Searchable
 		for(int i=0; i<moveList.length; i++) {
 			Move move = moveList[i];
 			RubiksCube cubeCopy = new RubiksCube(this);
+			cubeCopy.incrementCost();
 			move.setCube(cubeCopy);
 			move.apply();
 			allChildren[i] = move.getCube();
@@ -252,7 +256,6 @@ public class RubiksCube implements Searchable
 			return false;
 	}
 	
-	@Override
 	public boolean isSolved() {
 		return isSolved(this.cube);
 	}
@@ -265,12 +268,22 @@ public class RubiksCube implements Searchable
 	//Cost function, f(x)
 	//f(x) = g(x) + h(x)
 	@Override
-	public int getCost() {
-		return costSoFar + h();
+	public int f() {
+		return g() + h();
 	}
 	
 	public int h() {
 		return 0;
+	}
+
+	@Override
+	public int compareTo(RubiksCube cube) {
+		if(this.f() > cube.f())
+			return 10;
+		else if(this.f() < cube.f())
+			return -10;
+		else
+			return 0;
 	}
 
 }

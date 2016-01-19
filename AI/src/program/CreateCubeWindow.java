@@ -56,7 +56,7 @@ public class CreateCubeWindow {
 	private void initialize() {
 		frmCreateRubiksCube = new JFrame();
 		frmCreateRubiksCube.setTitle("Create Rubik's Cube");
-		frmCreateRubiksCube.setBounds(100, 100, 321, 193);
+		frmCreateRubiksCube.setBounds(100, 100, 321, 207);
 		frmCreateRubiksCube.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmCreateRubiksCube.getContentPane().setLayout(null);
 		

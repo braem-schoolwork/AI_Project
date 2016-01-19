@@ -1,13 +1,11 @@
 package program;
 
-import java.awt.BorderLayout;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JList;
-import javax.swing.JToggleButton;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.Font;
@@ -15,8 +13,16 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+import experiments.*;
+import search.AstarSearch;
+import search.BFSearch;
+
 public class ExperimentsWindow extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6452197459200260004L;
 	private JFrame thisFrame = this;
 	private JPanel contentPane;
 
@@ -46,31 +52,31 @@ public class ExperimentsWindow extends JFrame {
 	public ExperimentsWindow() {
 		setTitle("Run Experiments");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 452, 178);
+		setBounds(100, 100, 452, 201);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		//TODO JComboBox<Experiment>
-		JComboBox comboBox = new JComboBox();
-		comboBox.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {".txt", ".csv"}));
-		comboBox.setSelectedIndex(1);
-		comboBox.setBounds(222, 11, 102, 43);
-		contentPane.add(comboBox);
+		JComboBox<String> fileExtensionComboBox = new JComboBox<String>();
+		fileExtensionComboBox.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		fileExtensionComboBox.setModel(new DefaultComboBoxModel<String>(new String[] {".txt", ".csv"}));
+		fileExtensionComboBox.setSelectedIndex(1);
+		fileExtensionComboBox.setBounds(222, 11, 102, 43);
+		contentPane.add(fileExtensionComboBox);
 		
-		JComboBox comboBox_1 = new JComboBox();
-		comboBox_1.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		comboBox_1.setModel(new DefaultComboBoxModel(new String[] {"Experiment 1"}));
-		comboBox_1.setSelectedIndex(0);
-		comboBox_1.setBounds(10, 11, 202, 43);
-		contentPane.add(comboBox_1);
+		JComboBox<Experiment> ExperimentSelectComboBox = new JComboBox<Experiment>();
+		ExperimentSelectComboBox.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		ExperimentSelectComboBox.addItem(new Experiment(1, new BFSearch(), 3, (String)fileExtensionComboBox.getSelectedItem()));
+		ExperimentSelectComboBox.setSelectedIndex(0);
+		ExperimentSelectComboBox.setBounds(10, 11, 202, 43);
+		contentPane.add(ExperimentSelectComboBox);
 		
 		JButton btnRunExperiment = new JButton("Run Experiment");
 		btnRunExperiment.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				Experiment exp = (Experiment) ExperimentSelectComboBox.getSelectedItem();
+				exp.runExperiment();
 			}
 		});
 		btnRunExperiment.setFont(new Font("Tahoma", Font.PLAIN, 25));

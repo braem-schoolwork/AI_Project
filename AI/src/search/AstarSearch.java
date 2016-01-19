@@ -1,19 +1,34 @@
 package search;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class AstarSearch implements Search {
-
+	private ArrayList<Searchable> path;
+	private boolean searched = false;
+	
+	public AstarSearch() {
+		path = new ArrayList<Searchable>();
+	}
+	
+	public ArrayList<Searchable> getPath() {
+		if(searched)
+			return path;
+		else
+			return null;
+	}
+	
 	@Override
 	public Searchable search(Searchable startState, Searchable goalState)
 	{
+		searched = true;
+		
 		//queue for objects to be searched
 		PriorityQueue<Searchable> openList = new PriorityQueue<Searchable>();
 		//queue for objects that have already been searched
 		Queue<Searchable> closedList = new LinkedList<Searchable>();
-		
 		
 		openList.add(startState); //add start state to the queue of objects to be searched
 		while(!openList.peek().equals(goalState))
@@ -41,7 +56,7 @@ public class AstarSearch implements Search {
 					addChild = false;
 					//consider if it's cheaper to go this way
 					//should not fire frequently
-					if(child.getCost() < matchingElem.getCost()) {
+					if(child.f() < matchingElem.f()) {
 						closedList.remove(matchingElem);
 						addChild = true;
 					}
@@ -59,7 +74,7 @@ public class AstarSearch implements Search {
 					}
 					if(inList) {
 						addChild = false;
-						if(child.getCost() < matchingElem.getCost()) {
+						if(child.f() < matchingElem.f()) {
 							openList.remove(matchingElem);
 							addChild = true;
 						}
@@ -72,8 +87,22 @@ public class AstarSearch implements Search {
 				}
 			}//enhanced for
 		}//while
-		
+		backTrace(startState, openList.peek());
 		return openList.poll(); // return result of search
 	} //A*
 	
+	//backtrace the path of the AstarSearch
+	private void backTrace(Searchable start, Searchable end) {
+		
+		path.add(end);
+		if(path.get(0).getParent() != null) {
+			boolean isStartState = false;
+			while(!isStartState) {
+				Searchable parent = path.get(0).getParent();
+				if(parent.equals(start))
+					isStartState = true;
+				path.add(0, parent);
+			}
+		}
+	}
 }

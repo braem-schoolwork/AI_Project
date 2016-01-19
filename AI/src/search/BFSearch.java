@@ -16,16 +16,22 @@ import java.util.Queue;
 public class BFSearch implements Search
 {
 	private ArrayList<Searchable> path;
+	private boolean searched = false;
+	
 	public BFSearch() {
 		path = new ArrayList<Searchable>();
 	}
 	
 	public ArrayList<Searchable> getPath() {
-		return path;
+		if(searched)
+			return path;
+		else
+			return null;
 	}
 	
 	public Searchable search(Searchable startState, Searchable goalState)
 	{
+		searched = true;
 		//queue for objects to be searched
 		Queue<Searchable> openList = new LinkedList<Searchable>();
 		//queue for objects that have already been searched
@@ -80,16 +86,18 @@ public class BFSearch implements Search
 		return null; //search failed
 	}//end search
 	
-	//TODO remove moves && trace those later when Searchable is cast to RubiksCube
 	//backtrace the path of the BFSearch
 	private void backTrace(Searchable start, Searchable end) {
+		
 		path.add(end);
-		boolean isStartState = false;
-		while(!isStartState) {
-			Searchable parent = path.get(0).getParent();
-			if(parent.equals(start))
-				isStartState = true;
-			path.add(0, parent);
+		if(path.get(0).getParent() != null) {
+			boolean isStartState = false;
+			while(!isStartState) {
+				Searchable parent = path.get(0).getParent();
+				if(parent.equals(start))
+					isStartState = true;
+				path.add(0, parent);
+			}
 		}
 	}
 	

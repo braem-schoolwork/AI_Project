@@ -37,6 +37,17 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	private char[][][] cube;
 	private final int numMovesPossible; //cap on the amount of moves possible
 	
+	//default color scheme
+	private static char defaultFace0Color = 'G';
+	private static char defaultFace1Color = 'R';
+	private static char defaultFace2Color = 'W';
+	private static char defaultFace3Color = 'Y';
+	private static char defaultFace4Color = 'B';
+	private static char defaultFace5Color = 'O';
+	
+	//lets 
+	private boolean isSolved = false;
+	
 	public RubiksCube(int size) {
 		this.parent = null;
 		this.moveAppliedToParent = null;
@@ -54,6 +65,7 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 			numMovesPossible = 3*2*size - 2*3;
 		else
 			numMovesPossible = 3*2*size;
+		this.isSolved = true;
 	}
 	//copy constructor
 	public RubiksCube(RubiksCube rubiksCube) {
@@ -69,8 +81,12 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 					newCube[i][j][k] = cube[i][j][k];
 		this.cube = newCube;
 		this.numMovesPossible = rubiksCube.getNumMovesPossible();
+		this.isSolved = rubiksCube.getIsSolved();
 	}
 	
+	public boolean getIsSolved() {
+		return isSolved;
+	}
 	public char[][][] getCube() {
 		return cube;
 	}
@@ -218,12 +234,12 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 		for(int i=0; i<cubeStr.length; i++) {
 			char color;
 			switch(i) {
-			case 0: color = 'G'; break;
-			case 1: color = 'R'; break;
-			case 2: color = 'W'; break;
-			case 3: color = 'Y'; break;
-			case 4: color = 'B'; break;
-			case 5: color = 'O'; break;
+			case 0: color = defaultFace0Color; break;
+			case 1: color = defaultFace1Color; break;
+			case 2: color = defaultFace2Color; break;
+			case 3: color = defaultFace3Color; break;
+			case 4: color = defaultFace4Color; break;
+			case 5: color = defaultFace5Color; break;
 			default: color = ' '; //never gets here
 			}
 			for(int j=0; j<cubeStr[i].length; j++)
@@ -246,9 +262,11 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	
 	@Override
 	public boolean equals(Searchable cube) {
+		if(this == cube) return true;
 		if(!(cube instanceof RubiksCube))
 			return false;
-		
+		/*if(((RubiksCube)cube).getIsSolved())
+			return isSolved(this.cube);*/
 		RubiksCube copy = (RubiksCube)cube;
 		if(Arrays.deepEquals(this.cube, copy.getCube()))
 			return true;
@@ -273,7 +291,11 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	}
 	
 	public int h() {
-		return 0;
+		return 20;
+	}
+	
+	private boolean cornersSet() {
+		return false;
 	}
 
 	@Override

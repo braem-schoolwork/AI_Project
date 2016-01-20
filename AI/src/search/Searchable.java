@@ -5,4 +5,5 @@ public interface Searchable {
 	public boolean equals(Searchable obj);
 	public Searchable getParent();
 	public int f();
+	public int g();
 }

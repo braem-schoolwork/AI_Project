@@ -1,0 +1,6 @@
+package rubiks;
+
+class HeuristicCalculation
+{
+	
+}

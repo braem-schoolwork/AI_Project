@@ -2,7 +2,6 @@ package search;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
@@ -25,27 +24,22 @@ public class AstarSearch implements Search {
 	@Override
 	public Searchable search(Searchable startState, Searchable goalState)
 	{
-		int openListPoll = 0;
-		int closedListInsert = 0;
-		int closedListRemove = 0;
 		searched = true;
 		//queue for objects to be searched
 		//PriorityQueue<Map<Searchable, Integer>> ??
 		Queue<Searchable> openList = new PriorityQueue<Searchable>(11);
 		//queue for objects that have already been searched
 		Set<Searchable> closedList = new HashSet<Searchable>();
-		
+		Searchable[] childList;
 		
 		openList.add(startState); //add start state to the queue of objects to be searched
 		
 		while(!openList.peek().equals(goalState))
 		{
-			openListPoll++;
 			Searchable current = openList.poll(); //minimum element
-			closedListInsert++;
 			closedList.add(current);
 			
-			Searchable[] childList = current.genChildren();
+			childList = current.genChildren();
 			
 			//search the children
 			for(Searchable child : childList) {
@@ -65,8 +59,7 @@ public class AstarSearch implements Search {
 					addChild = false;
 					//consider if it's cheaper to go this way
 					//should not fire frequently
-					if(child.f() < matchingElem.f()) {
-						closedListRemove++;
+					if(child.g() <= matchingElem.g()) {
 						closedList.remove(matchingElem);
 						addChild = true;
 					}
@@ -75,7 +68,7 @@ public class AstarSearch implements Search {
 				/* consider openList */
 				if(addChild) {
 					inList = false;
-					for(Searchable item : openList) {
+					for(Searchable item : openList) { //O(n)
 						if(child.equals(item)) {
 							matchingElem = item;
 							inList = true;
@@ -84,7 +77,7 @@ public class AstarSearch implements Search {
 					}
 					if(inList) {
 						addChild = false;
-						if(child.f() < matchingElem.f()) {
+						if(child.g() <= matchingElem.g()) {
 							openList.remove(matchingElem);
 							addChild = true;
 						}

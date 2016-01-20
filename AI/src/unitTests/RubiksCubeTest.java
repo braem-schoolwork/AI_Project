@@ -5,18 +5,7 @@ import rubiks.*;
 
 import org.junit.Test;
 
-import java.util.Arrays;
-
 public class RubiksCubeTest {
-
-	@Test
-	public void RubiksCubeConstructorTest() {
-		RubiksCube rubiksCube = new RubiksCube(2);
-		char[][][] cube1 = rubiksCube.getCube();
-		char[][][] cube2 = { {{'G', 'G'}, {'G', 'G'}}, {{'R', 'R'}, {'R', 'R'}}, {{'W', 'W'}, {'W', 'W'}},
-				{{'Y', 'Y'}, {'Y', 'Y'}}, {{'B', 'B'}, {'B', 'B'}}, {{'O', 'O'}, {'O', 'O'}} };
-		assertTrue(Arrays.deepEquals(cube1, cube2));
-	}
 	
 	@Test
 	public void isSolvedTest() {
@@ -93,5 +82,17 @@ public class RubiksCubeTest {
 					break;
 				}
 		assertTrue(flag);
+	}
+	
+	@Test
+	public void heuristicTest() {
+		RubiksCube cube = new RubiksCube(3);
+		Move move = new Move(cube, 3, 0, Axis.Y, Direction.CW);
+		move.apply();
+		assertTrue(cube.h() == 1);
+		move.apply();
+		assertTrue(cube.h() == 2);
+		move.apply();
+		assertTrue(cube.h() == 1);
 	}
 }

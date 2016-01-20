@@ -15,7 +15,6 @@ import java.awt.event.ActionEvent;
 
 import experiments.*;
 import search.*;
-import search.BFSearch;
 
 public class ExperimentsWindow extends JFrame {
 
@@ -67,7 +66,7 @@ public class ExperimentsWindow extends JFrame {
 		
 		JComboBox<Experiment> ExperimentSelectComboBox = new JComboBox<Experiment>();
 		ExperimentSelectComboBox.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		ExperimentSelectComboBox.addItem(new Experiment(1, new BFSearch(), 3, (String)fileExtensionComboBox.getSelectedItem()));
+		ExperimentSelectComboBox.addItem(new Experiment(1, new AstarSearch(), 3, (String)fileExtensionComboBox.getSelectedItem()));
 		ExperimentSelectComboBox.setSelectedIndex(0);
 		ExperimentSelectComboBox.setBounds(10, 11, 202, 43);
 		contentPane.add(ExperimentSelectComboBox);

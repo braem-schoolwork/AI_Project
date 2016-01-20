@@ -39,11 +39,11 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	
 	//default color scheme
 	private static char defaultFace0Color = 'G';
-	private static char defaultFace1Color = 'R';
-	private static char defaultFace2Color = 'W';
-	private static char defaultFace3Color = 'Y';
-	private static char defaultFace4Color = 'B';
-	private static char defaultFace5Color = 'O';
+	private static char defaultFace1Color = 'B';
+	private static char defaultFace2Color = 'Y';
+	private static char defaultFace3Color = 'W';
+	private static char defaultFace4Color = 'O';
+	private static char defaultFace5Color = 'R';
 	
 	//lets 
 	private boolean isSolved = false;
@@ -102,6 +102,7 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	public Move getMoveAppliedToParent() {
 		return moveAppliedToParent;
 	}
+	@Override
 	public int g() {
 		return costSoFar;
 	}
@@ -291,11 +292,123 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	}
 	
 	public int h() {
-		return 20;
+		return calculateHeuristic();
 	}
 	
-	private boolean cornersSet() {
-		return false;
+	private int calculateHeuristic() {
+		if(isSolved()) //we're at the goal state so 0!
+			return 0;
+		
+		//check for possible Y turns that could solve the cube
+		if(faceSolved(cube[3]) && faceSolved(cube[2])) {
+			int cond;
+			if(cube[5][0][0] == defaultFace5Color)
+				cond = size-1;
+			else
+				cond = 0;
+			boolean allOrange = true;
+			boolean allGreen = true;
+			boolean allBlue = true;
+			for(int i=0; i<cube[5].length; i++) { //row 
+				for(int j=0; j<cube[5][i].length; j++) { //col
+					if(i != cond) {
+						if(cube[5][i][j] != defaultFace5Color)
+							return 20;
+					}
+					else {
+						if(cube[5][i][j] != defaultFace4Color)
+							allOrange = false;
+						if(cube[5][i][j] != defaultFace1Color)
+							allBlue = false;
+						if(cube[5][i][j] != defaultFace0Color)
+							allGreen = false;
+					}
+				}
+			}
+			if(allOrange) { return 2; }
+			else if(allBlue) { return 1; }
+			else if(allGreen) { return 1; }
+			else return 20;
+		}
+		
+		//check for possible X turns that could solve the cube
+		if(faceSolved(cube[0]) && faceSolved(cube[1])) {
+			int cond;
+			if(cube[5][0][0] == defaultFace5Color)
+				cond = size-1;
+			else
+				cond = 0;
+			boolean allOrange = true;
+			boolean allYellow = true;
+			boolean allWhite = true;
+			for(int i=0; i<cube[5].length; i++) { //row 
+				for(int j=0; j<cube[5][i].length; j++) { //col
+					if(j != cond){
+						if(cube[5][i][j] != defaultFace5Color)
+							return 20;
+					}
+					else {
+						if(cube[5][i][j] != defaultFace2Color)
+							allYellow = false;
+						if(cube[5][i][j] != defaultFace3Color)
+							allWhite = false;
+						if(cube[5][i][j] != defaultFace4Color)
+							allOrange = false;
+					}
+				}
+			}
+			if(allOrange) { return 2; }
+			else if(allYellow) { return 1; }
+			else if(allWhite) { return 1; }
+			else return 20;
+		}
+		
+		//check for possible Z turns that could solve the cube
+		if(faceSolved(cube[5]) && faceSolved(cube[4])) {
+			int cond;
+			if(cube[3][0][0] == defaultFace3Color)
+				cond = size-1;
+			else
+				cond = 0;
+			boolean allYellow = true;
+			boolean allBlue = true;
+			boolean allGreen = true;
+			for(int i=0; i<cube[3].length; i++) { //row 
+				for(int j=0; j<cube[3][i].length; j++) { //col
+					if(i != cond) {
+						if(cube[3][i][j] != defaultFace3Color)
+							return 20;
+					}
+					else {
+						if(cube[3][i][j] != defaultFace0Color)
+							allGreen = false;
+						if(cube[3][i][j] != defaultFace1Color)
+							allBlue = false;
+						if(cube[3][i][j] != defaultFace2Color)
+							allYellow = false;
+					}
+				}
+			}
+			if(allYellow) { return 2; }
+			else if(allBlue) { return 1; }
+			else if(allGreen) { return 1; }
+			else return 20;
+		}
+		
+		//we dont recognize this cube! => assume maximum number of turns to solve
+		else
+			return 20;
+	}
+	
+	private boolean faceSolved(char[][] face) {
+		char color = face[0][0];
+		for(int i=0; i<face.length; i++) {
+			for(int j=0; j<face[i].length; j++) {
+				if(! (face[i][j] == color))
+					return false;
+			}
+		}
+		return true;
 	}
 
 	@Override

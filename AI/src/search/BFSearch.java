@@ -36,6 +36,7 @@ public class BFSearch implements Search
 		Queue<Searchable> openList = new LinkedList<Searchable>();
 		//queue for objects that have already been searched
 		Queue<Searchable> closedList = new LinkedList<Searchable>();
+		Searchable[] childList;
 		
 		openList.add(startState); //add start state to the queue of objects to be searched
 		
@@ -51,9 +52,8 @@ public class BFSearch implements Search
 				return current;
 			}
 			
-			//TODO change data structure and initialize outside of loop
 			//generate every possible object adjacent to this object
-			Searchable[] childList = current.genChildren();
+			childList = current.genChildren();
 			
 			//search every adjacent object
 			for(Searchable child : childList) {

@@ -23,6 +23,9 @@ import search.Searchable;
  * have 6 of these representing the faces
  * the coordinates represent the cubies
  * 
+ * 
+ * 
+ * 
  */
 
 public class RubiksCube implements Searchable, Comparable<RubiksCube>
@@ -45,13 +48,13 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	private static char defaultFace4Color = 'O';
 	private static char defaultFace5Color = 'R';
 	
-	//lets 
-	private boolean isSolved = false;
+	boolean isSolved = false;
 	
 	public RubiksCube(int size) {
 		this.parent = null;
 		this.moveAppliedToParent = null;
 		this.costSoFar = 1;
+		this.isSolved = true;
 		
 		if(size < 2)
 			throw new IllegalSizeException("Size for Rubiks Cube is less than 2");
@@ -65,7 +68,6 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 			numMovesPossible = 3*2*size - 2*3;
 		else
 			numMovesPossible = 3*2*size;
-		this.isSolved = true;
 	}
 	//copy constructor
 	public RubiksCube(RubiksCube rubiksCube) {
@@ -81,12 +83,9 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 					newCube[i][j][k] = cube[i][j][k];
 		this.cube = newCube;
 		this.numMovesPossible = rubiksCube.getNumMovesPossible();
-		this.isSolved = rubiksCube.getIsSolved();
+		this.isSolved = rubiksCube.isSolved;
 	}
 	
-	public boolean getIsSolved() {
-		return isSolved;
-	}
 	public char[][][] getCube() {
 		return cube;
 	}
@@ -191,7 +190,8 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	public Searchable[] genChildren() {
 		//2x2 and 3x3 have same number of moves (12)
 		RubiksCube[] allChildren = new RubiksCube[numMovesPossible];
-		Move[] moveList = this.genAllMoves();
+		Move[] moveList = this.genAllMoves(); //TODO MOVE THIS TO CONSTRUCTOR?
+		//GET MOVES FROM THIS. IE create movelist at constructor & pass the movelist down
 		for(int i=0; i<moveList.length; i++) {
 			Move move = moveList[i];
 			RubiksCube cubeCopy = new RubiksCube(this);
@@ -266,8 +266,8 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 		if(this == cube) return true;
 		if(!(cube instanceof RubiksCube))
 			return false;
-		/*if(((RubiksCube)cube).getIsSolved())
-			return isSolved(this.cube);*/
+		if(((RubiksCube)cube).isSolved)
+			return isSolved(this.cube);
 		RubiksCube copy = (RubiksCube)cube;
 		if(Arrays.deepEquals(this.cube, copy.getCube()))
 			return true;
@@ -286,7 +286,6 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	
 	//Cost function, f(x)
 	//f(x) = g(x) + h(x)
-	@Override
 	public int f() {
 		return g() + h();
 	}

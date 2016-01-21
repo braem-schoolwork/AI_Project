@@ -1,6 +1,9 @@
 package search;
 
 import java.util.ArrayList;
+
+//Map<K, V> for openList where the key is the f() and the value is the cube
+
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Queue;

@@ -58,6 +58,9 @@ public class Move
 		if(size%2 == 1 && sliceNum == size/2)
 			throw new IllegalMoveException("ATTEMPT TO MOVE MIDDLE SLICE OF AN ODD RUBIK'S CUBE");
 		
+		if(cube.isSolved == true)
+			cube.isSolved = false;
+		
 		//initializations
 		int from_face, to_face, from_row, to_row, from_col, to_col;
 		char[][][] cubeArr = cube.getCube();

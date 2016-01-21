@@ -1,5 +1,7 @@
 package rubiks;
 
+
+
 class HeuristicCalculation
 {
 	static int calculate(RubiksCube rubiksCube, char defaultFace0Color, char defaultFace1Color, char defaultFace2Color,

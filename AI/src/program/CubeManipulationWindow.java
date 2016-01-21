@@ -414,6 +414,7 @@ public class CubeManipulationWindow extends JFrame {
 						repaintCube(cube);
 					}
 					recommendedMovesTextPane.setText("");
+					recommendedMoves.clear();
 				}
 			}
 		});

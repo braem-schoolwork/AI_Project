@@ -9,6 +9,8 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
+import dataStructures.HashSetWrapper;
+
 public class AstarSearch implements Search {
 	private ArrayList<Searchable> path;
 	private boolean searched = false;
@@ -32,7 +34,7 @@ public class AstarSearch implements Search {
 		//PriorityQueue<Map<Searchable, Integer>> ??
 		Queue<Searchable> openList = new PriorityQueue<Searchable>(11);
 		//queue for objects that have already been searched
-		Set<Searchable> closedList = new HashSet<Searchable>();
+		Set<Searchable> closedList = new HashSetWrapper<Searchable>();
 		Searchable[] childList;
 		
 		openList.add(startState); //add start state to the queue of objects to be searched

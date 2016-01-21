@@ -48,16 +48,8 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 		else
 			this.size = size;
 		cube = createSolvedCube(size);
-		int numMovesPossible;
-		//when size is odd, we can't move middle slices, which decreases
-		//the amount of moves possible. More precisely, decreases it by
-		//2 * #numAxis == 6
-		if(size%2 == 1)
-			numMovesPossible = 3*2*size - 2*3;
-		else
-			numMovesPossible = 3*2*size;
 		
-		moveSet = genAllMoves(numMovesPossible);
+		moveSet = genAllMoves(3*2*size); //generate move set for this cube
 	}
 	
 	//copy constructor. only need to deep copy the array
@@ -201,20 +193,12 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 		int ctr = 0;
 		for(Axis axis : Axis.values())
 			for(Direction dir : Direction.values())
-				for(int i=0; i<size; i++)
-					if(size%2 == 1 && i%size == size/2) { //if odd sized rubiks cube
-						Move move = new Move((i%size)+1, axis, dir);
-						//add to array
-						moveList[ctr] = move;
-						ctr++;
-						i++;
-					}
-					else { //even sized
-						Move move = new Move(i%size, axis, dir);
-						//add to array
-						moveList[ctr] = move;
-						ctr++;
-					}
+				for(int i=0; i<size; i++) {
+					Move move = new Move(i%size, axis, dir);
+					//add to array
+					moveList[ctr] = move;
+					ctr++;
+				}
 		return moveList;
 	}
 	

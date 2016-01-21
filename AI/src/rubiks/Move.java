@@ -36,8 +36,6 @@ public class Move
 	 */
 	public void apply(RubiksCube cube) {
 		int size = cube.getSize();
-		if(size%2 == 1 && sliceNum == size/2)
-			throw new IllegalMoveException("ATTEMPT TO MOVE MIDDLE SLICE OF AN ODD RUBIK'S CUBE");
 		
 		if(cube.isSolved == true)
 			cube.isSolved = false;

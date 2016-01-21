@@ -2,33 +2,16 @@ package rubiks;
 
 public class Move
 {	
-	private RubiksCube cube;
-	private int size;
 	private int sliceNum;
 	private Axis axis;
 	private Direction dir;
-	public Move(RubiksCube cube, int size, int sliceNum, Axis axis, Direction dir) {
-		this.cube = cube;
-		this.size = size;
-		this.sliceNum = sliceNum;
-		this.axis = axis;
-		this.dir = dir;
-	}
+
 	public Move(int sliceNum, Axis axis, Direction dir) {
-		this.cube = null;
-		this.size = 0;
 		this.sliceNum = sliceNum;
 		this.axis = axis;
 		this.dir = dir;
 	}
 	
-	public void setCube(RubiksCube cube) {
-		this.cube = cube;
-		this.size = cube.getSize();
-	}
-	public RubiksCube getCube() {
-		return cube;
-	}
 	public int getSliceNum() {
 		return sliceNum;
 	}
@@ -49,12 +32,10 @@ public class Move
 	
 	/*
 	 * APPLY Method
-	 * applies this move
+	 * applies this move to a cube paramter
 	 */
-	public void apply() {
-		//checks
-		if(cube == null)
-			throw new IllegalMoveException("ATTEMPT TO APPLY A MOVE WHEN NO RUBIKS CUBE IS SET");
+	public void apply(RubiksCube cube) {
+		int size = cube.getSize();
 		if(size%2 == 1 && sliceNum == size/2)
 			throw new IllegalMoveException("ATTEMPT TO MOVE MIDDLE SLICE OF AN ODD RUBIK'S CUBE");
 		

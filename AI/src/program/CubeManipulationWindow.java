@@ -143,7 +143,7 @@ public class CubeManipulationWindow extends JFrame {
 		this.cube = rubiksCube;
 		
 		//generate moveset
-		Move[] moveset = cube.genAllMoves();
+		Move[] moveset = cube.getMoveSet();
 		
 		//displaying the cube
 		face0Str = buildString(cube.getCube()[0], 0, (String)PerspectiveComboBox.getSelectedItem());
@@ -167,7 +167,7 @@ public class CubeManipulationWindow extends JFrame {
 				//search to get goal state
 				try {
 					double startTime = System.nanoTime();
-					RubiksCube searchResult = (RubiksCube)bfSearch.search(cube, RubiksCube.createSolvedRubiksCube(cube.getSize()));
+					RubiksCube searchResult = (RubiksCube)bfSearch.search(cube, new RubiksCube(cube.getSize()));
 					double endTime = System.nanoTime();
 					double duration = (endTime - startTime)/1000000000;
 					if(searchResult == null)
@@ -195,7 +195,7 @@ public class CubeManipulationWindow extends JFrame {
 				//search to get goal state
 				try {
 					double startTime = System.nanoTime();
-					RubiksCube searchResult = (RubiksCube)AstarSearch.search(cube, RubiksCube.createSolvedRubiksCube(cube.getSize()));
+					RubiksCube searchResult = (RubiksCube)AstarSearch.search(cube, new RubiksCube(cube.getSize()));
 					double endTime = System.nanoTime();
 					double duration = (endTime - startTime)/1000000000;
 					if(searchResult == null)
@@ -313,8 +313,7 @@ public class CubeManipulationWindow extends JFrame {
 		btnApplyMove.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) { //want to apply a move
 				Move move = (Move)MoveSetDropDown.getSelectedItem(); //get the move they want to do
-				move.setCube(cube);
-				move.apply();
+				move.apply(cube);
 				repaintCube(cube); //redraw cube
 				if(cube.isSolved()) {
 					recommendedMoves.clear();
@@ -411,8 +410,7 @@ public class CubeManipulationWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if(recommendedMoves!=null && !recommendedMoves.isEmpty()) {
 					for(Move move : recommendedMoves) {
-						move.setCube(cube);
-						move.apply();
+						move.apply(cube);
 						repaintCube(cube);
 					}
 					recommendedMovesTextPane.setText("");
@@ -428,8 +426,7 @@ public class CubeManipulationWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if(recommendedMoves!=null && !recommendedMoves.isEmpty()) {
 					Move move = recommendedMoves.remove(0);
-					move.setCube(cube);
-					move.apply();
+					move.apply(cube);
 					repaintCube(cube);
 					String textPaneContents = recommendedMovesTextPane.getText();
 					recommendedMovesTextPane.setText("");

@@ -40,7 +40,7 @@ public class Experiment
 				RubiksCube rubiksCube = new RubiksCube(cubeSize);
 				rubiksCube.perturb(j);
 				double startTime = System.nanoTime();
-				RubiksCube searchResult = (RubiksCube) search.search(rubiksCube, RubiksCube.createSolvedRubiksCube(rubiksCube.getSize()));
+				RubiksCube searchResult = (RubiksCube)search.search(rubiksCube, new RubiksCube(rubiksCube.getSize()));
 				double endTime = System.nanoTime();
 				double duration = (endTime - startTime)/1000000000;
 				ArrayList<Searchable> cubes = search.getPath();

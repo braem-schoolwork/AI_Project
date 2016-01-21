@@ -6,39 +6,26 @@ import java.util.Random;
 
 import search.Searchable;
 
-//Directions: CW and CCW
-//X, Y, Z axis
-//0..S-1 slices per axis of rotation
-//which means numMovesPossible = #axis * #directions * #slices;
-
-
 /*
- * one Face for size==2 cube
- * ______________________
- * | [0, 0]  |  [0, 1]  |
- * |_________|__________|
- * | [1, 0]  |  [1, 1]  |
- * |_________|__________|
+ * Cube represented by a [6][size][size] character array
  * 
- * have 6 of these representing the faces
- * the coordinates represent the cubies
- * 
- * 
- * 
- * 
+ * CW and CCW directions
+ * X, Y, Z axis
+ * 0..S-1 slices per axis of rotation
+ * numMovesPossible = #axis * #directions * #slices;
  */
 
 public class RubiksCube implements Searchable, Comparable<RubiksCube>
 {
-	//for searching
+	//links to parent to aid with searching
 	private RubiksCube parent; //parent 'node'
 	private Move moveAppliedToParent; //move applied to parent node to get this
-	private int costSoFar;
+	private int gValue; //A* search g value
 	
 	private final int size; //size=2 when dealing 2x2x2 cube & vice versa
-	//representations of cube
-	private char[][][] cube;
-	private final int numMovesPossible; //cap on the amount of moves possible
+	private char[][][] cube; //representation of the cube
+	
+	private Move[] moveSet; //move set for this cube
 	
 	//default color scheme
 	private static char defaultFace0Color = 'G';
@@ -48,12 +35,12 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	private static char defaultFace4Color = 'O';
 	private static char defaultFace5Color = 'R';
 	
-	boolean isSolved = false;
+	boolean isSolved = false; //keeps track of whether this cube is solved or not
 	
 	public RubiksCube(int size) {
 		this.parent = null;
 		this.moveAppliedToParent = null;
-		this.costSoFar = 1;
+		this.gValue = 1;
 		this.isSolved = true;
 		
 		if(size < 2)
@@ -61,6 +48,7 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 		else
 			this.size = size;
 		cube = createSolvedCube(size);
+		int numMovesPossible;
 		//when size is odd, we can't move middle slices, which decreases
 		//the amount of moves possible. More precisely, decreases it by
 		//2 * #numAxis == 6
@@ -68,13 +56,17 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 			numMovesPossible = 3*2*size - 2*3;
 		else
 			numMovesPossible = 3*2*size;
+		
+		moveSet = genAllMoves(numMovesPossible);
 	}
-	//copy constructor
+	
+	//copy constructor. only need to deep copy the array
+	//everything else can be pointers
 	public RubiksCube(RubiksCube rubiksCube) {
-		this.costSoFar = rubiksCube.g();
+		this.gValue = rubiksCube.g();
 		this.parent = rubiksCube;
-		this.size = rubiksCube.getSize();
-		char[][][] cube = rubiksCube.getCube();
+		this.size = rubiksCube.size;
+		char[][][] cube = rubiksCube.cube;
 		char[][][] newCube = new char[6][size][size];
 		//deep copy
 		for(int i=0; i<cube.length; i++)
@@ -82,42 +74,42 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 				for(int k=0; k<cube[j].length; k++)
 					newCube[i][j][k] = cube[i][j][k];
 		this.cube = newCube;
-		this.numMovesPossible = rubiksCube.getNumMovesPossible();
 		this.isSolved = rubiksCube.isSolved;
+		this.moveSet = rubiksCube.moveSet;
 	}
 	
+	//getters
+	public Move[] getMoveSet() {
+		return moveSet;
+	}
 	public char[][][] getCube() {
 		return cube;
 	}
 	public int getSize() {
 		return size;
 	}
-	public int getNumMovesPossible() {
-		return numMovesPossible;
-	} 
+	
+	//for tracing back moves from a search
 	public RubiksCube getParent() {
 		return parent;
 	}
 	public Move getMoveAppliedToParent() {
 		return moveAppliedToParent;
 	}
-	@Override
-	public int g() {
-		return costSoFar;
-	}
-	public void setCube(char[][][] cube) {
-		this.cube = cube;
-	}
 	public void setMoveAppliedToParent(Move move) {
 		this.moveAppliedToParent = move;
 	}
-	public void incrementCost() {
-		costSoFar++;
+	//increments cost from start (g value)
+	public void incrementGVal() {
+		gValue++;
 	}
 	
+	/*
+	 * Method to trace back the path from a search
+	 * Returns null if no parent is found
+	 */
 	public ArrayList<Move> traceMoves() {
-		if(this.parent == null)
-			return null;
+		if(this.parent == null) return null;
 		//assume this is the end state of a search
 		RubiksCube parent = this.parent;
 		ArrayList<Move> moves = new ArrayList<Move>();
@@ -129,35 +121,30 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 		return moves;
 	}
 	
-	
 	/* 
-	 * The aim is to perturb the cube by applying depth random moves
+	 * Method to apply a number of random moves to the cube
 	 * 
 	 * try to preserve the integrity of perturbation by making sure moves
 	 * dont roll back to a previous state
 	 */
 	public void perturb(int depth) {
 		//check
-		if(depth <= 0 || depth > numMovesPossible)
-			throw new IllegalDepthException();
+		if(depth <= 0 || depth > moveSet.length) throw new IllegalDepthException();
 		//variables
-		Move[] moveList = this.genAllMoves();
+		Move[] moveList = moveSet;
 		int consecutiveMoves = 0; //counts consecutive same moves
 		Random rand = new Random();
 		int randomMove; //index for a move in the list
-		//set moves to reference this cube
-		for(Move move : moveList)
-			move.setCube(this);
 		
 		//apply a randomMove
-		randomMove = rand.nextInt(numMovesPossible);
+		randomMove = rand.nextInt(moveSet.length);
 		Move moveToApply = moveList[randomMove];
 		//copy this instead
 		Move lastMoveApplied = moveToApply;
-		moveToApply.apply();
+		moveToApply.apply(this);
 		//attempt to preserve depth integrity
 		for(int i=1; i<depth; i++) {
-			randomMove = rand.nextInt(numMovesPossible);
+			randomMove = rand.nextInt(moveSet.length);
 			moveToApply = moveList[randomMove];
 			//same axis && same sliceNum
 			if( lastMoveApplied.getAxis().equals(moveToApply.getAxis()) && lastMoveApplied.getSliceNum()==moveToApply.getSliceNum() )
@@ -181,30 +168,35 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 				}
 			else
 				consecutiveMoves = 0;
-			moveToApply.apply();
+			moveToApply.apply(this);
 			lastMoveApplied = moveToApply;
 		}
 	}
 	
+	/*
+	 * Generate children implementation from Searchable
+	 */
 	@Override
 	public Searchable[] genChildren() {
 		//2x2 and 3x3 have same number of moves (12)
-		RubiksCube[] allChildren = new RubiksCube[numMovesPossible];
-		Move[] moveList = this.genAllMoves(); //TODO MOVE THIS TO CONSTRUCTOR?
+		RubiksCube[] allChildren = new RubiksCube[moveSet.length];
+		Move[] moveList = this.moveSet; //TODO MOVE THIS TO CONSTRUCTOR?
 		//GET MOVES FROM THIS. IE create movelist at constructor & pass the movelist down
 		for(int i=0; i<moveList.length; i++) {
 			Move move = moveList[i];
 			RubiksCube cubeCopy = new RubiksCube(this);
-			cubeCopy.incrementCost();
-			move.setCube(cubeCopy);
-			move.apply();
-			allChildren[i] = move.getCube();
+			cubeCopy.incrementGVal();
+			move.apply(cubeCopy);
+			allChildren[i] = cubeCopy;
 			allChildren[i].setMoveAppliedToParent(move);
 		}
 		return allChildren;
 	}
 	
-	public Move[] genAllMoves() {
+	/*
+	 * Generates all moves for this rubiks cube
+	 */
+	private Move[] genAllMoves(int numMovesPossible) {
 		Move[] moveList = new Move[numMovesPossible];
 		int ctr = 0;
 		for(Axis axis : Axis.values())
@@ -226,10 +218,9 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 		return moveList;
 	}
 	
-	public static RubiksCube createSolvedRubiksCube(int size) {
-		return new RubiksCube(size);
-	}
-	
+	/*
+	 * methods to create a solved rubiks cube
+	 */
 	private static char[][][] createSolvedCube(int size) {
 		char[][][] cubeStr = new char[6][size][size];
 		for(int i=0; i<cubeStr.length; i++) {
@@ -250,51 +241,41 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 		return cubeStr;
 	}
 	
+	/*
+	 * methods to determine if the cube is in a solved state
+	 */
 	private static boolean isSolved(char[][][] cube) {
 		for(int i=0; i<cube.length; i++) {
 			char color = cube[i][0][0];
-			for(int j=1; j<cube[i].length; j++)
-				for(int k=1; k<cube[i][j].length; k++)
+			for(int j=0; j<cube[i].length; j++)
+				for(int k=0; k<cube[i][j].length; k++)
 					if(color != cube[i][j][k])
 						return false;
 		}
 		return true;
 	}
-	
-	@Override
-	public boolean equals(Searchable cube) {
-		if(this == cube) return true;
-		if(!(cube instanceof RubiksCube))
-			return false;
-		if(((RubiksCube)cube).isSolved)
-			return isSolved(this.cube);
-		RubiksCube copy = (RubiksCube)cube;
-		if(Arrays.deepEquals(this.cube, copy.getCube()))
-			return true;
-		else
-			return false;
-	}
-	
 	public boolean isSolved() {
 		return isSolved(this.cube);
 	}
 	
-	@Override
-	public String toString() {
-		return Arrays.deepToString(cube);
-	}
-	
-	//Cost function, f(x)
-	//f(x) = g(x) + h(x)
-	public int f() {
+	/*
+	 * A* Search related methods
+	 */
+	public int f() { //Cost function, f(x) = g() + h()
 		return g() + h();
 	}
-	
-	public int h() {
+	@Override
+	public int g() { //cost from start
+		return gValue;
+	}
+	public int h() { //estimate to end
 		return HeuristicCalculation.calculate(this, defaultFace0Color, defaultFace1Color, defaultFace2Color,
 				defaultFace3Color, defaultFace4Color, defaultFace5Color);
 	}
 
+	/*
+	 * Comparison Method Overrides
+	 */
 	@Override
 	public int compareTo(RubiksCube cube) {
 		if(this.f() > cube.f())
@@ -304,5 +285,18 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 		else
 			return 0;
 	}
-
+	@Override
+	public boolean equals(Searchable cube) {
+		if(this == cube) return true; //same reference
+		if(!(cube instanceof RubiksCube)) return false; //not a rubikscube
+		if(((RubiksCube)cube).isSolved) return isSolved(this.cube); //all solved cubes are equal
+		RubiksCube copy = (RubiksCube)cube; 
+		if(Arrays.deepEquals(this.cube, copy.cube)) return true;
+		else return false;
+	}
+	
+	@Override
+	public String toString() { //simple toString override
+		return Arrays.deepToString(cube);
+	}
 }

@@ -20,18 +20,9 @@ public class RubiksCubeTest {
 	}
 	
 	@Test
-	public void isSolvedTest3() {
-		RubiksCube rubiksCube = new RubiksCube(2);
-		char[][][] cube = { {{'R', 'R'}, {'R', 'R'}}, {{'G', 'G'}, {'G', 'G'}}, {{'B', 'B'}, {'B', 'B'}},
-				{{'Y', 'Y'}, {'Y', 'Y'}}, {{'W', 'W'}, {'W', 'W'}}, {{'O', 'O'}, {'O', 'O'}} };
-		rubiksCube.setCube(cube);
-		assertTrue(rubiksCube.isSolved());
-	}
-	
-	@Test
 	public void genAllMovesTest() {
 		RubiksCube rubiksCube = new RubiksCube(2);
-		Move[] moves1 = rubiksCube.genAllMoves();
+		Move[] moves1 = rubiksCube.getMoveSet();
 		Move[] moves2 = new Move[12];
 		moves2[0] = new Move(0, Axis.X, Direction.CW);
 		moves2[1] = new Move(1, Axis.X, Direction.CW);
@@ -87,12 +78,12 @@ public class RubiksCubeTest {
 	@Test
 	public void heuristicTest() {
 		RubiksCube cube = new RubiksCube(3);
-		Move move = new Move(cube, 3, 0, Axis.Y, Direction.CW);
-		move.apply();
+		Move move = new Move(0, Axis.Y, Direction.CW);
+		move.apply(cube);
 		assertTrue(cube.h() == 1);
-		move.apply();
+		move.apply(cube);
 		assertTrue(cube.h() == 2);
-		move.apply();
+		move.apply(cube);
 		assertTrue(cube.h() == 1);
 	}
 }

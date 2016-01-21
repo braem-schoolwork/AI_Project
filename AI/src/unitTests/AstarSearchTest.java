@@ -13,7 +13,7 @@ public class AstarSearchTest {
 		RubiksCube cube = new RubiksCube(2);
 		cube.perturb(3);
 		AstarSearch AstarSearch = new AstarSearch();
-		RubiksCube searchResult = (RubiksCube)AstarSearch.search(cube, RubiksCube.createSolvedRubiksCube(cube.getSize()));
+		RubiksCube searchResult = (RubiksCube)AstarSearch.search(cube, new RubiksCube(cube.getSize()));
 		assertTrue(searchResult.isSolved());
 	}
 

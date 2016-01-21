@@ -15,7 +15,7 @@ public class BFSearchTest {
 		RubiksCube cube = new RubiksCube(2);
 		cube.perturb(3);
 		BFSearch bfSearch = new BFSearch();
-		RubiksCube searchResult = (RubiksCube)bfSearch.search(cube, RubiksCube.createSolvedRubiksCube(cube.getSize()));
+		RubiksCube searchResult = (RubiksCube)bfSearch.search(cube, new RubiksCube(cube.getSize()));
 		assertTrue(bfSearch.getPath().size() <= 4);
 		assertTrue(searchResult.isSolved());
 	}
@@ -25,7 +25,7 @@ public class BFSearchTest {
 		RubiksCube cube = new RubiksCube(3);
 		cube.perturb(3);
 		BFSearch bfSearch = new BFSearch();
-		RubiksCube searchResult = (RubiksCube)bfSearch.search(cube, RubiksCube.createSolvedRubiksCube(cube.getSize()));
+		RubiksCube searchResult = (RubiksCube)bfSearch.search(cube, new RubiksCube(cube.getSize()));
 		assertTrue(bfSearch.getPath().size() <= 4);
 		assertTrue(searchResult.isSolved());
 	}
@@ -35,7 +35,7 @@ public class BFSearchTest {
 		RubiksCube cube = new RubiksCube(4);
 		cube.perturb(2);
 		BFSearch bfSearch = new BFSearch();
-		RubiksCube searchResult = (RubiksCube)bfSearch.search(cube, RubiksCube.createSolvedRubiksCube(cube.getSize()));
+		RubiksCube searchResult = (RubiksCube)bfSearch.search(cube, new RubiksCube(cube.getSize()));
 		assertTrue(bfSearch.getPath().size() <= 3);
 		assertTrue(searchResult.isSolved());
 	}

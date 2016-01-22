@@ -9,7 +9,7 @@ public class HeuristicTest {
 	@Test
 	public void heuristicXTest() {
 		RubiksCube cube = new RubiksCube(3);
-		Move move = new Move(0, Axis.X, Direction.CCW);
+		Move move = new Move(2, Axis.X, Direction.CCW);
 		move.apply(cube);
 		assertTrue(cube.h() == 1);
 		move.apply(cube);
@@ -19,7 +19,7 @@ public class HeuristicTest {
 	@Test
 	public void heuristicYTest() {
 		RubiksCube cube = new RubiksCube(3);
-		Move move = new Move(2, Axis.Y, Direction.CW);
+		Move move = new Move(1, Axis.Y, Direction.CW);
 		move.apply(cube);
 		assertTrue(cube.h() == 1);
 		move.apply(cube);
@@ -29,7 +29,7 @@ public class HeuristicTest {
 	@Test
 	public void heuristicZTest() {
 		RubiksCube cube = new RubiksCube(3);
-		Move move = new Move(2, Axis.Z, Direction.CCW);
+		Move move = new Move(1, Axis.Z, Direction.CCW);
 		move.apply(cube);
 		assertTrue(cube.h() == 1);
 		move.apply(cube);

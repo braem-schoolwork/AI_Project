@@ -33,10 +33,9 @@ public class Experiment
 	}
 	
 	public void runExperiment() {
-		writer.println("Experiment Number, Number of Perturbations, Rubik's Cube, Move Applied/Runtime");
-		for(int j=1; j<=8; j++) {
+		writer.println("Experiment Number, Number of Perturbations, Rubik's Cube, Move Applied, Runtime");
+		for(int j=5; j<=5; j++) {
 			for(int k=1; k<=5; k++) {
-				
 				RubiksCube rubiksCube = new RubiksCube(cubeSize);
 				rubiksCube.perturb(j);
 				double startTime = System.nanoTime();
@@ -53,6 +52,7 @@ public class Experiment
 				
 			}
 			writer.println();
+			System.out.println("hello?");
 		}
 		writer.close();
 	}

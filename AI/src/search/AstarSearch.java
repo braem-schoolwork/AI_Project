@@ -4,10 +4,7 @@ import java.util.ArrayList;
 
 //Map<K, V> for openList where the key is the f() and the value is the cube
 
-import java.util.HashSet;
 import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
 
 import dataStructures.HashSetWrapper;
 
@@ -31,10 +28,9 @@ public class AstarSearch implements Search {
 	{
 		searched = true;
 		//queue for objects to be searched
-		//PriorityQueue<Map<Searchable, Integer>> ??
-		Queue<Searchable> openList = new PriorityQueue<Searchable>(11);
+		PriorityQueue<Searchable> openList = new PriorityQueue<Searchable>(11);
 		//queue for objects that have already been searched
-		Set<Searchable> closedList = new HashSetWrapper<Searchable>();
+		HashSetWrapper<Searchable> closedList = new HashSetWrapper<Searchable>();
 		Searchable[] childList;
 		
 		openList.add(startState); //add start state to the queue of objects to be searched
@@ -53,13 +49,7 @@ public class AstarSearch implements Search {
 				/* consider closedList */
 				boolean inList = false;
 				Searchable matchingElem = null;
-				for(Searchable item : closedList) { //O(n)
-					if(child.equals(item)) {
-						matchingElem = item;
-						inList = true;
-						break;
-					}
-				}
+				matchingElem = closedList.removeRef(child);
 				if(inList) { //we've explored it
 					addChild = false;
 					//consider if it's cheaper to go this way

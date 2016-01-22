@@ -226,20 +226,17 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	}
 	
 	/*
-	 * methods to determine if the cube is in a solved state
+	 * method to determine if the cube is in a solved state
 	 */
-	private static boolean isSolved(char[][][] cube) {
-		for(int i=0; i<cube.length; i++) {
-			char color = cube[i][0][0];
+	public boolean isSolved() {
+		for(int i=0; i<3; i++) { //only need to traverse 3 faces
+			char color = cube[i][0][0]; //face color
 			for(int j=0; j<cube[i].length; j++)
 				for(int k=0; k<cube[i][j].length; k++)
 					if(color != cube[i][j][k])
 						return false;
 		}
 		return true;
-	}
-	public boolean isSolved() {
-		return isSolved(this.cube);
 	}
 	
 	/*
@@ -253,8 +250,7 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 		return gValue;
 	}
 	public int h() { //estimate to end
-		return HeuristicCalculation.calculate(this, defaultFace0Color, defaultFace1Color, defaultFace2Color,
-				defaultFace3Color, defaultFace4Color, defaultFace5Color);
+		return HeuristicCalculation.calculate(this);
 	}
 
 	/*
@@ -273,14 +269,20 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	public boolean equals(Searchable cube) {
 		if(this == cube) return true; //same reference
 		if(!(cube instanceof RubiksCube)) return false; //not a rubikscube
-		if(((RubiksCube)cube).isSolved) return isSolved(this.cube); //all solved cubes are equal
+		if(((RubiksCube)cube).isSolved) return isSolved(); //all solved cubes are equal EATS TIME!
 		RubiksCube copy = (RubiksCube)cube; 
 		if(Arrays.deepEquals(this.cube, copy.cube)) return true;
-		else return false;
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Arrays.deepHashCode(cube);
 	}
 	
 	@Override
 	public String toString() { //simple toString override
 		return Arrays.deepToString(cube);
 	}
+	
 }

@@ -25,7 +25,10 @@
 package dataStructures;
 
 import java.util.AbstractSet;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 public class HashSetWrapper<E>
@@ -38,10 +41,59 @@ implements Set<E>, Cloneable, java.io.Serializable
 	// Dummy value to associate with an Object in the backing Map
 	private static final Object PRESENT = new Object();
 	
+    public HashSetWrapper() {
+    	map = new HashMap<E,Object>();
+    }
 	
-	
-	
-	
+    public HashSetWrapper(Collection<? extends E> c) {
+    	map = new HashMap<E,Object>(Math.max((int) (c.size()/.75f) + 1, 16));
+    	addAll(c);
+    }
+
+    public HashSetWrapper(int initialCapacity, float loadFactor) {
+    	map = new HashMap<E,Object>(initialCapacity, loadFactor);
+    }
+    
+    public HashSetWrapper(int initialCapacity) {
+    	map = new HashMap<E,Object>(initialCapacity);
+    }
+    
+    HashSetWrapper(int initialCapacity, float loadFactor, boolean dummy) {
+    	map = new LinkedHashMap<E,Object>(initialCapacity, loadFactor);
+    }
+    
+    public Iterator<E> iterator() {
+    	return map.keySet().iterator();
+    }
+    
+    public int size() {
+    	return map.size();
+    }
+    
+    public boolean isEmpty() {
+    	return map.isEmpty();
+    }
+    
+    public boolean contains(Object o) {
+    	return map.containsKey(o);
+    }
+    
+    public boolean add(E e) {
+    	return map.put(e, PRESENT) == null;
+    }
+    
+    public boolean remove(Object o) {
+    	return map.remove(o) == PRESENT;
+    }
+    
+    @SuppressWarnings("unchecked")
+	public E removeRef(Object o) {
+    	return (E) map.remove(o);
+    }
+    
+    public void clear() {
+    	map.clear();
+    }
 }
 	
 	

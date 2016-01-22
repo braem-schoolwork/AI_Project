@@ -269,7 +269,6 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	public boolean equals(Searchable cube) {
 		if(this == cube) return true; //same reference
 		if(!(cube instanceof RubiksCube)) return false; //not a rubikscube
-		if(((RubiksCube)cube).isSolved) return isSolved(); //all solved cubes are equal EATS TIME!
 		RubiksCube copy = (RubiksCube)cube; 
 		if(Arrays.deepEquals(this.cube, copy.cube)) return true;
 		return false;

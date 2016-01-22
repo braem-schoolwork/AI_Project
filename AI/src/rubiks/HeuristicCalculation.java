@@ -3,13 +3,13 @@ package rubiks;
 class HeuristicCalculation
 {
 	static int calculate(RubiksCube rubiksCube) {
-		if(rubiksCube.isSolved()) //we're at the goal state so 0!
-			return 0;
 		
 		char cube[][][] = rubiksCube.getCube();
 		int size = rubiksCube.getSize();
 			
-		//TODO make work for middle slices
+		//TODO floating point heuristic
+		
+		
 		//check for possible X turns
 		if(faceSolved(cube[0]) && faceSolved(cube[1])) {
 			boolean isBars = true;

@@ -102,7 +102,6 @@ public class CubeManipulationWindow extends JFrame {
 		this.setVisible(true);
 	}
 	
-	//TODO change for perspective
 	private String buildString(byte[][] arr, int face, String perspective) {
 		String rtnStr = "";
 		for(int i=0; i<arr.length; i++) {

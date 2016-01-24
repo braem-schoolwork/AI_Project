@@ -104,7 +104,6 @@ public class CreateCubeWindow {
 						CubeManipulationWindow window = new CubeManipulationWindow(rubiksCube);
 						frmCreateRubiksCube.dispose();
 						window.enable();
-						//TODO open new window
 					} catch(IllegalSizeException e) {
 						lblInvalidSize.setVisible(true);
 					}

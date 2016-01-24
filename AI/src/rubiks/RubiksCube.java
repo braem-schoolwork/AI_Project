@@ -175,10 +175,8 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	 */
 	@Override
 	public Searchable[] genChildren() {
-		//2x2 and 3x3 have same number of moves (12)
 		RubiksCube[] allChildren = new RubiksCube[moveSet.length];
-		Move[] moveList = this.moveSet; //TODO MOVE THIS TO CONSTRUCTOR?
-		//GET MOVES FROM THIS. IE create movelist at constructor & pass the movelist down
+		Move[] moveList = this.moveSet;
 		for(int i=0; i<moveList.length; i++) {
 			Move move = moveList[i];
 			RubiksCube cubeCopy = new RubiksCube(this);

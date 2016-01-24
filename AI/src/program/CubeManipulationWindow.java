@@ -1,5 +1,23 @@
 package program;
 
+/**
+ * 
+ * @author braem
+ * 
+ * Main window for manipulating a Rubik's Cube
+ * 
+ * FEATURES:
+ * - Can change perspective
+ * - Can apply moves you want from the Move Set
+ * - Can randomly perturb the cube by a depth > 0
+ * - Can use A* or Breadth-First Search to generate a list of moves
+ *   recommended to solve the cube & the time it took to search
+ * 		- can then apply all moves at once, or one at a time
+ * 			- can apply the moves recommended from the Move Set if you'd rather
+ * - Can reset the cube to a solve state
+ * 
+ */
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;

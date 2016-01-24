@@ -9,6 +9,15 @@ import java.util.ArrayList;
 
 import rubiks.*;
 
+/**
+ * 
+ * @author braem
+ *
+ * Runs given Experiment
+ * 
+ * 
+ */
+
 public class Experiment
 {
 	private Search search;

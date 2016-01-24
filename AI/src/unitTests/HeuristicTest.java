@@ -7,33 +7,18 @@ import org.junit.Test;
 public class HeuristicTest {
 
 	@Test
-	public void heuristicXTest() {
+	public void heuristicTest() {
 		RubiksCube cube = new RubiksCube(3);
 		Move move = new Move(0, Axis.X, Direction.CW);
 		Move move2 = new Move(0, Axis.Y, Direction.CW);
-		System.out.println(cube.h());
+		//assert that the heuristic never overestimates moves left to solve
+		assertTrue(cube.h() == 0);
 		move.apply(cube);
-		System.out.println(cube.h());
+		assertTrue(cube.h() <= 1);
 		move.apply(cube);
-		System.out.println(cube.h());
+		assertTrue(cube.h() <= 2);
 		move2.apply(cube);
-		System.out.println(cube.h());
-	}
-	
-	@Test
-	public void heuristicYTest() {
-		RubiksCube cube = new RubiksCube(3);
-		Move move = new Move(1, Axis.Y, Direction.CW);
-		move.apply(cube);
-
-	}
-	
-	@Test
-	public void heuristicZTest() {
-		RubiksCube cube = new RubiksCube(3);
-		Move move = new Move(1, Axis.Z, Direction.CCW);
-		move.apply(cube);
-
+		assertTrue(cube.h() <= 3);
 	}
 
 }

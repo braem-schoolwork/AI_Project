@@ -31,7 +31,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-public class HashSetWrapper<E>
+public class HashSet<E>
 extends AbstractSet<E>
 implements Set<E>, Cloneable, java.io.Serializable
 {
@@ -41,24 +41,24 @@ implements Set<E>, Cloneable, java.io.Serializable
 	// Dummy value to associate with an Object in the backing Map
 	private static final Object PRESENT = new Object();
 	
-    public HashSetWrapper() {
+    public HashSet() {
     	map = new HashMap<E,Object>();
     }
 	
-    public HashSetWrapper(Collection<? extends E> c) {
+    public HashSet(Collection<? extends E> c) {
     	map = new HashMap<E,Object>(Math.max((int) (c.size()/.75f) + 1, 16));
     	addAll(c);
     }
 
-    public HashSetWrapper(int initialCapacity, float loadFactor) {
+    public HashSet(int initialCapacity, float loadFactor) {
     	map = new HashMap<E,Object>(initialCapacity, loadFactor);
     }
     
-    public HashSetWrapper(int initialCapacity) {
+    public HashSet(int initialCapacity) {
     	map = new HashMap<E,Object>(initialCapacity);
     }
     
-    HashSetWrapper(int initialCapacity, float loadFactor, boolean dummy) {
+    HashSet(int initialCapacity, float loadFactor, boolean dummy) {
     	map = new LinkedHashMap<E,Object>(initialCapacity, loadFactor);
     }
     
@@ -86,6 +86,7 @@ implements Set<E>, Cloneable, java.io.Serializable
     	return map.remove(o) == PRESENT;
     }
     
+    //added method to extract reference of remove
     @SuppressWarnings("unchecked")
 	public E removeRef(Object o) {
     	return (E) map.remove(o);

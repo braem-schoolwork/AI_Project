@@ -1,5 +1,13 @@
 package rubiks;
 
+/**
+ * 
+ * @author braem
+ *
+ * Disallows illegal sizes for a RubiksCube object
+ *
+ */
+
 public class IllegalSizeException extends RuntimeException
 {
 	/**

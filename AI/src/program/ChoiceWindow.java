@@ -10,6 +10,16 @@ import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+/**
+ * 
+ * @author braem
+ *
+ * Window to choose whether you want to run the experiments or
+ * manually manipulate a Rubik's Cube
+ *
+ */
+
+
 public class ChoiceWindow extends JFrame {
 
 	/**

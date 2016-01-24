@@ -3,16 +3,16 @@ package search;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-
-/*
- * Standard Breadth-First Search
+/**
  * 
- * Path is recorded through keeping track of parent & moves from the parent
- * in the RubiksCube class
+ * @author braem
+ *
+ * Breadth-First Search
  * 
- * 2x2x2 at depth 3 takes ~0.1-0.2 seconds
- * 2x2x2 at depth 4 takes ~80-100 seconds
+ * 
+ *
  */
+
 public class BFSearch implements Search
 {
 	private ArrayList<Searchable> path;
@@ -31,12 +31,12 @@ public class BFSearch implements Search
 	
 	public Searchable search(Searchable startState, Searchable goalState)
 	{
-		searched = true;
+		
 		//queue for objects to be searched
 		Queue<Searchable> openList = new LinkedList<Searchable>();
 		//queue for objects that have already been searched
 		Queue<Searchable> closedList = new LinkedList<Searchable>();
-		Searchable[] childList;
+		Searchable[] childList; //array for the generated children
 		
 		openList.add(startState); //add start state to the queue of objects to be searched
 		
@@ -48,7 +48,8 @@ public class BFSearch implements Search
 			
 			//check if current state is a goal state
 			if(current.equals(goalState)) {
-				backTrace(startState, current);
+				backTrace(startState, current); //backtrace steps taken
+				searched = true; //done search
 				return current;
 			}
 			
@@ -83,6 +84,7 @@ public class BFSearch implements Search
 				
 			}//foreach child
 		}//while openList
+		
 		return null; //search failed
 	}//end search
 	
@@ -99,6 +101,7 @@ public class BFSearch implements Search
 				path.add(0, parent);
 			}
 		}
+		
 	}
 	
 }

@@ -1,5 +1,13 @@
 package rubiks;
 
+/**
+ * 
+ * @author braem
+ *
+ * Keeps the RubiksCube perturb function sensible
+ *
+ */
+
 public class IllegalDepthException extends RuntimeException {
 	
 	/**

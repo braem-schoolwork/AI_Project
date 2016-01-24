@@ -1,5 +1,12 @@
 package program;
 
+/**
+ * 
+ * @author braem
+ * 
+ * Window to run different Experiments & write them to different file formats
+ * 
+ */
 
 import java.awt.EventQueue;
 

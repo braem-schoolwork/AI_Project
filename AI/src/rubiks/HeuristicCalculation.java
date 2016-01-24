@@ -2,8 +2,37 @@ package rubiks;
 
 import java.util.Arrays;
 
+/**
+ * 
+ * @author braem
+ *
+ * Heuristic Summary:
+ * 
+ * 1. Find the location of each corner piece in the cube
+ * 2. Find the 3D Manhattan Distance between each corner and where it should be on the cube
+ * 3. Add up all these distances
+ * 4. Divide the answer by 8
+ * 
+ * 5. Find the location of each edge piece in the cube
+ * 6. Find the 3D Manhattan Distance between each edge and where it should be on the cube
+ * 7. Add up all these distances
+ * 8. Divide the answer by 8
+ * 
+ * 9. Take the highest of the two 3D Manhattan Distances and return it as the Heuristic Approximation
+ * 
+ * 
+ * NOTES: The value 8 was not originally intended to have any meaning, it was just the value
+ * that put the Manhattan Distances in sensible range.
+ * On second wind, the magic value 8 may come about because each rotation rotates exactly
+ * 4 corners and exactly 4 edges.
+ * 
+ */
+
 public class HeuristicCalculation
 {
+	
+	private static float magicDivideByNumber = 8;
+	
 	static float calculate(RubiksCube rubiksCube) {
 		
 		char cube[][][] = rubiksCube.getCube();
@@ -11,10 +40,6 @@ public class HeuristicCalculation
 			
 		float edgeManhattanDist3D = calcEdgeManhattan3DDistance(cube, size);
 		float cornerManhattanDist3D = calcCornerManhattan3DDistance(cube, size);
-		
-		//divide each by 4
-		cornerManhattanDist3D /= 4;
-		edgeManhattanDist3D /= 4;
 		
 		//take the maximum of corner and edge 3D manhattan distances
 		float manhattanDistance3D;
@@ -144,7 +169,7 @@ public class HeuristicCalculation
 			edgeManhattanDist3D += manhattanDistance3D(from_x, to_x, from_y, to_y, from_z, to_z);
 		}
 		
-		return edgeManhattanDist3D;
+		return edgeManhattanDist3D/magicDivideByNumber;
 	}
 	
 	private static float calcCornerManhattan3DDistance(char[][][] cube, int size) {
@@ -235,7 +260,7 @@ public class HeuristicCalculation
 			}
 			cornerManhattanDist3D += manhattanDistance3D(from_x, to_x, from_y, to_y, from_z, to_z);
 		}
-		return cornerManhattanDist3D;
+		return cornerManhattanDist3D/magicDivideByNumber;
 	}
 	
 	//1 == from, 2 == to

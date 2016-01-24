@@ -1,5 +1,14 @@
 package program;
 
+/**
+ * 
+ * @author braem
+ * 
+ * Window to create a new Rubik's Cube by size
+ * 
+ */
+
+
 import java.awt.EventQueue;
 
 

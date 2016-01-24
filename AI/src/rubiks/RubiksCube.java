@@ -6,13 +6,24 @@ import java.util.Random;
 
 import search.Searchable;
 
-/*
- * Cube represented by a [6][size][size] character array
+/**
  * 
- * CW and CCW directions
- * X, Y, Z axis
- * 0..S-1 slices per axis of rotation
- * numMovesPossible = #axis * #directions * #slices;
+ * @author braem
+ *
+ * Class that represents an actual, physical rubik's cube
+ * 
+ * The Cube represented by a [6][size][size] character array
+ * The Move Set for the cube is generated when the cube is made
+ * 
+ * Cannot make a Rubik's Cube unless you specify the size.
+ * 
+ * As for searching, The Rubik's Cube also keeps track of its parent,
+ * the move applied to the parent to get this current cube, and the 
+ * A* search g value.
+ * 
+ * 
+ * NOTE: Specifying your own face colors will break the A* search heuristic
+ * 
  */
 
 public class RubiksCube implements Searchable, Comparable<RubiksCube>
@@ -23,7 +34,7 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	private int gValue; //A* search g value
 	
 	private final int size; //size=2 when dealing 2x2x2 cube & vice versa
-	private char[][][] cube; //representation of the cube
+	private char[][][] cube; //representation of the cube [6][size][size]
 	
 	private Move[] moveSet; //move set for this cube
 	
@@ -35,20 +46,15 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	private static char defaultFace4Color = 'O';
 	private static char defaultFace5Color = 'R';
 	
-	boolean isSolved = false; //keeps track of whether this cube is solved or not
-	
 	public RubiksCube(int size) {
 		this.parent = null;
 		this.moveAppliedToParent = null;
 		this.gValue = 1;
-		this.isSolved = true;
-		
 		if(size < 2)
 			throw new IllegalSizeException("Size for Rubiks Cube is less than 2");
 		else
 			this.size = size;
 		cube = createSolvedCube(size);
-		
 		moveSet = genAllMoves(3*2*size); //generate move set for this cube
 	}
 	
@@ -66,7 +72,6 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 				for(int k=0; k<cube[j].length; k++)
 					newCube[i][j][k] = cube[i][j][k];
 		this.cube = newCube;
-		this.isSolved = rubiksCube.isSolved;
 		this.moveSet = rubiksCube.moveSet;
 	}
 	
@@ -275,7 +280,6 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 		if(Arrays.deepEquals(this.cube, copy.cube)) return true;
 		return false;
 	}
-	
 	@Override
 	public int hashCode() {
 		return Arrays.deepHashCode(cube);

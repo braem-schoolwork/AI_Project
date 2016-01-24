@@ -242,15 +242,17 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	/*
 	 * A* Search related methods
 	 */
-	public int f() { //Cost function, f(x) = g() + h()
-		return g() + h();
+	public float f() { //Cost function, f(x) = g() + h()
+		float fVal = g() + h();
+		return fVal;
 	}
 	@Override
 	public int g() { //cost from start
 		return gValue;
 	}
-	public int h() { //estimate to end
-		return HeuristicCalculation.calculate(this);
+	public float h() { //estimate to end
+		float hVal = HeuristicCalculation.calculate(this);
+		return hVal;
 	}
 
 	/*

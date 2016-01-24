@@ -35,7 +35,7 @@ public class HeuristicCalculation
 	
 	static float calculate(RubiksCube rubiksCube) {
 		
-		char cube[][][] = rubiksCube.getCube();
+		byte cube[][][] = rubiksCube.getCube();
 		int size = rubiksCube.getSize();
 			
 		float edgeManhattanDist3D = calcEdgeManhattan3DDistance(cube, size);
@@ -52,65 +52,65 @@ public class HeuristicCalculation
 		return manhattanDistance3D;
 	}
 	
-	private static float calcEdgeManhattan3DDistance(char[][][] cube, int size) {
+	private static float calcEdgeManhattan3DDistance(byte[][][] cube, int size) {
 		float edgeManhattanDist3D = 0;
 		
 		/* store the default values of these edges */
 		//top layer
-		char[] defaultTopFrontEdgeColor = { 'R', 'W' };
-		char[] defaultTopLeftEdgeColor = { 'G', 'W' };
-		char[] defaultTopRightEdgeColor = { 'B', 'W' };
-		char[] defaultTopBackEdgeColor = { 'O', 'W' };
+		byte[] defaultTopFrontEdgeColor = { 'R', 'W' };
+		byte[] defaultTopLeftEdgeColor = { 'G', 'W' };
+		byte[] defaultTopRightEdgeColor = { 'B', 'W' };
+		byte[] defaultTopBackEdgeColor = { 'O', 'W' };
 		
 		//middle layer
-		char[] defaultMidRightFrontEdgeColor = { 'B', 'R' };
-		char[] defaultMidLeftFrontEdgeColor = { 'G', 'R' };
-		char[] defaultMidRightBackEdgeColor = { 'B', 'O' };
-		char[] defaultMidLeftBackEdgeColor = { 'G', 'O' };
+		byte[] defaultMidRightFrontEdgeColor = { 'B', 'R' };
+		byte[] defaultMidLeftFrontEdgeColor = { 'G', 'R' };
+		byte[] defaultMidRightBackEdgeColor = { 'B', 'O' };
+		byte[] defaultMidLeftBackEdgeColor = { 'G', 'O' };
 		
 		//bottom layer
-		char[] defaultBotFrontEdgeColor = { 'R', 'Y' };
-		char[] defaultBotLeftEdgeColor = { 'G', 'Y' };
-		char[] defaultBotRightEdgeColor = { 'B', 'Y' };
-		char[] defaultBotBackEdgeColor = { 'O', 'Y' };
+		byte[] defaultBotFrontEdgeColor = { 'R', 'Y' };
+		byte[] defaultBotLeftEdgeColor = { 'G', 'Y' };
+		byte[] defaultBotRightEdgeColor = { 'B', 'Y' };
+		byte[] defaultBotBackEdgeColor = { 'O', 'Y' };
 		
 		//put these in an array
-		char[][] defaultEdgeValues = { defaultTopFrontEdgeColor, defaultTopLeftEdgeColor, defaultTopRightEdgeColor, defaultTopBackEdgeColor,
+		byte[][] defaultEdgeValues = { defaultTopFrontEdgeColor, defaultTopLeftEdgeColor, defaultTopRightEdgeColor, defaultTopBackEdgeColor,
 				defaultMidRightFrontEdgeColor, defaultMidLeftFrontEdgeColor, defaultMidRightBackEdgeColor, defaultMidLeftBackEdgeColor,
 				defaultBotFrontEdgeColor, defaultBotLeftEdgeColor, defaultBotRightEdgeColor, defaultBotBackEdgeColor };
 		
 		/* get the actual values of the edges */
-		char[] actualTopFrontEdgeColor = { cube[5][0][size/2], cube[3][size-1][size/2] };
+		byte[] actualTopFrontEdgeColor = { cube[5][0][size/2], cube[3][size-1][size/2] };
 		Arrays.sort(actualTopFrontEdgeColor);
-		char[] actualTopLeftEdgeColor = { cube[3][size/2][0], cube[0][0][size/2] };
+		byte[] actualTopLeftEdgeColor = { cube[3][size/2][0], cube[0][0][size/2] };
 		Arrays.sort(actualTopLeftEdgeColor);
-		char[] actualTopRightEdgeColor = { cube[3][size/2][size-1], cube[1][0][size/2] };
+		byte[] actualTopRightEdgeColor = { cube[3][size/2][size-1], cube[1][0][size/2] };
 		Arrays.sort(actualTopRightEdgeColor);
-		char[] actualTopBackEdgeColor = { cube[3][0][size/2], cube[4][0][size/2] };
+		byte[] actualTopBackEdgeColor = { cube[3][0][size/2], cube[4][0][size/2] };
 		Arrays.sort(actualTopBackEdgeColor);
 		
 		//middle layer
-		char[] actualMidRightFrontEdgeColor = { cube[5][size/2][size-1], cube[1][size/2][0] };
+		byte[] actualMidRightFrontEdgeColor = { cube[5][size/2][size-1], cube[1][size/2][0] };
 		Arrays.sort(actualMidRightFrontEdgeColor);
-		char[] actualMidLeftFrontEdgeColor = { cube[5][size/2][0], cube[0][size/2][0] };
+		byte[] actualMidLeftFrontEdgeColor = { cube[5][size/2][0], cube[0][size/2][0] };
 		Arrays.sort(actualMidLeftFrontEdgeColor);
-		char[] actualMidRightBackEdgeColor = { cube[4][size/2][size-1], cube[1][size/2][size-1] };
+		byte[] actualMidRightBackEdgeColor = { cube[4][size/2][size-1], cube[1][size/2][size-1] };
 		Arrays.sort(actualMidRightBackEdgeColor);
-		char[] actualMidLeftBackEdgeColor = { cube[4][size/2][0], cube[0][size/2][size-1] };
+		byte[] actualMidLeftBackEdgeColor = { cube[4][size/2][0], cube[0][size/2][size-1] };
 		Arrays.sort(actualMidLeftBackEdgeColor);
 		
 		//bottom layer
-		char[] actualBotFrontEdgeColor = { cube[5][size-1][size/2], cube[2][size-1][size/2] };
+		byte[] actualBotFrontEdgeColor = { cube[5][size-1][size/2], cube[2][size-1][size/2] };
 		Arrays.sort(actualBotFrontEdgeColor);
-		char[] actualBotLeftEdgeColor = { cube[2][size/2][0], cube[0][size-1][size/2] };
+		byte[] actualBotLeftEdgeColor = { cube[2][size/2][0], cube[0][size-1][size/2] };
 		Arrays.sort(actualBotLeftEdgeColor);
-		char[] actualBotRightEdgeColor = { cube[2][size/2][size-1], cube[1][size-1][size/2] };
+		byte[] actualBotRightEdgeColor = { cube[2][size/2][size-1], cube[1][size-1][size/2] };
 		Arrays.sort(actualBotRightEdgeColor);
-		char[] actualBotBackEdgeColor = { cube[2][0][size/2], cube[4][size-1][size/2] };
+		byte[] actualBotBackEdgeColor = { cube[2][0][size/2], cube[4][size-1][size/2] };
 		Arrays.sort(actualBotBackEdgeColor);
 		
 		//put these in array like above
-		char[][] actualEdgeValues = { actualTopFrontEdgeColor, actualTopLeftEdgeColor, actualTopRightEdgeColor, actualTopBackEdgeColor,
+		byte[][] actualEdgeValues = { actualTopFrontEdgeColor, actualTopLeftEdgeColor, actualTopRightEdgeColor, actualTopBackEdgeColor,
 				actualMidRightFrontEdgeColor, actualMidLeftFrontEdgeColor, actualMidRightBackEdgeColor, actualMidLeftBackEdgeColor,
 				actualBotFrontEdgeColor, actualBotLeftEdgeColor, actualBotRightEdgeColor, actualBotBackEdgeColor };
 		
@@ -172,43 +172,43 @@ public class HeuristicCalculation
 		return edgeManhattanDist3D/magicDivideByNumber;
 	}
 	
-	private static float calcCornerManhattan3DDistance(char[][][] cube, int size) {
+	private static float calcCornerManhattan3DDistance(byte[][][] cube, int size) {
 		float cornerManhattanDist3D = 0;
 		
 		/* store the default values of these corners */
 		//front corners (closest to observer)
-		char[] defFrontTopRightCornerColor = { 'B', 'R', 'W' };
-		char[] defFrontTopLeftCornerColor = { 'G', 'R', 'W' };
-		char[] defFrontBotRightCornerColor = { 'B', 'R', 'Y' };
-		char[] defFrontBotLeftCornerColor = { 'G', 'R', 'Y' };
+		byte[] defFrontTopRightCornerColor = { 'B', 'R', 'W' };
+		byte[] defFrontTopLeftCornerColor = { 'G', 'R', 'W' };
+		byte[] defFrontBotRightCornerColor = { 'B', 'R', 'Y' };
+		byte[] defFrontBotLeftCornerColor = { 'G', 'R', 'Y' };
 		//back corners (furthest from observer)
-		char[] defBackTopRightCornerColor = { 'B', 'O', 'W' };
-		char[] defBackTopLeftCornerColor = { 'G', 'O', 'W' };
-		char[] defBackBotRightCornerColor = { 'B', 'O', 'Y' };
-		char[] defBackBotLeftCornerColor = { 'G', 'O', 'Y' };
+		byte[] defBackTopRightCornerColor = { 'B', 'O', 'W' };
+		byte[] defBackTopLeftCornerColor = { 'G', 'O', 'W' };
+		byte[] defBackBotRightCornerColor = { 'B', 'O', 'Y' };
+		byte[] defBackBotLeftCornerColor = { 'G', 'O', 'Y' };
 		//put them in an array
-		char[][] defaultCornerValues = { defFrontTopRightCornerColor, defFrontTopLeftCornerColor, defFrontBotRightCornerColor, defFrontBotLeftCornerColor,
+		byte[][] defaultCornerValues = { defFrontTopRightCornerColor, defFrontTopLeftCornerColor, defFrontBotRightCornerColor, defFrontBotLeftCornerColor,
 				defBackTopRightCornerColor, defBackTopLeftCornerColor, defBackBotRightCornerColor, defBackBotLeftCornerColor };
 		
 		/* get actual corner values. Sort them to test for corner equality */
-		char[] actualFrontTopRightCornerColor = { cube[5][0][size-1], cube[1][0][0], cube[3][size-1][size-1] };
+		byte[] actualFrontTopRightCornerColor = { cube[5][0][size-1], cube[1][0][0], cube[3][size-1][size-1] };
 		Arrays.sort(actualFrontTopRightCornerColor);
-		char[] actualFrontTopLeftCornerColor = { cube[5][0][0], cube[0][0][0], cube[3][size-1][0] };
+		byte[] actualFrontTopLeftCornerColor = { cube[5][0][0], cube[0][0][0], cube[3][size-1][0] };
 		Arrays.sort(actualFrontTopLeftCornerColor);
-		char[] actualFrontBotRightCornerColor = { cube[5][size-1][size-1], cube[1][size-1][0], cube[2][size-1][size-1] };
+		byte[] actualFrontBotRightCornerColor = { cube[5][size-1][size-1], cube[1][size-1][0], cube[2][size-1][size-1] };
 		Arrays.sort(actualFrontBotRightCornerColor);
-		char[] actualFrontBotLeftCornerColor = { cube[5][size-1][0], cube[0][size-1][0], cube[2][size-1][0] };
+		byte[] actualFrontBotLeftCornerColor = { cube[5][size-1][0], cube[0][size-1][0], cube[2][size-1][0] };
 		Arrays.sort(actualFrontBotLeftCornerColor);
-		char[] actualBackTopRightCornerColor = { cube[4][0][size-1], cube[1][0][size-1], cube[3][0][size-1] };
+		byte[] actualBackTopRightCornerColor = { cube[4][0][size-1], cube[1][0][size-1], cube[3][0][size-1] };
 		Arrays.sort(actualBackTopRightCornerColor);
-		char[] actualBackTopLeftCornerColor = { cube[4][0][0], cube[0][0][size-1], cube[3][0][0] };
+		byte[] actualBackTopLeftCornerColor = { cube[4][0][0], cube[0][0][size-1], cube[3][0][0] };
 		Arrays.sort(actualBackTopLeftCornerColor);
-		char[] actualBackBotRightCornerColor = { cube[4][size-1][size-1], cube[1][size-1][size-1], cube[2][0][size-1] };
+		byte[] actualBackBotRightCornerColor = { cube[4][size-1][size-1], cube[1][size-1][size-1], cube[2][0][size-1] };
 		Arrays.sort(actualBackBotRightCornerColor);
-		char[] actualBackBotLeftCornerColor = { cube[4][size-1][0], cube[0][size-1][size-1], cube[2][0][0] };
+		byte[] actualBackBotLeftCornerColor = { cube[4][size-1][0], cube[0][size-1][size-1], cube[2][0][0] };
 		Arrays.sort(actualBackBotLeftCornerColor);
 		//put them in an array like above
-		char[][] actualCornerValues = { actualFrontTopRightCornerColor, actualFrontTopLeftCornerColor, actualFrontBotRightCornerColor, actualFrontBotLeftCornerColor,
+		byte[][] actualCornerValues = { actualFrontTopRightCornerColor, actualFrontTopLeftCornerColor, actualFrontBotRightCornerColor, actualFrontBotLeftCornerColor,
 				actualBackTopRightCornerColor, actualBackTopLeftCornerColor, actualBackBotRightCornerColor, actualBackBotLeftCornerColor };
 		
 		/* 

@@ -103,19 +103,19 @@ public class CubeManipulationWindow extends JFrame {
 	}
 	
 	//TODO change for perspective
-	private String buildString(char[][] arr, int face, String perspective) {
+	private String buildString(byte[][] arr, int face, String perspective) {
 		String rtnStr = "";
 		for(int i=0; i<arr.length; i++) {
 			for(int j=0; j<arr[i].length; j++) {
 				if(perspective.equals("From Top Right Corner"))
-					rtnStr += arr[i][j]+" ";
+					rtnStr += (char)arr[i][j]+" ";
 				else
 					if(face == 0 || face == 4)
-						rtnStr += arr[i][this.cube.getSize()-1-j] + " ";
+						rtnStr += (char)arr[i][this.cube.getSize()-1-j] + " ";
 					else if(face == 2)
-						rtnStr += arr[this.cube.getSize()-1-i][j] + " ";
+						rtnStr += (char)arr[this.cube.getSize()-1-i][j] + " ";
 					else
-						rtnStr += arr[i][j]+" ";
+						rtnStr += (char)arr[i][j]+" ";
 			}
 			rtnStr += "\n";
 		}

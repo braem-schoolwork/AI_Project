@@ -64,8 +64,8 @@ public class Move
 		
 		//initializations
 		int from_face, to_face, from_row, to_row, from_col, to_col;
-		char[][][] cubeArr = cube.getCube();
-		char values[][] = new char[4][size];
+		byte[][][] cubeArr = cube.getCube();
+		byte values[][] = new byte[4][size];
 		int[] effectedFaces = findEffectedFaces();
 		
 		/* Dealing with edge cases */
@@ -182,11 +182,11 @@ public class Move
 	 */
 	//rotates a two-dimensional array in a direction
 	//used to implement edge cases
-	private void rotate(char[][] face) {
+	private void rotate(byte[][] face) {
 		int n = face.length;
 		for(int i=0; i<=(n-1)/2; i++)
 			for(int j=i; j<n-i-1; j++) {
-				char tmp;
+				byte tmp;
 				if(dir.equals(Direction.CW)) {
 					tmp = face[i][j];
 					face[i][j] = face[n-j-1][i];

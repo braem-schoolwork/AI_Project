@@ -34,17 +34,17 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	private int gValue; //A* search g value
 	
 	private final int size; //size=2 when dealing 2x2x2 cube & vice versa
-	private char[][][] cube; //representation of the cube [6][size][size]
+	private byte[][][] cube; //representation of the cube [6][size][size]
 	
 	private Move[] moveSet; //move set for this cube
 	
 	//default color scheme
-	private static char defaultFace0Color = 'G';
-	private static char defaultFace1Color = 'B';
-	private static char defaultFace2Color = 'Y';
-	private static char defaultFace3Color = 'W';
-	private static char defaultFace4Color = 'O';
-	private static char defaultFace5Color = 'R';
+	private static byte defaultFace0Color = 'G';
+	private static byte defaultFace1Color = 'B';
+	private static byte defaultFace2Color = 'Y';
+	private static byte defaultFace3Color = 'W';
+	private static byte defaultFace4Color = 'O';
+	private static byte defaultFace5Color = 'R';
 	
 	public RubiksCube(int size) {
 		this.parent = null;
@@ -64,8 +64,8 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 		this.gValue = rubiksCube.g();
 		this.parent = rubiksCube;
 		this.size = rubiksCube.size;
-		char[][][] cube = rubiksCube.cube;
-		char[][][] newCube = new char[6][size][size];
+		byte[][][] cube = rubiksCube.cube;
+		byte[][][] newCube = new byte[6][size][size];
 		//deep copy
 		for(int i=0; i<cube.length; i++)
 			for(int j=0; j<cube[i].length; j++)
@@ -79,7 +79,7 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	public Move[] getMoveSet() {
 		return moveSet;
 	}
-	public char[][][] getCube() {
+	public byte[][][] getCube() {
 		return cube;
 	}
 	public int getSize() {
@@ -210,10 +210,10 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	/*
 	 * methods to create a solved rubiks cube
 	 */
-	private static char[][][] createSolvedCube(int size) {
-		char[][][] cubeStr = new char[6][size][size];
+	private static byte[][][] createSolvedCube(int size) {
+		byte[][][] cubeStr = new byte[6][size][size];
 		for(int i=0; i<cubeStr.length; i++) {
-			char color;
+			byte color;
 			switch(i) {
 			case 0: color = defaultFace0Color; break;
 			case 1: color = defaultFace1Color; break;
@@ -235,7 +235,7 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	 */
 	public boolean isSolved() {
 		for(int i=0; i<3; i++) { //only need to traverse 3 faces
-			char color = cube[i][0][0]; //face color
+			byte color = cube[i][0][0]; //face color
 			for(int j=0; j<cube[i].length; j++)
 				for(int k=0; k<cube[i][j].length; k++)
 					if(color != cube[i][j][k])

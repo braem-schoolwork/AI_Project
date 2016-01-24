@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import rubiks.*;
 
+//TODO Prove for n=2 & n=3 cube, various moves generate expected cube
 public class MoveTest {
 
 	@Test

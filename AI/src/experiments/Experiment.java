@@ -26,24 +26,16 @@ public class Experiment
 	private String fileName;
 	private PrintWriter writer;
 	
-	public Experiment(int experimentNum, Search search, int cubeSize, String fileExtension) {
+	public Experiment(int experimentNum, Search search, int cubeSize) {
 		this.experimentNum = experimentNum;
 		this.search = search;
 		this.cubeSize = cubeSize;
-		this.fileName = System.getProperty("user.dir")+"\\Experiment"+experimentNum+fileExtension;
-		System.out.println(fileName);
-		try {
-			this.writer = new PrintWriter(fileName, "UTF-8");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
 	}
 	
-	public void runExperiment() {
+	public void runExperiment(String fileExtension) {
+		setupFile(fileExtension);
 		writer.println("Experiment Number, Number of Perturbations, Rubik's Cube, Move Applied, Runtime");
-		for(int j=1; j<=6; j++) {
+		for(int j=1; j<=7; j++) {
 			for(int k=1; k<=5; k++) {
 				RubiksCube rubiksCube = new RubiksCube(cubeSize);
 				rubiksCube.perturb(j);
@@ -79,6 +71,17 @@ public class Experiment
 		}
 	}
 
+	private void setupFile(String fileExtension) {
+		this.fileName = System.getProperty("user.dir")+"\\Experiment"+experimentNum+fileExtension;
+		try {
+			this.writer = new PrintWriter(fileName, "UTF-8");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		System.out.println(fileName);
+	}
 	
 	@Override
 	public String toString() {

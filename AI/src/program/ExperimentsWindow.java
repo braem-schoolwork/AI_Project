@@ -73,7 +73,7 @@ public class ExperimentsWindow extends JFrame {
 		
 		JComboBox<Experiment> ExperimentSelectComboBox = new JComboBox<Experiment>();
 		ExperimentSelectComboBox.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		ExperimentSelectComboBox.addItem(new Experiment(1, new AstarSearch(), 3, (String)fileExtensionComboBox.getSelectedItem()));
+		ExperimentSelectComboBox.addItem(new Experiment(1, new AstarSearch(), 3));
 		ExperimentSelectComboBox.setSelectedIndex(0);
 		ExperimentSelectComboBox.setBounds(10, 11, 202, 43);
 		contentPane.add(ExperimentSelectComboBox);
@@ -82,7 +82,7 @@ public class ExperimentsWindow extends JFrame {
 		btnRunExperiment.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Experiment exp = (Experiment) ExperimentSelectComboBox.getSelectedItem();
-				exp.runExperiment();
+				exp.runExperiment((String)fileExtensionComboBox.getSelectedItem());
 			}
 		});
 		btnRunExperiment.setFont(new Font("Tahoma", Font.PLAIN, 25));

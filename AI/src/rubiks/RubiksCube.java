@@ -272,8 +272,6 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	}
 	@Override
 	public boolean equals(Searchable cube) {
-		if(this == cube) return true; //same reference
-		if(!(cube instanceof RubiksCube)) return false; //not a rubikscube
 		RubiksCube copy = (RubiksCube)cube; 
 		if(Arrays.deepEquals(this.cube, copy.cube)) return true;
 		return false;
@@ -285,7 +283,26 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	
 	@Override
 	public String toString() { //simple toString override
-		return Arrays.deepToString(cube);
+		String rtnStr = "[";
+		for(int i=0; i<cube.length; i++) {
+			rtnStr += "[";
+			for(int j=0; j<cube[i].length; j++) {
+				rtnStr += "[";
+				for(int k=0; k<cube[i][j].length; k++) {
+					rtnStr += ((char)cube[i][j][k]);
+					if(k!=cube[i][j].length-1)
+						rtnStr += ", ";
+				}
+				rtnStr += "]";
+				if(j!=cube[i].length-1)
+					rtnStr += ", ";
+			}
+			rtnStr += "]";
+			if(i!=cube.length-1)
+				rtnStr += ", \n";
+		}
+		rtnStr += "]";
+		return rtnStr;
 	}
 	
 }

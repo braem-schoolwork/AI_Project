@@ -8,6 +8,20 @@ import org.junit.Test;
 public class RubiksCubeTest {
 	
 	@Test
+	public void hashTest() {
+		RubiksCube rubiksCube = new RubiksCube(3);
+		RubiksCube rubiksCube2 = new RubiksCube(3);
+		assertTrue(rubiksCube.hashCode() == rubiksCube2.hashCode());
+	}
+	
+	@Test
+	public void equalsTest() {
+		Object rubiksCube = new RubiksCube(3);
+		Object rubiksCube2 = new RubiksCube(3);
+		assertTrue(rubiksCube.equals(rubiksCube2));
+	}
+	
+	@Test
 	public void isSolvedTest() {
 		RubiksCube rubiksCube = new RubiksCube(2);
 		assertTrue(rubiksCube.isSolved());
@@ -64,7 +78,7 @@ public class RubiksCubeTest {
 		//proves all moves are unique
 		RubiksCube cube = new RubiksCube(3);
 		RubiksCube[] children = (RubiksCube[]) cube.genChildren();
-		assertTrue(children.length == 12);
+		assertTrue(children.length == 18);
 		boolean flag = true;
 		for(int i=0; i<children.length; i++)
 			for(int j=0; j<children.length; j++)

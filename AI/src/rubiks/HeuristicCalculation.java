@@ -23,7 +23,7 @@ import java.util.Arrays;
  * 
  * NOTES: The value 8 was not originally intended to have any meaning, it was just the value
  * that put the Manhattan Distances in sensible range.
- * On second wind, the magic value 8 may come about because each rotation rotates exactly
+ * On second wind, the magic value 8 may come about because each rotation rotates at most
  * 4 corners and exactly 4 edges.
  * 
  */

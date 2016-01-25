@@ -3,6 +3,8 @@ package search;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import dataStructures.HashSet;
 /**
  * 
  * @author braem
@@ -35,7 +37,7 @@ public class BFSearch implements Search
 		//queue for objects to be searched
 		Queue<Searchable> openList = new LinkedList<Searchable>();
 		//queue for objects that have already been searched
-		Queue<Searchable> closedList = new LinkedList<Searchable>();
+		HashSet<Searchable> closedList = new HashSet<Searchable>();
 		Searchable[] childList; //array for the generated children
 		
 		openList.add(startState); //add start state to the queue of objects to be searched
@@ -60,13 +62,11 @@ public class BFSearch implements Search
 			for(Searchable child : childList) {
 				boolean addChild = true;
 				
-				//check queue of items to be searched
-				for(Searchable item : openList)
-					//if we find the same item, dont bother searching it
-					if(child.equals(item)) {
-						addChild = false;
-						break;
-					}
+				//check the set of items to be searched
+				Searchable matchingElem = (Searchable)closedList.removeRef(child);
+				//if we find the same item, dont bother searching it
+				if(child.equals(matchingElem))
+					addChild = false;
 				
 				if(addChild) //if we should add the child
 					//check the items that have been searched

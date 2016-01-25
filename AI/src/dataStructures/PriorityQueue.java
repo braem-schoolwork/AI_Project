@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
@@ -103,6 +104,8 @@ public class PriorityQueue<E> extends AbstractQueue<E>
      * lowest value is in queue[0], assuming the queue is nonempty.
      */
     private transient Object[] queue;
+    
+    private HashMap<E, Integer> hashMap;
 
     /**
      * The number of elements in the priority queue.
@@ -161,6 +164,7 @@ public class PriorityQueue<E> extends AbstractQueue<E>
         if (initialCapacity < 1)
             throw new IllegalArgumentException();
         this.queue = new Object[initialCapacity];
+        this.hashMap = new HashMap<E, Integer>(initialCapacity);
         this.comparator = comparator;
     }
 
@@ -298,8 +302,10 @@ public class PriorityQueue<E> extends AbstractQueue<E>
         if (i >= queue.length)
             grow(i + 1);
         size = i + 1;
-        if (i == 0)
-            queue[0] = e;
+        if (i == 0) {
+        	queue[0] = e;
+        	hashMap.put(e, 0);
+        }
         else
             siftUp(i, e);
         return true;
@@ -340,6 +346,12 @@ public class PriorityQueue<E> extends AbstractQueue<E>
             removeAt(i);
             return true;
         }
+    }
+    
+    @SuppressWarnings("unchecked")
+	public E removeRef(Object o) {
+    	//return (E) queue[hashMap.get((E)o)];
+    	return null;
     }
 
     /**
@@ -554,6 +566,7 @@ public class PriorityQueue<E> extends AbstractQueue<E>
         @SuppressWarnings("unchecked")
 		E x = (E) queue[s];
         queue[s] = null;
+        hashMap.remove(x, s);
         if (s != 0)
             siftDown(0, x);
         return result;
@@ -588,6 +601,7 @@ public class PriorityQueue<E> extends AbstractQueue<E>
                     return moved;
             }
         }
+        hashMap.remove(i);
         return null;
     }
 
@@ -622,6 +636,7 @@ public class PriorityQueue<E> extends AbstractQueue<E>
             k = parent;
         }
         queue[k] = key;
+        hashMap.put((E)key, k);
     }
 
     @SuppressWarnings("unchecked")
@@ -669,6 +684,7 @@ public class PriorityQueue<E> extends AbstractQueue<E>
             k = child;
         }
         queue[k] = key;
+        hashMap.put((E)key, k);
     }
 
     @SuppressWarnings("unchecked")

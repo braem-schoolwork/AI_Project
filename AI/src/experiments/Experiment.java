@@ -35,7 +35,7 @@ public class Experiment
 	public void runExperiment(String fileExtension) {
 		setupFile(fileExtension);
 		writer.println("Experiment Number, Number of Perturbations, Rubik's Cube, Move Applied, Runtime");
-		for(int j=1; j<=7; j++) {
+		for(int j=1; j<=8; j++) {
 			for(int k=1; k<=5; k++) {
 				RubiksCube rubiksCube = new RubiksCube(cubeSize);
 				rubiksCube.perturb(j);

@@ -1,7 +1,7 @@
 package search;
 
 import java.util.ArrayList;
-import java.util.PriorityQueue;
+import dataStructures.PriorityQueue;
 
 import dataStructures.HashSet;
 
@@ -55,7 +55,6 @@ public class AstarSearch implements Search {
 		
 		while(!openList.peek().equals(goalState))
 		{
-			
 			Searchable current = openList.poll(); //get & remove minimum element
 			closedList.add(current);
 			
@@ -66,13 +65,11 @@ public class AstarSearch implements Search {
 				boolean addChild = true;
 				
 				/* consider closedList */
-				boolean inList = false;
-				Searchable matchingElem = null;
-				matchingElem = closedList.removeRef(child);
-				if(inList) { //we've explored it
+				Searchable matchingElem = (Searchable)closedList.removeRef(child);
+				if(matchingElem != null) {
 					addChild = false;
 					//consider if it's cheaper to go this way
-					if(child.g() <= matchingElem.g()) {
+					if(child.g() < matchingElem.g()) {
 						closedList.remove(matchingElem);
 						addChild = true;
 					}
@@ -80,17 +77,10 @@ public class AstarSearch implements Search {
 				
 				/* consider openList */
 				if(addChild) {
-					inList = false;
-					for(Searchable item : openList) { //TODO fix O(n) worst case
-						if(child.equals(item)) {
-							matchingElem = item;
-							inList = true;
-							break;
-						}
-					}
-					if(inList) {
+					matchingElem = openList.removeRef(child);
+					if(matchingElem != null) {
 						addChild = false;
-						if(child.g() <= matchingElem.g()) {
+						if(child.g() < matchingElem.g()) {
 							openList.remove(matchingElem);
 							addChild = true;
 						}

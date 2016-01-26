@@ -49,7 +49,7 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	public RubiksCube(int size) {
 		this.parent = null;
 		this.moveAppliedToParent = null;
-		this.gValue = 1;
+		this.gValue = 0;
 		if(size < 2)
 			throw new IllegalSizeException("Size for Rubiks Cube is less than 2");
 		else
@@ -271,8 +271,9 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 			return 0;
 	}
 	@Override
-	public boolean equals(Searchable cube) {
-		RubiksCube copy = (RubiksCube)cube; 
+	public boolean equals(Object obj) {
+		if(!(obj instanceof RubiksCube)) return false;
+		RubiksCube copy = (RubiksCube)obj; 
 		if(Arrays.deepEquals(this.cube, copy.cube)) return true;
 		return false;
 	}

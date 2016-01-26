@@ -27,9 +27,8 @@ package dataStructures;
 import java.util.AbstractSet;
 import java.util.*;
 import java.util.Collection;
-import java.util.HashMap;
+import dataStructures.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Set;
 
 /**
@@ -150,23 +149,6 @@ public class HashSet<E>
     }
 
     /**
-     * Constructs a new, empty linked hash set.  (This package private
-     * constructor is only used by LinkedHashSet.) The backing
-     * HashMap instance is a LinkedHashMap with the specified initial
-     * capacity and the specified load factor.
-     *
-     * @param      initialCapacity   the initial capacity of the hash map
-     * @param      loadFactor        the load factor of the hash map
-     * @param      dummy             ignored (distinguishes this
-     *             constructor from other int, float constructor.)
-     * @throws     IllegalArgumentException if the initial capacity is less
-     *             than zero, or if the load factor is nonpositive
-     */
-    HashSet(int initialCapacity, float loadFactor, boolean dummy) {
-        map = new LinkedHashMap<>(initialCapacity, loadFactor);
-    }
-
-    /**
      * Returns an iterator over the elements in this set.  The elements
      * are returned in no particular order.
      *
@@ -208,6 +190,12 @@ public class HashSet<E>
         return map.containsKey(o);
     }
 
+    //added method to extract reference of remove
+	@SuppressWarnings("unchecked")
+	public E containsRef(Object o) {
+		return map.containsKeyRef((E) o);
+    }
+    
     /**
      * Adds the specified element to this set if it is not already present.
      * More formally, adds the specified element <tt>e</tt> to this set if
@@ -239,13 +227,6 @@ public class HashSet<E>
     public boolean remove(Object o) {
         return map.remove(o)==PRESENT;
     }
-    
-    //added method to extract reference of remove
-	@SuppressWarnings("unchecked")
-	public E removeRef(E o) {
-		//return (E) map.get(o);
-		return null;
-    }
 
     /**
      * Removes all of the elements from this set.
@@ -255,22 +236,6 @@ public class HashSet<E>
         map.clear();
     }
 
-    /**
-     * Returns a shallow copy of this <tt>HashSet</tt> instance: the elements
-     * themselves are not cloned.
-     *
-     * @return a shallow copy of this set
-     */
-    @SuppressWarnings("unchecked")
-    public Object clone() {
-        try {
-            HashSet<E> newSet = (HashSet<E>) super.clone();
-            newSet.map = (HashMap<E, Object>) map.clone();
-            return newSet;
-        } catch (CloneNotSupportedException e) {
-            throw new InternalError(e);
-        }
-    }
 }
    
 	

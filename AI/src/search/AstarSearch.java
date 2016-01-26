@@ -63,9 +63,9 @@ public class AstarSearch implements Search {
 			//search the children
 			for(Searchable child : childList) {
 				boolean addChild = true;
-				
+
 				/* consider closedList */
-				Searchable matchingElem = (Searchable)closedList.removeRef(child);
+				Searchable matchingElem = (Searchable)closedList.containsRef(child);
 				if(matchingElem != null) {
 					addChild = false;
 					//consider if it's cheaper to go this way
@@ -77,7 +77,7 @@ public class AstarSearch implements Search {
 				
 				/* consider openList */
 				if(addChild) {
-					matchingElem = openList.removeRef(child);
+					matchingElem = openList.containsRef(child);
 					if(matchingElem != null) {
 						addChild = false;
 						if(child.g() < matchingElem.g()) {

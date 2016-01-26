@@ -63,14 +63,14 @@ public class BFSearch implements Search
 				boolean addChild = true;
 				
 				//check the set of items to be searched
-				Searchable matchingElem = (Searchable)closedList.removeRef(child);
+				Searchable matchingElem = (Searchable)closedList.containsRef(child);
 				//if we find the same item, dont bother searching it
 				if(child.equals(matchingElem))
 					addChild = false;
 				
 				if(addChild) //if we should add the child
 					//check the items that have been searched
-					for(Searchable item : closedList)
+					for(Searchable item : closedList) //O(n)
 						//if we find the same item, dont bother searching it
 						if(child.equals(item)) {
 							addChild = false;

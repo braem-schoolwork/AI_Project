@@ -320,9 +320,10 @@ public class PriorityQueue<E> extends AbstractQueue<E>
 
     private int indexOf(Object o) {
         if (o != null) {
-            for (int i = 0; i < size; i++)
+            /*for (int i = 0; i < size; i++)
                 if (o.equals(queue[i]))
-                    return i;
+                    return i;*/
+        	return hashMap.get(o);
         }
         return -1;
     }
@@ -338,21 +339,19 @@ public class PriorityQueue<E> extends AbstractQueue<E>
      * @param o element to be removed from this queue, if present
      * @return {@code true} if this queue changed as a result of the call
      */
-    public boolean remove(Object o) {
+    @SuppressWarnings("unchecked")
+	public boolean remove(Object o) {
         int i = indexOf(o);
         if (i == -1)
             return false;
         else {
+        	hashMap.remove((E)o);
             removeAt(i);
             return true;
         }
     }
     
-    @SuppressWarnings("unchecked")
-	public E removeRef(Object o) {
-    	//return (E) queue[hashMap.get((E)o)];
-    	return null;
-    }
+
 
     /**
      * Version of remove using reference equality, not equals.
@@ -380,7 +379,20 @@ public class PriorityQueue<E> extends AbstractQueue<E>
      * @return {@code true} if this queue contains the specified element
      */
     public boolean contains(Object o) {
-        return indexOf(o) != -1;
+    	try {
+    		return indexOf(o) != -1;
+    	} catch (NullPointerException e) {
+    		return false;
+    	}
+    }
+    
+    @SuppressWarnings("unchecked")
+	public E containsRef(Object o) {
+    	try {
+    		return (E) queue[hashMap.get((E)o)];
+    	} catch (NullPointerException e) {
+    		return null;
+    	}
     }
 
     /**
@@ -553,6 +565,7 @@ public class PriorityQueue<E> extends AbstractQueue<E>
         modCount++;
         for (int i = 0; i < size; i++)
             queue[i] = null;
+        hashMap.clear();
         size = 0;
     }
 
@@ -566,7 +579,8 @@ public class PriorityQueue<E> extends AbstractQueue<E>
         @SuppressWarnings("unchecked")
 		E x = (E) queue[s];
         queue[s] = null;
-        hashMap.remove(x, s);
+        hashMap.remove(x);
+        hashMap.remove(result);
         if (s != 0)
             siftDown(0, x);
         return result;
@@ -633,9 +647,12 @@ public class PriorityQueue<E> extends AbstractQueue<E>
             if (key.compareTo((E) e) >= 0)
                 break;
             queue[k] = e;
+            hashMap.remove((E) e);
+            hashMap.put((E)e, k);
             k = parent;
         }
         queue[k] = key;
+        hashMap.remove((E) key);
         hashMap.put((E)key, k);
     }
 
@@ -681,9 +698,12 @@ public class PriorityQueue<E> extends AbstractQueue<E>
             if (key.compareTo((E) c) <= 0)
                 break;
             queue[k] = c;
+            hashMap.remove((E) c);
+            hashMap.put((E)c, k);
             k = child;
         }
         queue[k] = key;
+        hashMap.remove((E) key);
         hashMap.put((E)key, k);
     }
 
@@ -773,5 +793,9 @@ public class PriorityQueue<E> extends AbstractQueue<E>
         // Elements are guaranteed to be in "proper order", but the
         // spec has never explained what that might be.
         heapify();
+    }
+    @Override
+    public String toString() {
+    	return Arrays.toString(queue)+"\n\n\n"+hashMap.toString();
     }
 }

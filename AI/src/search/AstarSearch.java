@@ -14,8 +14,11 @@ import dataStructures.HashSet;
  * HashSet for the closedList (fast insert & lookup)
  *
  * 
- * NOTES: PriorityQueue has a O(n) for lookup. Possible fixes might be
- * keeping track of index to object mappings via HashMap.
+ * NOTES: The PriorityQueue used is Sun MicroSystems' PriorityQueue, but with an added
+ * internal HashMap of which keeps track of the relationship between an Object and its
+ * index in the queue. The reason for this is to make java.util's PriorityQueue also have
+ * O(1) time complexity when looking up an object/removing that object by equality. This does
+ * mean the space used by the openList is doubled, but in this case sacrificing space for speed is useful.
  * 
  * The HashSet is Sun MicroSystems HashSet, but with an added method
  * for extracting the reference via remove, instead of just returning
@@ -97,7 +100,7 @@ public class AstarSearch implements Search {
 		searched = true; //completed search
 		backTrace(startState, openList.peek()); //backtrace nodes
 		
-		return openList.poll(); // return result of search
+		return openList.peek(); // return result of search
 		
 	} //A*
 	

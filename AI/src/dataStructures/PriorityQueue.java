@@ -319,12 +319,9 @@ public class PriorityQueue<E> extends AbstractQueue<E>
     }
 
     private int indexOf(Object o) {
-        if (o != null) {
-            /*for (int i = 0; i < size; i++)
-                if (o.equals(queue[i]))
-                    return i;*/
+    	//hashMap knows the index of this object
+        if (o != null)
         	return hashMap.get(o);
-        }
         return -1;
     }
 
@@ -386,6 +383,7 @@ public class PriorityQueue<E> extends AbstractQueue<E>
     	}
     }
     
+    //new method to extract reference to an object equal to one in the queue
     @SuppressWarnings("unchecked")
 	public E containsRef(Object o) {
     	try {

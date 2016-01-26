@@ -23,8 +23,10 @@ public class Experiment
 	private Search search;
 	private int cubeSize;
 	private int experimentNum;
-	private String fileName;
-	private PrintWriter writer;
+	private String hFriendlyFileName;
+	private String mFriendlyFileName;
+	private PrintWriter humanFriendlyWriter;
+	private PrintWriter machineFriendlyWriter;
 	
 	public Experiment(int experimentNum, Search search, int cubeSize) {
 		this.experimentNum = experimentNum;
@@ -33,8 +35,8 @@ public class Experiment
 	}
 	
 	public void runExperiment(String fileExtension) {
-		setupFile(fileExtension);
-		writer.println("Experiment Number, Number of Perturbations, Rubik's Cube, Move Applied, Runtime");
+		setupFiles(fileExtension);
+		humanFriendlyWriter.println("Experiment Number, Number of Perturbations, Rubik's Cube, Move Applied, Runtime");
 		for(int j=1; j<=8; j++) {
 			for(int k=1; k<=5; k++) {
 				RubiksCube rubiksCube = new RubiksCube(cubeSize);
@@ -52,35 +54,57 @@ public class Experiment
 					moves.clear();
 				
 			}
-			writer.println();
-			System.out.println("hello?");
+			humanFriendlyWriter.println();
 		}
-		writer.close();
+		humanFriendlyWriter.close();
+		machineFriendlyWriter.close();
 	}
 	
 	private void writeResults(ArrayList<Searchable> cubes, ArrayList<Move> moves, int perturbations, double duration) {
 		for(int i=0; i<cubes.size(); i++) {
-			String entry = experimentNum + "," + perturbations + "," + cubes.get(i).toString().replaceAll(",", "");
-			try {
-				entry += "," + moves.get(i).toString().replaceAll(",", "");
-			} catch(Exception e) {
-				entry += ",," + duration;
-			}
+			//human readable entry
+			String hEntry = experimentNum + "," + perturbations + "," + cubes.get(i).toString().replaceAll(",", "");
 			
-			writer.println(entry);
+			//training data entry
+			String mEntry = "";
+			if(i!=cubes.size()-1)
+				mEntry = ((RubiksCube) cubes.get(i)).toTrainingData()+"|";
+			try {
+				hEntry += "," + moves.get(i).toString().replaceAll(",", "");
+				mEntry += moves.get(i).toTrainingData();
+			} catch(Exception e) {
+				hEntry += ",," + duration;
+			}
+			humanFriendlyWriter.println(hEntry);
+			machineFriendlyWriter.print(mEntry+'\t');
 		}
 	}
 
-	private void setupFile(String fileExtension) {
-		this.fileName = System.getProperty("user.dir")+"\\Experiment"+experimentNum+fileExtension;
+	private void setupFiles(String fileExtension) {
+		this.hFriendlyFileName = System.getProperty("user.dir") + "\\Experiment"+experimentNum+fileExtension;
 		try {
-			this.writer = new PrintWriter(fileName, "UTF-8");
+			this.humanFriendlyWriter = new PrintWriter(hFriendlyFileName, "UTF-8");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		System.out.println(fileName);
+		System.out.println("Human Readable File written to: ");
+		System.out.println(hFriendlyFileName);
+		System.out.println();
+		
+		this.mFriendlyFileName = System.getProperty("user.dir")+"\\Experiment"+experimentNum+"TrainingData"+fileExtension;
+		try {
+			this.machineFriendlyWriter = new PrintWriter(mFriendlyFileName, "UTF-8");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Training Data File written to: ");
+		System.out.println(mFriendlyFileName);
+		System.out.println();
+		System.out.println();
 	}
 	
 	@Override

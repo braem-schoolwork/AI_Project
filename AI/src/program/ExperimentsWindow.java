@@ -58,7 +58,7 @@ public class ExperimentsWindow extends JFrame {
 	public ExperimentsWindow() {
 		setTitle("Run Experiments");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 452, 201);
+		setBounds(100, 100, 472, 197);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

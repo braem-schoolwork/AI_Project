@@ -38,7 +38,9 @@ public class HeuristicCalculation
 		byte cube[][][] = rubiksCube.getCube();
 		int size = rubiksCube.getSize();
 			
-		float edgeManhattanDist3D = calcEdgeManhattan3DDistance(cube, size);
+		float edgeManhattanDist3D = 0;
+		if(size > 2)
+			edgeManhattanDist3D = calcEdgeManhattan3DDistance(cube, size);
 		float cornerManhattanDist3D = calcCornerManhattan3DDistance(cube, size);
 		
 		//take the maximum of corner and edge 3D manhattan distances

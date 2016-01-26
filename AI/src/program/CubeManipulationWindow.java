@@ -143,7 +143,7 @@ public class CubeManipulationWindow extends JFrame {
 	public CubeManipulationWindow(RubiksCube rubiksCube) {
 		setTitle("Rubiks Cube Manipulation");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 862, 753);
+		setBounds(100, 100, 862, 787);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -436,7 +436,7 @@ public class CubeManipulationWindow extends JFrame {
 			}
 		});
 		btnApplyAllMoves.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		btnApplyAllMoves.setBounds(590, 617, 224, 53);
+		btnApplyAllMoves.setBounds(590, 602, 224, 53);
 		contentPane.add(btnApplyAllMoves);
 		
 		btnApplyOneMove = new JButton("Apply one Move");
@@ -464,7 +464,7 @@ public class CubeManipulationWindow extends JFrame {
 		recommendedMovesTextPane = new JTextPane();
 		recommendedMovesTextPane.setEditable(false);
 		recommendedMovesTextPane.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		recommendedMovesTextPane.setBounds(378, 545, 199, 125);
+		recommendedMovesTextPane.setBounds(378, 545, 199, 192);
 		contentPane.add(recommendedMovesTextPane);
 		
 		perturbDepthTextField = new JTextField();
@@ -522,6 +522,26 @@ public class CubeManipulationWindow extends JFrame {
 		btnSwitchPerspective.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		btnSwitchPerspective.setBounds(649, 170, 165, 31);
 		contentPane.add(btnSwitchPerspective);
+		
+		JLabel lblIsFront = new JLabel("*5 is front face");
+		lblIsFront.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		lblIsFront.setBounds(31, 665, 128, 21);
+		contentPane.add(lblIsFront);
+		
+		JLabel lblIsBack = new JLabel("*4 is back face");
+		lblIsBack.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		lblIsBack.setBounds(31, 686, 128, 21);
+		contentPane.add(lblIsBack);
+		
+		JLabel lblIsLeft = new JLabel("*0 is left face");
+		lblIsLeft.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		lblIsLeft.setBounds(169, 676, 128, 21);
+		contentPane.add(lblIsLeft);
+		
+		JLabel lblIsRight = new JLabel("*1 is right face");
+		lblIsRight.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		lblIsRight.setBounds(169, 698, 116, 21);
+		contentPane.add(lblIsRight);
 		
 	}
 }

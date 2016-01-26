@@ -273,6 +273,7 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	@Override
 	public boolean equals(Object obj) {
 		if(!(obj instanceof RubiksCube)) return false;
+		if(obj == this) return true;
 		RubiksCube copy = (RubiksCube)obj; 
 		if(Arrays.deepEquals(this.cube, copy.cube)) return true;
 		return false;
@@ -300,10 +301,50 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 			}
 			rtnStr += "]";
 			if(i!=cube.length-1)
-				rtnStr += ", \n";
+				rtnStr += ", ";
 		}
 		rtnStr += "]";
 		return rtnStr;
+	}
+	
+	public String toTrainingData() {
+		String rtnStr = "\n";
+		for(int i=0; i<cube.length; i++) {
+			for(int j=0; j<cube[i].length; j++) {
+				for(int k=0; k<cube[i][j].length; k++) {
+					rtnStr += colorToBits(cube[i][j][k]);
+					if(k!=cube[i][j].length-1)
+						rtnStr += ".";
+				}
+			}
+			if(i!=cube.length-1)
+				rtnStr += "\n";
+		}
+		return rtnStr;
+	}
+	
+	private String colorToBits(byte color) {
+		switch(color) {
+		case 'G':
+			byte[] GcolorStream = { -1,-1,-1,-1,-1,1 };
+			return Arrays.toString(GcolorStream);
+		case 'B':
+			byte[] BcolorStream = { -1,-1,-1,-1,1,-1 };
+			return Arrays.toString(BcolorStream);
+		case 'Y':
+			byte[] YcolorStream = { -1,-1,-1,1,-1,-1 };
+			return Arrays.toString(YcolorStream);
+		case 'W':
+			byte[] WcolorStream = { -1,-1,1,-1,-1,-1 };
+			return Arrays.toString(WcolorStream);
+		case 'O':
+			byte[] OcolorStream = { -1,1,-1,-1,-1,-1 };
+			return Arrays.toString(OcolorStream);
+		case 'R':
+			byte[] RcolorStream = { 1,-1,-1,-1,-1,-1 };
+			return Arrays.toString(RcolorStream);
+		default: return null;
+		}
 	}
 	
 }

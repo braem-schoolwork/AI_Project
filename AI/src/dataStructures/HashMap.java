@@ -156,7 +156,8 @@ public class HashMap<K,V>
     /**
      * The table, resized as necessary. Length MUST Always be a power of two.
      */
-    transient Entry[] table;
+    @SuppressWarnings("rawtypes")
+	transient Entry[] table;
 
     /**
      * The number of key-value mappings contained in this map.
@@ -306,7 +307,8 @@ public class HashMap<K,V>
      *
      * @see #put(Object, Object)
      */
-    public V get(Object key) {
+    @SuppressWarnings("unchecked")
+	public V get(Object key) {
         if (key == null)
             return getForNullKey();
         int hash = hash(key.hashCode());
@@ -327,7 +329,8 @@ public class HashMap<K,V>
      * operations (get and put), but incorporated with conditionals in
      * others.
      */
-    private V getForNullKey() {
+    @SuppressWarnings("unchecked")
+	private V getForNullKey() {
         for (Entry<K,V> e = table[0]; e != null; e = e.next) {
             if (e.key == null)
                 return e.value;
@@ -347,7 +350,8 @@ public class HashMap<K,V>
         return getEntry(key) != null;
     }
     
-    public K containsKeyRef(Object key) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public K containsKeyRef(Object key) {
     	Entry e = getEntry(key);
     	if(e == null)
     		return null;
@@ -360,7 +364,8 @@ public class HashMap<K,V>
      * HashMap.  Returns null if the HashMap contains no mapping
      * for the key.
      */
-    final Entry<K,V> getEntry(Object key) {
+    @SuppressWarnings("unchecked")
+	final Entry<K,V> getEntry(Object key) {
         int hash = (key == null) ? 0 : hash(key.hashCode());
         for (Entry<K,V> e = table[indexFor(hash, table.length)];
              e != null;
@@ -386,7 +391,8 @@ public class HashMap<K,V>
      *         (A <tt>null</tt> return can also indicate that the map
      *         previously associated <tt>null</tt> with <tt>key</tt>.)
      */
-    public V put(K key, V value) {
+    @SuppressWarnings("unchecked")
+	public V put(K key, V value) {
         if (key == null)
             return putForNullKey(value);
         int hash = hash(key.hashCode());
@@ -409,7 +415,8 @@ public class HashMap<K,V>
     /**
      * Offloaded version of put for null keys
      */
-    private V putForNullKey(V value) {
+    @SuppressWarnings("unchecked")
+	private V putForNullKey(V value) {
         for (Entry<K,V> e = table[0]; e != null; e = e.next) {
             if (e.key == null) {
                 V oldValue = e.value;
@@ -429,7 +436,8 @@ public class HashMap<K,V>
      * check for comodification, etc.  It calls createEntry rather than
      * addEntry.
      */
-    private void putForCreate(K key, V value) {
+    @SuppressWarnings({ "unchecked", "unused" })
+	private void putForCreate(K key, V value) {
         int hash = (key == null) ? 0 : hash(key.hashCode());
         int i = indexFor(hash, table.length);
 
@@ -464,7 +472,8 @@ public class HashMap<K,V>
      *        capacity is MAXIMUM_CAPACITY (in which case value
      *        is irrelevant).
      */
-    void resize(int newCapacity) {
+    @SuppressWarnings("rawtypes")
+	void resize(int newCapacity) {
         Entry[] oldTable = table;
         int oldCapacity = oldTable.length;
         if (oldCapacity == MAXIMUM_CAPACITY) {
@@ -481,7 +490,8 @@ public class HashMap<K,V>
     /**
      * Transfers all entries from current table to newTable.
      */
-    void transfer(Entry[] newTable) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	void transfer(Entry[] newTable) {
         Entry[] src = table;
         int newCapacity = newTable.length;
         for (int j = 0; j < src.length; j++) {
@@ -518,7 +528,8 @@ public class HashMap<K,V>
      * in the HashMap.  Returns null if the HashMap contains no mapping
      * for this key.
      */
-    final Entry<K,V> removeEntryForKey(Object key) {
+    @SuppressWarnings("unchecked")
+	final Entry<K,V> removeEntryForKey(Object key) {
         int hash = (key == null) ? 0 : hash(key.hashCode());
         int i = indexFor(hash, table.length);
         Entry<K,V> prev = table[i];
@@ -548,7 +559,8 @@ public class HashMap<K,V>
     /**
      * Special version of remove for EntrySet.
      */
-    final Entry<K,V> removeMapping(Object o) {
+    @SuppressWarnings("unchecked")
+	final Entry<K,V> removeMapping(Object o) {
         if (!(o instanceof Map.Entry))
             return null;
 
@@ -582,7 +594,8 @@ public class HashMap<K,V>
      * Removes all of the mappings from this map.
      * The map will be empty after this call returns.
      */
-    public void clear() {
+    @SuppressWarnings("rawtypes")
+	public void clear() {
         modCount++;
         Entry[] tab = table;
         for (int i = 0; i < tab.length; i++)
@@ -598,7 +611,8 @@ public class HashMap<K,V>
      * @return <tt>true</tt> if this map maps one or more keys to the
      *         specified value
      */
-    public boolean containsValue(Object value) {
+    @SuppressWarnings("rawtypes")
+	public boolean containsValue(Object value) {
         if (value == null)
             return containsNullValue();
 
@@ -613,7 +627,8 @@ public class HashMap<K,V>
     /**
      * Special-case code for containsValue with null argument
      */
-    private boolean containsNullValue() {
+    @SuppressWarnings("rawtypes")
+	private boolean containsNullValue() {
         Entry[] tab = table;
         for (int i = 0; i < tab.length ; i++)
             for (Entry e = tab[i] ; e != null ; e = e.next)
@@ -655,7 +670,8 @@ public class HashMap<K,V>
         public final boolean equals(Object o) {
             if (!(o instanceof Map.Entry))
                 return false;
-            Map.Entry e = (Map.Entry)o;
+            @SuppressWarnings("rawtypes")
+			Map.Entry e = (Map.Entry)o;
             Object k1 = getKey();
             Object k2 = e.getKey();
             if (k1 == k2 || (k1 != null && k1.equals(k2))) {
@@ -700,7 +716,8 @@ public class HashMap<K,V>
      * Subclass overrides this to alter the behavior of put method.
      */
     void addEntry(int hash, K key, V value, int bucketIndex) {
-        Entry<K,V> e = table[bucketIndex];
+        @SuppressWarnings("unchecked")
+		Entry<K,V> e = table[bucketIndex];
         table[bucketIndex] = new Entry<K,V>(hash, key, value, e);
         if (size++ >= threshold)
             resize(2 * table.length);
@@ -715,7 +732,8 @@ public class HashMap<K,V>
      * clone, and readObject.
      */
     void createEntry(int hash, K key, V value, int bucketIndex) {
-        Entry<K,V> e = table[bucketIndex];
+        @SuppressWarnings("unchecked")
+		Entry<K,V> e = table[bucketIndex];
         table[bucketIndex] = new Entry<K,V>(hash, key, value, e);
         size++;
     }

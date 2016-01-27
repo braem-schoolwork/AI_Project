@@ -26,6 +26,7 @@ public class BFSearch implements Search
 		edges = new ArrayList<Edge>();
 	}
 	
+	@Override
 	public ArrayList<Searchable> getPath() {
 		if(searched)
 			return path;
@@ -72,20 +73,24 @@ public class BFSearch implements Search
 			for(Searchable child : childList) {
 				boolean addChild = true;
 				
-				//check the set of items to be searched
-				Searchable matchingElem = (Searchable)closedList.containsRef(child);
-				//if we find the same item, dont bother searching it
-				if(child.equals(matchingElem))
-					addChild = false;
+				//check the items that have been searched
+				for(Searchable item : openList) //O(n)
+					//if we find the same item, dont bother searching it
+					if(child.equals(item)) {
+						addChild = false;
+						openList.remove(item);
+						break;
+					}
 				
-				if(addChild) //if we should add the child
-					//check the items that have been searched
-					for(Searchable item : closedList) //O(n)
-						//if we find the same item, dont bother searching it
-						if(child.equals(item)) {
-							addChild = false;
-							break;
-						}
+				if(addChild) { //if we should add the child
+					//check the set of items to be searched
+					Searchable matchingElem = (Searchable)closedList.containsRef(child);
+					//if we find the same item, dont bother searching it
+					if(matchingElem != null) {
+						addChild = false;
+						closedList.remove(matchingElem);
+					}
+				}
 				
 				//if we should add the child
 				if(addChild) {

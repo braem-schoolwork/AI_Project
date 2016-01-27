@@ -2,6 +2,9 @@ package rubiks;
 
 import java.util.Arrays;
 
+import search.Edge;
+import search.Searchable;
+
 /**
  * 
  * @author braem
@@ -23,7 +26,7 @@ import java.util.Arrays;
  */
 
 
-public class Move
+public class Move implements Edge
 {	
 	
 	private int sliceNum;
@@ -60,8 +63,9 @@ public class Move
 	 * APPLY Method
 	 * applies this move to a cube parameter
 	 */
-	public void apply(RubiksCube cube) {
+	public void apply(Searchable obj) {
 		
+		RubiksCube cube = (RubiksCube) obj;
 		int size = cube.getSize();
 		
 		//initializations

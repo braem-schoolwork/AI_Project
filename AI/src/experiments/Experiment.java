@@ -37,16 +37,16 @@ public class Experiment
 	public void runExperiment(String fileExtension) {
 		setupFiles(fileExtension);
 		humanFriendlyWriter.println("Experiment Number, Number of Perturbations, Rubik's Cube, Move Applied, Runtime");
-		for(int j=1; j<=8; j++) {
+		for(int j=1; j<=5; j++) {
 			for(int k=1; k<=5; k++) {
 				RubiksCube rubiksCube = new RubiksCube(cubeSize);
 				rubiksCube.perturb(j);
 				double startTime = System.nanoTime();
-				RubiksCube searchResult = (RubiksCube)search.search(rubiksCube, new RubiksCube(rubiksCube.getSize()));
+				search.search(rubiksCube, new RubiksCube(rubiksCube.getSize()));
 				double endTime = System.nanoTime();
 				double duration = (endTime - startTime)/1000000000;
 				ArrayList<Searchable> cubes = search.getPath();
-				ArrayList<Move> moves = searchResult.traceMoves();
+				ArrayList<Edge> moves = search.getEdges();
 				writeResults(cubes, moves, j, duration);
 				if(cubes != null)
 					cubes.clear();
@@ -60,7 +60,7 @@ public class Experiment
 		machineFriendlyWriter.close();
 	}
 	
-	private void writeResults(ArrayList<Searchable> cubes, ArrayList<Move> moves, int perturbations, double duration) {
+	private void writeResults(ArrayList<Searchable> cubes, ArrayList<Edge> moves, int perturbations, double duration) {
 		for(int i=0; i<cubes.size(); i++) {
 			//human readable entry
 			String hEntry = experimentNum + "," + perturbations + "," + cubes.get(i).toString().replaceAll(",", "");
@@ -71,7 +71,7 @@ public class Experiment
 				mEntry = ((RubiksCube) cubes.get(i)).toTrainingData()+"|";
 			try {
 				hEntry += "," + moves.get(i).toString().replaceAll(",", "");
-				mEntry += moves.get(i).toTrainingData();
+				mEntry += ((Move) moves.get(i)).toTrainingData();
 			} catch(Exception e) {
 				hEntry += ",," + duration;
 			}

@@ -13,10 +13,7 @@ package search;
 public interface Searchable {
 	
 	public Searchable[] genChildren();
-	
-	@Override
-	public boolean equals(Object obj);
-	
+	public Edge getEdge();
 	public Searchable getParent();
 	public int g();
 	

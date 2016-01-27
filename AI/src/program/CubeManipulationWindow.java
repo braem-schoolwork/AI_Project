@@ -26,6 +26,7 @@ import javax.swing.border.EmptyBorder;
 import rubiks.*;
 import search.AstarSearch;
 import search.BFSearch;
+import search.Edge;
 
 import java.awt.TextArea;
 import java.util.ArrayList;
@@ -78,7 +79,7 @@ public class CubeManipulationWindow extends JFrame {
 	private JTextField perturbDepthTextField;
 	private JButton btnPerturb;
 	private JLabel lblInvalidDepth;
-	ArrayList<Move> recommendedMoves;
+	ArrayList<Edge> recommendedMoves;
 	private JTextField BFSearchTimeTextField;
 	private JTextField AstarSearchTimeTextField;
 
@@ -190,8 +191,8 @@ public class CubeManipulationWindow extends JFrame {
 					if(searchResult == null)
 						recommendedMovesTextPane.setText("Search did not\nfind a result");
 					else {
-						recommendedMoves = searchResult.traceMoves();
-						for(Move move : recommendedMoves) {
+						recommendedMoves = bfSearch.getEdges();
+						for(Edge move : recommendedMoves) {
 							recommendedMovesTextPane.setText(recommendedMovesTextPane.getText()+move+"\n");
 						}
 						String pattern = "####.###";
@@ -218,8 +219,8 @@ public class CubeManipulationWindow extends JFrame {
 					if(searchResult == null)
 						recommendedMovesTextPane.setText("Search did not\nfind a result");
 					else {
-						recommendedMoves = searchResult.traceMoves();
-						for(Move move : recommendedMoves) {
+						recommendedMoves = AstarSearch.getEdges();
+						for(Edge move : recommendedMoves) {
 							recommendedMovesTextPane.setText(recommendedMovesTextPane.getText()+move+"\n");
 						}
 						String pattern = "####.###";
@@ -426,7 +427,7 @@ public class CubeManipulationWindow extends JFrame {
 		btnApplyAllMoves.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(recommendedMoves!=null && !recommendedMoves.isEmpty()) {
-					for(Move move : recommendedMoves) {
+					for(Edge move : recommendedMoves) {
 						move.apply(cube);
 						repaintCube(cube);
 					}
@@ -443,7 +444,7 @@ public class CubeManipulationWindow extends JFrame {
 		btnApplyOneMove.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(recommendedMoves!=null && !recommendedMoves.isEmpty()) {
-					Move move = recommendedMoves.remove(0);
+					Edge move = recommendedMoves.remove(0);
 					move.apply(cube);
 					repaintCube(cube);
 					String textPaneContents = recommendedMovesTextPane.getText();

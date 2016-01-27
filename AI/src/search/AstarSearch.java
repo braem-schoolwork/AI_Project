@@ -29,16 +29,27 @@ import dataStructures.HashSet;
 public class AstarSearch implements Search {
 	
 	private ArrayList<Searchable> path;
+	private ArrayList<Edge> edges;
 	private boolean searched = false;
 	
 	public AstarSearch() {
 		path = new ArrayList<Searchable>();
+		edges = new ArrayList<Edge>();
 	}
 	
 	//returns path taken from search
+	@Override
 	public ArrayList<Searchable> getPath() {
 		if(searched)
 			return path;
+		else
+			return null;
+	}
+	
+	@Override
+	public ArrayList<Edge> getEdges() {
+		if(searched)
+			return edges;
 		else
 			return null;
 	}
@@ -109,16 +120,21 @@ public class AstarSearch implements Search {
 	private void backTrace(Searchable start, Searchable end) {
 		
 		path.add(end);
+		edges.add(end.getEdge());
 		
 		if(path.get(0).getParent() != null) {
 			boolean isStartState = false;
 			while(!isStartState) {
 				Searchable parent = path.get(0).getParent();
-				if(parent.equals(start))
+				if(parent.equals(start)) {
 					isStartState = true;
-				path.add(0, parent);
+					path.add(0, parent);
+				}
+				else {
+					path.add(0, parent);
+					edges.add(0, parent.getEdge());
+				}
 			}
 		}
-		
 	}
 }

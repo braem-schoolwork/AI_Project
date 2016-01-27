@@ -1,9 +1,9 @@
 package rubiks;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import search.Edge;
 import search.Searchable;
 
 /**
@@ -30,7 +30,7 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 {
 	//links to parent to aid with searching
 	private RubiksCube parent; //parent 'node'
-	private Move moveAppliedToParent; //move applied to parent node to get this
+	private Edge edge; //edge from parent to this
 	private int gValue; //A* search g value
 	
 	private final int size; //size=2 when dealing 2x2x2 cube & vice versa
@@ -48,7 +48,7 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	
 	public RubiksCube(int size) {
 		this.parent = null;
-		this.moveAppliedToParent = null;
+		this.edge = null;
 		this.gValue = 0;
 		if(size < 2)
 			throw new IllegalSizeException("Size for Rubiks Cube is less than 2");
@@ -87,35 +87,22 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	}
 	
 	//for tracing back moves from a search
+	@Override
 	public RubiksCube getParent() {
 		return parent;
 	}
-	public Move getMoveAppliedToParent() {
-		return moveAppliedToParent;
-	}
-	public void setMoveAppliedToParent(Move move) {
-		this.moveAppliedToParent = move;
-	}
-	//increments cost from start (g value)
-	public void incrementGVal() {
-		gValue++;
+	@Override
+	public Edge getEdge() {
+		return edge;
 	}
 	
-	/*
-	 * Method to trace back the path from a search
-	 * Returns null if no parent is found
-	 */
-	public ArrayList<Move> traceMoves() {
-		if(this.parent == null) return null;
-		//assume this is the end state of a search
-		RubiksCube parent = this.parent;
-		ArrayList<Move> moves = new ArrayList<Move>();
-		moves.add(moveAppliedToParent);
-		while(!(parent.getParent() == null)) {
-			moves.add(0, parent.getMoveAppliedToParent());
-			parent = parent.getParent();
-		}
-		return moves;
+	//private setters
+	private void setEdge(Edge move) {
+		this.edge = move;
+	}
+	//increments cost from start (g value)
+	private void incrementGVal() {
+		gValue++;
 	}
 	
 	/* 
@@ -183,7 +170,7 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 			cubeCopy.incrementGVal();
 			move.apply(cubeCopy);
 			allChildren[i] = cubeCopy;
-			allChildren[i].setMoveAppliedToParent(move);
+			allChildren[i].setEdge(move);
 		}
 		return allChildren;
 	}

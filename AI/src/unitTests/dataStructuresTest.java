@@ -27,15 +27,12 @@ public class dataStructuresTest {
 		for(Searchable child : children) {
 			pq.add(child);
 		}
-		System.out.println(pq);
 		pq.remove(children[5]);
-		System.out.println(pq);
 		assertTrue(!pq.contains(children[5]));
 		assertTrue(pq.contains(cube));
 		Searchable ref = pq.containsRef(cube);
 		
 		assertTrue(ref.equals(cube));
-		//assertTrue(ref == cube);
 	}
 	
 	@Test

@@ -43,7 +43,7 @@ public class Experiment
 		if(genHumanReadableFile)
 			humanFriendlyWriter.println("Experiment Number, Number of Perturbations, Rubik's Cube, Move Applied, Runtime");
 		for(int j=1; j<=8; j++) {
-			for(int k=1; k<=10; k++) {
+			for(int k=1; k<=5; k++) {
 				RubiksCube rubiksCube = new RubiksCube(cubeSize);
 				rubiksCube.perturb(j);
 				double startTime = System.nanoTime();

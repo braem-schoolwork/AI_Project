@@ -27,6 +27,8 @@ public class Experiment
 	private String mFriendlyFileName;
 	private PrintWriter humanFriendlyWriter;
 	private PrintWriter machineFriendlyWriter;
+	private boolean genHumanReadableFile;
+	private boolean genTrainingData;
 	
 	public Experiment(int experimentNum, Search search, int cubeSize) {
 		this.experimentNum = experimentNum;
@@ -34,11 +36,14 @@ public class Experiment
 		this.cubeSize = cubeSize;
 	}
 	
-	public void runExperiment(String fileExtension) {
+	public void runExperiment(String fileExtension, boolean genHumanReadableFile, boolean genTrainingData) {
+		this.genHumanReadableFile = genHumanReadableFile;
+		this.genTrainingData = genTrainingData;
 		setupFiles(fileExtension);
-		humanFriendlyWriter.println("Experiment Number, Number of Perturbations, Rubik's Cube, Move Applied, Runtime");
-		for(int j=1; j<=5; j++) {
-			for(int k=1; k<=5; k++) {
+		if(genHumanReadableFile)
+			humanFriendlyWriter.println("Experiment Number, Number of Perturbations, Rubik's Cube, Move Applied, Runtime");
+		for(int j=1; j<=8; j++) {
+			for(int k=1; k<=10; k++) {
 				RubiksCube rubiksCube = new RubiksCube(cubeSize);
 				rubiksCube.perturb(j);
 				double startTime = System.nanoTime();
@@ -54,10 +59,13 @@ public class Experiment
 					moves.clear();
 				
 			}
-			humanFriendlyWriter.println();
+			if(genHumanReadableFile)
+				humanFriendlyWriter.println();
 		}
-		humanFriendlyWriter.close();
-		machineFriendlyWriter.close();
+		if(genHumanReadableFile)
+			humanFriendlyWriter.close();
+		if(genTrainingData)
+			machineFriendlyWriter.close();
 	}
 	
 	private void writeResults(ArrayList<Searchable> cubes, ArrayList<Edge> moves, int perturbations, double duration) {
@@ -75,36 +83,42 @@ public class Experiment
 			} catch(Exception e) {
 				hEntry += ",," + duration;
 			}
-			humanFriendlyWriter.println(hEntry);
-			machineFriendlyWriter.print(mEntry+'\t');
+			if(genHumanReadableFile)
+				humanFriendlyWriter.println(hEntry);
+			if(genTrainingData)
+				machineFriendlyWriter.print(mEntry+'\t');
 		}
 	}
 
 	private void setupFiles(String fileExtension) {
-		this.hFriendlyFileName = System.getProperty("user.dir") + "\\Experiment"+experimentNum+fileExtension;
-		try {
-			this.humanFriendlyWriter = new PrintWriter(hFriendlyFileName, "UTF-8");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+		if(genHumanReadableFile) {
+			this.hFriendlyFileName = System.getProperty("user.dir") + "\\Experiment"+experimentNum+fileExtension;
+			try {
+				this.humanFriendlyWriter = new PrintWriter(hFriendlyFileName, "UTF-8");
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			System.out.println("Human Readable File written to: ");
+			System.out.println(hFriendlyFileName);
+			System.out.println();
 		}
-		System.out.println("Human Readable File written to: ");
-		System.out.println(hFriendlyFileName);
-		System.out.println();
 		
-		this.mFriendlyFileName = System.getProperty("user.dir")+"\\Experiment"+experimentNum+"TrainingData"+fileExtension;
-		try {
-			this.machineFriendlyWriter = new PrintWriter(mFriendlyFileName, "UTF-8");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+		if(genTrainingData) {
+			this.mFriendlyFileName = System.getProperty("user.dir")+"\\Experiment"+experimentNum+"TrainingData"+fileExtension;
+			try {
+				this.machineFriendlyWriter = new PrintWriter(mFriendlyFileName, "UTF-8");
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			System.out.println("Training Data File written to: ");
+			System.out.println(mFriendlyFileName);
+			System.out.println();
+			System.out.println();
 		}
-		System.out.println("Training Data File written to: ");
-		System.out.println(mFriendlyFileName);
-		System.out.println();
-		System.out.println();
 	}
 	
 	@Override

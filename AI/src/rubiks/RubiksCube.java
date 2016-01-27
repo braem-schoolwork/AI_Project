@@ -303,6 +303,7 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 					if(k!=cube[i][j].length-1)
 						rtnStr += ".";
 				}
+				rtnStr += ".";
 			}
 			if(i!=cube.length-1)
 				rtnStr += "\n";

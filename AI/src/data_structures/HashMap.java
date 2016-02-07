@@ -23,7 +23,7 @@
  * have any questions.
  */
 
-package dataStructures;
+package data_structures;
 
 import java.io.*;
 import java.util.AbstractMap;

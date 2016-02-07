@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import dataStructures.HashSet;
+import data_structures.HashSet;
 /**
  * 
  * @author braem

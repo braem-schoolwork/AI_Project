@@ -1,10 +1,10 @@
-package unitTests;
+package unit_tests;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import dataStructures.*;
+import data_structures.*;
 import rubiks.*;
 import search.*;
 

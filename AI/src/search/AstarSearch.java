@@ -1,9 +1,9 @@
 package search;
 
 import java.util.ArrayList;
-import dataStructures.PriorityQueue;
 
-import dataStructures.HashSet;
+import data_structures.HashSet;
+import data_structures.PriorityQueue;
 
 /**
  * 

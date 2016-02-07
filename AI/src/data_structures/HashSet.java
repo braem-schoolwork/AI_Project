@@ -22,14 +22,15 @@
 22  * CA 95054 USA or visit www.sun.com if you need additional information or
 23  * have any questions.
 */
-package dataStructures;
+package data_structures;
 
 import java.util.AbstractSet;
 import java.util.*;
 import java.util.Collection;
-import dataStructures.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+
+import data_structures.HashMap;
 
 /**
  * This class implements the <tt>Set</tt> interface, backed by a hash table

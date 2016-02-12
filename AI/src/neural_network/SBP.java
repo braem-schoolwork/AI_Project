@@ -3,9 +3,9 @@ package neural_network;
 public class SBP
 {
 	private static int epochs;
-	private static int trainingIterations;
+	private static int trainingIterations = 32000;
 	private static int errorThreshold;
-	private static double learningRate;
+	private static double learningRate = 0.1;
 	private static double startingEdgeWeight = 20.0;
 	
 	public static void apply(SBPImpl trainee) {
@@ -23,7 +23,7 @@ public class SBP
 				//delta k			(error at output layer)
 				//( (expect output k) - (actual output k) ) * sigmoid'(NETk)
 				//sigmoid' = 1-tanh(x)^2
-				double deltaK = 0f;
+				double deltaK = 0;
 				
 				//delta Wkj			(matrix of weight difference)
 				//(learning curve) * ( (expect output k) - (actual output k) ) * sigmoid'(NETk) * sigmoid(NETj)  /  delta k

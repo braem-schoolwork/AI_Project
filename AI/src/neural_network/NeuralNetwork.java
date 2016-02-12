@@ -26,6 +26,8 @@ public class NeuralNetwork implements SBPImpl
 	double A = 1.716;
 	double[] input;
 	
+	double expectedOutput;
+	
 	public NeuralNetwork(int inputLayerSize, int hiddenLayerSize, int outputLayerSize, double initialEdgeWeight, double[] input) {
 		
 		this.input = input;
@@ -75,6 +77,7 @@ public class NeuralNetwork implements SBPImpl
 		//ACT0 = A*tanh(BIAS*NET0)
 		double oAct0 = A*Math.tanh(bias*oNet0);
 		
+		this.expectedOutput = oNet0;
 		return oAct0;
 	}
 }

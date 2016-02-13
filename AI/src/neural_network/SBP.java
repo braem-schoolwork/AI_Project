@@ -14,6 +14,7 @@ public class SBP
 			/* initialize NN */
 			NeuralNetwork NN = new NeuralNetwork(2,2,1, startingEdgeWeight, inputs);
 			for(int iter=0; iter<trainingIterations; iter++) {
+				//TT -1,1|-1
 				/* pick a training tuple from trainee */
 				
 				/* test training tuple */

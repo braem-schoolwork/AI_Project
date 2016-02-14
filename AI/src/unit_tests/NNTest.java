@@ -10,6 +10,11 @@ import neural_network.NeuralNetwork;
 public class NNTest {
 
 	@Test
+	public void matrixTest() {
+		
+	}
+	
+	@Test
 	public void nnTest() {
 		DoubleMatrix matrix1 = new DoubleMatrix(new double[][] {{1.2, 1.6, 2.0}} );
 		System.out.println(matrix1);

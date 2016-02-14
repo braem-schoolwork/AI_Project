@@ -17,25 +17,21 @@ import org.jblas.*;
  */
 public class NeuralNetwork implements SBPImpl
 {
-	DoubleMatrix inputMatrix;
-	DoubleMatrix Wji;
-	DoubleMatrix Wkj;
-	double[] Wjbias;
-	double[] Wkbias;
-	double bias = 0.667;
-	double A = 1.716;
-	double[] input;
+	private DoubleMatrix Wji;
+	private DoubleMatrix Wkj;
+	private DoubleMatrix Wjbias;
+	private DoubleMatrix Wkbias;
+	private double bias = 0.667;
+	private double A = 1.716;
+	DoubleMatrix NETk;
+	DoubleMatrix NETj;
 	
-	double expectedOutput;
-	
-	public NeuralNetwork(int inputLayerSize, int hiddenLayerSize, int outputLayerSize, double initialEdgeWeight, double[] input) {
+	public NeuralNetwork(int inputLayerSize, int hiddenLayerSize, int outputLayerSize, double initialEdgeWeight) {
 		
-		this.input = input;
-		inputMatrix = new DoubleMatrix(new double[][] { input } );
 		Wji = DoubleMatrix.ones(inputLayerSize, hiddenLayerSize);
 		Wkj = DoubleMatrix.ones(hiddenLayerSize, outputLayerSize);
-		Wjbias = new double[hiddenLayerSize];
-		Wkbias = new double[outputLayerSize];
+		Wjbias = DoubleMatrix.ones(1, hiddenLayerSize);
+		Wkbias = DoubleMatrix.ones(1, outputLayerSize);
 		
 		for(int i=0; i<Wji.rows; i++)
 			for(int j=0; j<Wji.columns; j++)
@@ -45,39 +41,40 @@ public class NeuralNetwork implements SBPImpl
 			for(int j=0; j<Wkj.columns; j++)
 				Wkj.put(i, j, initialEdgeWeight);
 
-		for(int i=0; i<Wjbias.length; i++)
-			Wjbias[i] = initialEdgeWeight;
+		for(int i=0; i<Wjbias.rows; i++)
+			for(int j=0; j<Wjbias.columns; j++)
+				Wjbias.put(i, j, initialEdgeWeight);
 		
-		for(int i=0; i<Wkbias.length; i++)
-			Wkbias[i] = initialEdgeWeight;
+		for(int i=0; i<Wkbias.rows; i++)
+			for(int j=0; j<Wkbias.columns; j++)
+				Wkbias.put(i, j, initialEdgeWeight);
 		
 	}
 	
 	//feedForward(inputVector) : outputVector
 	//output is actual output
-	public double feedForward(double[] inputVector) {
+	@Override
+	public DoubleMatrix feedForward(DoubleMatrix inputVector) {
 		
 		/* HIDDEN LAYER */
-		//Net0 = i0*w00 + i1*w01 + BIAS*W0bias
-		double hNet0 = input[0]*Wji.get(0,0) + input[1]*Wji.get(0,1) + bias*Wjbias[0];
+		//Hidden Net Matrix = inputVector*Wji + Wjbias*bias
+		//(h0 h1 h2) etc.
+		DoubleMatrix hiddenNetMatrix = inputVector.mul(Wji).add(Wjbias.mul(bias));
+		NETj = hiddenNetMatrix;
 		
-		//Act0 = A*tanh(BIAS*NET0)
-		double hAct0 = A*Math.tanh(bias*hNet0);
-		
-		//Net1 = i0*W10 + i1*W11 + Bias*W1bias
-		double hNet1 = input[0]*Wji.get(1,0) + input[1]*Wji.get(1,1) + bias*Wjbias[1];
-		
-		//Act1 - A*tanh(BIAS*NET1)
-		double hAct1 = A*Math.tanh(bias*hNet1);
+		//Hidden Act Matrix = tanh(hiddenNetMatrix*bias)*A
+		DoubleMatrix hiddenActMatrix = SigmoidFunction.apply(hiddenNetMatrix.mul(bias)).mul(A);
 		
 		/* OUTPUT LAYER */
-		//NET0 = ACT0*W00 + ACT1*W01 + ACT2*W20 + BIAS*W0bias
-		double oNet0 = hAct0*Wkj.get(0,0) + hAct1*Wkj.get(0,1) + bias*Wkbias[0];
+		//Output Net Matrix = hiddenActMatrix*Wkj + Wkbias*bias
+		DoubleMatrix outputNetMatrix = hiddenActMatrix.mul(Wkj).add(Wkbias.mul(bias));
+		NETk = outputNetMatrix;
 		
-		//ACT0 = A*tanh(BIAS*NET0)
-		double oAct0 = A*Math.tanh(bias*oNet0);
+		//Actual Output Matrix = tanh(outputNetMatrix*bias)*A
+		DoubleMatrix outputActMatrix = SigmoidFunction.apply(outputNetMatrix.mul(bias)).mul(A);
 		
-		this.expectedOutput = oNet0;
-		return oAct0;
+		//return actual output matrix
+		return outputActMatrix;
+		
 	}
 }

@@ -42,24 +42,36 @@ public class SBP
 				
 				/* Calculate Updates */
 				//delta k			(error at output layer)
-				//( (expect output k) - (actual output k) ) * sigmoid'(NETk)  TODO fix mul for vectors
-				DoubleMatrix deltaK = ( expectedOutputVector.sub(actualOutputVector) ).mul(SigmoidFunction.applyDeriv(NN.NETk));
+				//( (expect output k) - (actual output k) ) * sigmoid'(NETk)
+				DoubleMatrix deltaK = ( expectedOutputVector.sub(actualOutputVector) ).mulRowVector(SigmoidFunction.applyDeriv(NN.NETk));
 				
+				DoubleMatrix Yj = SigmoidFunction.apply(NN.NETj);
 				//delta Wkj			(matrix of weight difference) 
-				//(learning curve) * deltaK
-				DoubleMatrix deltaWkj = deltaK.mul(learningRate);
+				//(learning curve) * deltaK * f(NETj)
+				DoubleMatrix deltaWkj = new DoubleMatrix(actualOutputVector.columns, NN.hiddenLayerSize);
+				for(int i=0; i<deltaWkj.columns; i++) {
+					for(int j=0; j<deltaWkj.rows; j++) {
+						deltaWkj.put(j, i, learningRate*deltaK.get(0, i)*Yj.get(0, j) );
+					}
+				}
 				
 				//delta Wkbias
-				//(learning curve) * ( (expect output k) - (actual output k) ) * sigmoid'(NETk)  /  delta k
-				DoubleMatrix deltaWkbias;
+				//(learning curve) * deltaK * 1
+				DoubleMatrix deltaWkbias = deltaK.mul(learningRate);
 				
 				//delta j 			(error at hidden layer)
-				//sigmoid'(NETj) * (sum(Wkj) k=0 to n) * delta k
-				DoubleMatrix deltaJ = deltaK;
+				//sigmoid'(NETj) * (sum(Wkj) k=0 to n) * delta k   TODO add sum
+				DoubleMatrix deltaJ = SigmoidFunction.applyDeriv(NN.NETj);
 				
+				DoubleMatrix ACTi = SigmoidFunction.apply(inputVector);
 				//delta Wji			(weight updates)
 				//(learning curve) * (activation at input i) * delta j
-				DoubleMatrix deltaWji;
+				DoubleMatrix deltaWji = new DoubleMatrix(NN.hiddenLayerSize, inputVector.rows);
+				for(int i=0; i<deltaWji.columns; i++) {
+					for(int j=0; j<deltaWji.rows; j++) {
+						deltaWkj.put(j, i, learningRate*ACTi.get(0,j)*deltaJ.get(0, i));
+					}
+				}
 				
 				//delta Wjbias
 				//(learning curve) * delta j
@@ -68,9 +80,13 @@ public class SBP
 				
 				/* apply updates */
 				//delta Wkj
+				NN.applyWkjUpdate(deltaWkj);
 				//delta Wkbias
+				NN.applyWkbiasUpdate(deltaWkbias);
 				//delta Wji
+				NN.applyWjiUpdate(deltaWji);
 				//delta Wjbias
+				NN.applyWjbiasUpdate(deltaWjbias);
 			}
 			
 			/* Check error */

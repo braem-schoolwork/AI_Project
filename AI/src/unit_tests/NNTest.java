@@ -6,12 +6,16 @@ import org.jblas.*;
 
 import org.junit.Test;
 import neural_network.NeuralNetwork;
+import neural_network.SigmoidFunction;
 
 public class NNTest {
-
+	
 	@Test
-	public void matrixTest() {
-		
+	public void sigmoidTest() {
+		DoubleMatrix matrix1 = new DoubleMatrix(new double[][] {{5}} );
+		System.out.println(SigmoidFunction.apply(matrix1));
+		System.out.println(SigmoidFunction.applyDeriv(matrix1));
+		System.out.println(MatrixFunctions.pow(2, 5));
 	}
 	
 	@Test

@@ -25,9 +25,11 @@ public class NeuralNetwork implements SBPImpl
 	private double A = 1.716;
 	DoubleMatrix NETk;
 	DoubleMatrix NETj;
+	DoubleMatrix ACTj;
+	int hiddenLayerSize;
 	
 	public NeuralNetwork(int inputLayerSize, int hiddenLayerSize, int outputLayerSize, double initialEdgeWeight) {
-		
+		this.hiddenLayerSize = hiddenLayerSize;
 		Wji = DoubleMatrix.ones(inputLayerSize, hiddenLayerSize);
 		Wkj = DoubleMatrix.ones(hiddenLayerSize, outputLayerSize);
 		Wjbias = DoubleMatrix.ones(1, hiddenLayerSize);
@@ -63,7 +65,8 @@ public class NeuralNetwork implements SBPImpl
 		NETj = hiddenNetMatrix;
 		
 		//Hidden Act Matrix = tanh(hiddenNetMatrix*bias)*A
-		DoubleMatrix hiddenActMatrix = SigmoidFunction.apply(hiddenNetMatrix.mul(bias)).mul(A);
+		DoubleMatrix hiddenActMatrix = SigmoidFunction.apply(hiddenNetMatrix);
+		ACTj = hiddenActMatrix;
 		
 		/* OUTPUT LAYER */
 		//Output Net Matrix = hiddenActMatrix*Wkj + Wkbias*bias
@@ -71,10 +74,23 @@ public class NeuralNetwork implements SBPImpl
 		NETk = outputNetMatrix;
 		
 		//Actual Output Matrix = tanh(outputNetMatrix*bias)*A
-		DoubleMatrix outputActMatrix = SigmoidFunction.apply(outputNetMatrix.mul(bias)).mul(A);
+		DoubleMatrix outputActMatrix = SigmoidFunction.apply(outputNetMatrix);
 		
 		//return actual output matrix
 		return outputActMatrix;
 		
+	}
+	
+	public void applyWkjUpdate (DoubleMatrix Wkj) {
+		this.Wkj.add(Wkj);
+	}
+	public void applyWkbiasUpdate (DoubleMatrix Wkbias) {
+		this.Wkbias.add(Wkbias);
+	}
+	public void applyWjiUpdate (DoubleMatrix Wji) {
+		this.Wji.add(Wji);
+	}
+	public void applyWjbiasUpdate (DoubleMatrix Wjbias) {
+		this.Wjbias.add(Wjbias);
 	}
 }

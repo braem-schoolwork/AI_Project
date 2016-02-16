@@ -1,9 +1,27 @@
 package neural_network;
 
-import java.util.ArrayList;
-
-public interface TrainingTuple
+public class TrainingTuple
 {
-	public double[] getInputs();
-	public double[] getAnswers();
+	double[] inputs;
+	double[] answers;
+	
+	public TrainingTuple(double[] inputs, double[] answers) {
+		this.inputs = inputs;
+		this.answers = answers;
+	}
+	
+	public double[] getInputs() {
+		return inputs;
+	}
+	public double[] getAnswers() {
+		return answers;
+	}
+	
+	public void setInputs(double[] inputs) {
+		this.inputs = inputs;
+	}
+	public void setAnswers(double[] answers) {
+		this.answers = answers;
+	}
+	
 }

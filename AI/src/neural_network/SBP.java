@@ -7,8 +7,8 @@ import org.jblas.*;
 public class SBP
 {
 	//class params
-	private static int epochs = 2;
-	private static int trainingIterations = 5;
+	private static int epochs = 1;
+	private static int trainingIterations = 50;
 	private static int errorThreshold;
 	private static double learningRate = 0.1;
 	private static SBPImpl network;
@@ -48,12 +48,10 @@ public class SBP
 				DoubleMatrix Yj = network.applySigmoid(network.getNETj());
 				//delta Wkj			(matrix of weight difference) 
 				//(learning curve) * deltaK * f(NETj)
-				DoubleMatrix deltaWkj = new DoubleMatrix(network.getOutputLayerSize(), network.getHiddenLayerSize());
-				for(int i=0; i<deltaWkj.columns; i++) {
-					for(int j=0; j<deltaWkj.rows; j++) {
+				DoubleMatrix deltaWkj = new DoubleMatrix(network.getHiddenLayerSize(), network.getOutputLayerSize());
+				for(int i=0; i<deltaWkj.columns; i++)
+					for(int j=0; j<deltaWkj.rows; j++)
 						deltaWkj.put(j, i, learningRate*deltaK.get(0, i)*Yj.get(0, j) );
-					}
-				}
 				
 				//delta Wkbias
 				//(learning curve) * deltaK * 1
@@ -64,25 +62,26 @@ public class SBP
 				DoubleMatrix deltaJ = network.applySigmoidDeriv(network.getNETj());
 				for(int i=0; i<deltaJ.columns; i++) {
 					double sum = 0.0;
-					for(int j=0; j<actualOutputVector.length; j++) {
+					for(int j=0; j<actualOutputVector.length-1; j++)
 						sum += network.getWkj().get(i,j)*deltaK.get(0,i);
-					}
 					deltaJ.put(0, i, deltaJ.get(0,i)*sum);
 				}
 				
 				DoubleMatrix ACTi = network.applySigmoid(inputVector);
 				//delta Wji			(weight updates)
 				//(learning curve) * (activation at input i) * delta j
-				DoubleMatrix deltaWji = new DoubleMatrix(network.getHiddenLayerSize(), network.getInputLayerSize());
-				for(int i=0; i<deltaWji.columns; i++) {
-					for(int j=0; j<deltaWji.rows; j++) {
-						deltaWkj.put(j, i, learningRate*ACTi.get(0,j)*deltaJ.get(0, i));
-					}
-				}
+				DoubleMatrix deltaWji = new DoubleMatrix(network.getInputLayerSize(), network.getHiddenLayerSize());
+				for(int i=0; i<deltaWji.rows; i++)
+					for(int j=0; j<deltaWji.columns; j++)
+						deltaWji.put(i, j, learningRate*ACTi.get(0,i)*deltaJ.get(0,j));
 				
 				//delta Wjbias
 				//(learning curve) * delta j
 				DoubleMatrix deltaWjbias = deltaJ.mul(learningRate);
+				
+				System.out.println("SBP");
+				System.out.println(deltaWji);
+				System.out.println(deltaWkj);
 				
 				/* apply updates */
 				//delta Wkj
@@ -95,6 +94,7 @@ public class SBP
 				network.applyWjbiasUpdate(deltaWjbias);
 			}
 			
+			System.out.println("Error Test");
 			/* Check error */
 			double error = 0.0;
 			for(int i=0; i<trainingData.getData().size(); i++) {

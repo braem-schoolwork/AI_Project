@@ -29,7 +29,6 @@ public class NNTest {
 	public void mTest() {
 		DoubleMatrix matrix1 = new DoubleMatrix(new double[][] {{-1,1}});
 		DoubleMatrix matrix2 = new DoubleMatrix(new double[][] {{20,20}, {20,20}});
-		System.out.println(matrix1.mmul(matrix2));
 	}
 
 }

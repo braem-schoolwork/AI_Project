@@ -21,7 +21,7 @@ public class NeuralNetwork implements SBPImpl
 	private int inputLayerSize = 2;		//layer sizes
 	private int hiddenLayerSize = 2;
 	private int outputLayerSize = 1;
-	private double initialEdgeWeight = 20.0;
+	private double initialEdgeWeight = 0.5;
 	
 	/* FEED FORWARD */
 	@Override
@@ -29,9 +29,6 @@ public class NeuralNetwork implements SBPImpl
 		
 		/* HIDDEN LAYER */
 		//Hidden Net Matrix = inputVector*Wji + Wjbias*bias
-		System.out.println(inputVector);
-		System.out.println(Wji);
-		System.out.println(inputVector.multipliesWith(Wji));
 		DoubleMatrix hiddenNetMatrix = inputVector.mmul(Wji).add(Wjbias.mmul(bias));
 		NETj = hiddenNetMatrix;
 		
@@ -40,11 +37,15 @@ public class NeuralNetwork implements SBPImpl
 		
 		/* OUTPUT LAYER */
 		//Output Net Matrix = hiddenActMatrix*Wkj + Wkbias*bias
-		DoubleMatrix outputNetMatrix = hiddenActMatrix.mmul(Wkj).add(Wkbias.mmul(bias));
+		DoubleMatrix outputNetMatrix = hiddenActMatrix.mmul(Wkj).add(Wkbias.mul(bias));
 		NETk = outputNetMatrix;
 		
 		//Actual Output Matrix = tanh(outputNetMatrix*bias)*A
 		DoubleMatrix outputActMatrix = applySigmoid(outputNetMatrix);
+		
+		System.out.println("FF");
+		System.out.println(Wji);
+		System.out.println(Wkj);
 		
 		//return actual output matrix
 		return outputActMatrix;
@@ -54,22 +55,22 @@ public class NeuralNetwork implements SBPImpl
 	//sigmoid function application
 	@Override
 	public DoubleMatrix applySigmoid(DoubleMatrix inc) {
-		return MatrixFunctions.tanh(inc.mul(bias)).mul(A);
+		return MatrixFunctions.tanh(inc.mmul(bias)).mmul(A);
 	}
 	@Override
 	public DoubleMatrix applySigmoidDeriv(DoubleMatrix inc) {
-		return MatrixFunctions.pow( MatrixFunctions.tanh(inc.mul(bias)),2 ).mul(-A*bias).add(A*bias);
+		return MatrixFunctions.pow( MatrixFunctions.tanh(inc.mmul(bias)),2 ).mmul(-A*bias).add(A*bias);
 	}
 	
 	//update application
 	@Override
-	public void applyWkjUpdate (DoubleMatrix Wkj) { this.Wkj.add(Wkj); }
+	public void applyWkjUpdate (DoubleMatrix Wkj) { this.Wkj.addi(Wkj); }
 	@Override
-	public void applyWkbiasUpdate (DoubleMatrix Wkbias) { this.Wkbias.add(Wkbias); }
+	public void applyWkbiasUpdate (DoubleMatrix Wkbias) { this.Wkbias.addi(Wkbias); }
 	@Override
-	public void applyWjiUpdate (DoubleMatrix Wji) { this.Wji.add(Wji); }
+	public void applyWjiUpdate (DoubleMatrix Wji) { this.Wji.addi(Wji); }
 	@Override
-	public void applyWjbiasUpdate (DoubleMatrix Wjbias) { this.Wjbias.add(Wjbias); }
+	public void applyWjbiasUpdate (DoubleMatrix Wjbias) { this.Wjbias.addi(Wjbias); }
 
 	//getters
 	@Override
@@ -114,6 +115,10 @@ public class NeuralNetwork implements SBPImpl
 		for(int i=0; i<Wkbias.rows; i++)
 			for(int j=0; j<Wkbias.columns; j++)
 				Wkbias.put(i, j, initialEdgeWeight);
+		/*System.out.println(Wkj);
+		System.out.println(Wkbias);
+		System.out.println(Wji);
+		System.out.println(Wjbias);*/
 	}
 	
 	/* To & From string methods */

@@ -8,7 +8,7 @@ public class SBP
 {
 	//class params
 	private static int epochs = 1;
-	private static int trainingIterations = 50;
+	private static int trainingIterations = 1000;
 	private static int errorThreshold;
 	private static double learningRate = 0.1;
 	private static SBPImpl network;
@@ -24,26 +24,34 @@ public class SBP
 	public static void apply(TrainingData trainingData) {
 		ArrayList<TrainingTuple> data = trainingData.getData();
 		for(int epoch=0; epoch<epochs; epoch++) {
+			ArrayList<DoubleMatrix> ttOutputs = new ArrayList<DoubleMatrix>();
+			for(TrainingTuple tt : data)
+				ttOutputs.add(tt.getAnswers());
+			ArrayList<DoubleMatrix> cActualOutputs = new ArrayList<DoubleMatrix>(ttOutputs.size());
+			for(int i=0; i<ttOutputs.size(); i++) {
+				cActualOutputs.add(null);
+			}
 			/* initialize NN */
 			network.init();
+			
 			for(int iter=0; iter<trainingIterations; iter++) {
 				//TT -1,1|-1
 				/* pick a training tuple from trainer at random */
 				Random rand = new Random();
 				int randInt = rand.nextInt(data.size());
 				TrainingTuple chosenTuple = data.get(randInt);
-				double[] inputArr = chosenTuple.getInputs();
-				double[] expectedOutputArr = chosenTuple.getAnswers();
-				DoubleMatrix inputVector = new DoubleMatrix(new double[][] { inputArr } );
-				DoubleMatrix expectedOutputVector = new DoubleMatrix(new double[][] { expectedOutputArr } );
+				DoubleMatrix inputVector = chosenTuple.getInputs();
+				DoubleMatrix expectedOutputVector = chosenTuple.getAnswers();
 				
 				/* test training tuple */
 				DoubleMatrix actualOutputVector = network.feedForward(inputVector);
+				cActualOutputs.add(randInt, actualOutputVector);
 				
 				/* Calculate Updates */
 				//delta k			(error at output layer)
-				//( (expect output k) - (actual output k) ) * sigmoid'(NETk)
-				DoubleMatrix deltaK = ( expectedOutputVector.sub(actualOutputVector) ).mulRowVector(network.applySigmoidDeriv(network.getNETk()));
+				//( (expect output k) - (actual output k) ) * sigmoid'(NETk)    TODO really big, fix!
+				DoubleMatrix deltaK = ( expectedOutputVector.sub(actualOutputVector) ).
+						mulRowVector(network.applySigmoidDeriv(network.getNETk()));
 				
 				DoubleMatrix Yj = network.applySigmoid(network.getNETj());
 				//delta Wkj			(matrix of weight difference) 
@@ -62,8 +70,8 @@ public class SBP
 				DoubleMatrix deltaJ = network.applySigmoidDeriv(network.getNETj());
 				for(int i=0; i<deltaJ.columns; i++) {
 					double sum = 0.0;
-					for(int j=0; j<actualOutputVector.length-1; j++)
-						sum += network.getWkj().get(i,j)*deltaK.get(0,i);
+					for(int j=0; j<actualOutputVector.length; j++)
+						sum += network.getWkj().get(i,j)*deltaK.get(0,j);
 					deltaJ.put(0, i, deltaJ.get(0,i)*sum);
 				}
 				
@@ -79,9 +87,13 @@ public class SBP
 				//(learning curve) * delta j
 				DoubleMatrix deltaWjbias = deltaJ.mul(learningRate);
 				
+				/*
 				System.out.println("SBP");
 				System.out.println(deltaWji);
+				System.out.println(deltaWjbias);
 				System.out.println(deltaWkj);
+				System.out.println(deltaWkbias);
+				*/
 				
 				/* apply updates */
 				//delta Wkj
@@ -96,10 +108,19 @@ public class SBP
 			
 			System.out.println("Error Test");
 			/* Check error */
-			double error = 0.0;
-			for(int i=0; i<trainingData.getData().size(); i++) {
-				error += 0.5;
+			DoubleMatrix errorVec = new DoubleMatrix(1, ttOutputs.get(0).columns);
+			for(int i=0; i<errorVec.rows; i++)
+				for(int j=0; j<errorVec.columns; j++)
+					errorVec.put(i, j, 0);
+			for(int i=0; i<ttOutputs.size(); i++) {
+				if(ttOutputs.get(i) != null) {
+					DoubleMatrix tmp = MatrixFunctions.pow(ttOutputs.get(i).sub(cActualOutputs.get(i)), 2);
+					errorVec = errorVec.addi(tmp);
+				}
 			}
+			errorVec.mmuli(0.5);
+			System.out.println(errorVec);
+			double error = 0;
 			if(error < errorThreshold) {
 				/* save best network so far to disk */
 				network.writeNetworkToFile(error);

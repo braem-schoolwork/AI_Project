@@ -1,26 +1,28 @@
 package neural_network;
 
+import org.jblas.DoubleMatrix;
+
 public class TrainingTuple
 {
-	double[] inputs;
-	double[] answers;
+	DoubleMatrix inputs;
+	DoubleMatrix answers;
 	
-	public TrainingTuple(double[] inputs, double[] answers) {
+	public TrainingTuple(DoubleMatrix inputs, DoubleMatrix answers) {
 		this.inputs = inputs;
 		this.answers = answers;
 	}
 	
-	public double[] getInputs() {
+	public DoubleMatrix getInputs() {
 		return inputs;
 	}
-	public double[] getAnswers() {
+	public DoubleMatrix getAnswers() {
 		return answers;
 	}
 	
-	public void setInputs(double[] inputs) {
+	public void setInputs(DoubleMatrix inputs) {
 		this.inputs = inputs;
 	}
-	public void setAnswers(double[] answers) {
+	public void setAnswers(DoubleMatrix answers) {
 		this.answers = answers;
 	}
 	

@@ -21,7 +21,7 @@ public class NeuralNetwork implements SBPImpl
 	private int inputLayerSize = 2;		//layer sizes
 	private int hiddenLayerSize = 2;
 	private int outputLayerSize = 1;
-	private double initialEdgeWeight = 0.5;
+	private double initialEdgeWeight = 1.0;
 	
 	/* FEED FORWARD */
 	@Override
@@ -29,7 +29,7 @@ public class NeuralNetwork implements SBPImpl
 		
 		/* HIDDEN LAYER */
 		//Hidden Net Matrix = inputVector*Wji + Wjbias*bias
-		DoubleMatrix hiddenNetMatrix = inputVector.mmul(Wji).add(Wjbias.mmul(bias));
+		DoubleMatrix hiddenNetMatrix = inputVector.mmul(Wji).add(Wjbias.mul(bias));
 		NETj = hiddenNetMatrix;
 		
 		//Hidden Act Matrix = tanh(hiddenNetMatrix*bias)*A
@@ -43,9 +43,13 @@ public class NeuralNetwork implements SBPImpl
 		//Actual Output Matrix = tanh(outputNetMatrix*bias)*A
 		DoubleMatrix outputActMatrix = applySigmoid(outputNetMatrix);
 		
+		/*
 		System.out.println("FF");
 		System.out.println(Wji);
+		System.out.println(Wjbias);
 		System.out.println(Wkj);
+		System.out.println(Wkbias);
+		*/
 		
 		//return actual output matrix
 		return outputActMatrix;
@@ -141,6 +145,10 @@ public class NeuralNetwork implements SBPImpl
 		return newNN;
 	}
 
+	public void saveToDisk() {
+		
+	}
+	
 	@Override
 	public void writeNetworkToFile(double error) {
 		//read file and see if this error is less

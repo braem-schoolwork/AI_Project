@@ -119,10 +119,6 @@ public class NeuralNetwork implements SBPImpl
 		for(int i=0; i<Wkbias.rows; i++)
 			for(int j=0; j<Wkbias.columns; j++)
 				Wkbias.put(i, j, initialEdgeWeight);
-		/*System.out.println(Wkj);
-		System.out.println(Wkbias);
-		System.out.println(Wji);
-		System.out.println(Wjbias);*/
 	}
 	
 	/* To & From string methods */

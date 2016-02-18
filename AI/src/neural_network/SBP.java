@@ -7,16 +7,17 @@ import org.jblas.*;
 public class SBP
 {
 	//class params
-	private static int epochs = 1;
+	private static int epochs = 5;
 	private static int trainingIterations = 1000;
-	private static int errorThreshold;
+	private static double errorThreshold = 0.5;
 	private static double learningRate = 0.1;
+	private static double alpha = 0.1;
 	private static SBPImpl network;
 	
 	//setters
 	public static void setEpochs(int epochs) { SBP.epochs = epochs; }
 	public static void setTrainingIterations(int trainingIterations) { SBP.trainingIterations = trainingIterations; }
-	public static void setErrorThreshold(int errorThreshold) { SBP.errorThreshold = errorThreshold; }
+	public static void setErrorThreshold(double errorThreshold) { SBP.errorThreshold = errorThreshold; }
 	public static void setLearningRate(double learningRate) { SBP.learningRate = learningRate; }
 	public static void setNetwork(SBPImpl nwrk) { network = nwrk; }
 	
@@ -33,7 +34,7 @@ public class SBP
 			}
 			/* initialize NN */
 			network.init();
-			
+			boolean firstPass = true;
 			for(int iter=0; iter<trainingIterations; iter++) {
 				//TT -1,1|-1
 				/* pick a training tuple from trainer at random */
@@ -95,6 +96,12 @@ public class SBP
 				System.out.println(deltaWkbias);
 				*/
 				
+				/* Apply Momentum */
+				if(!firstPass) {
+					
+					firstPass = false;
+				}
+				
 				/* apply updates */
 				//delta Wkj
 				network.applyWkjUpdate(deltaWkj);
@@ -108,10 +115,7 @@ public class SBP
 			
 			System.out.println("Error Test");
 			/* Check error */
-			DoubleMatrix errorVec = new DoubleMatrix(1, ttOutputs.get(0).columns);
-			for(int i=0; i<errorVec.rows; i++)
-				for(int j=0; j<errorVec.columns; j++)
-					errorVec.put(i, j, 0);
+			DoubleMatrix errorVec = DoubleMatrix.zeros(1, ttOutputs.get(0).columns);
 			for(int i=0; i<ttOutputs.size(); i++) {
 				if(ttOutputs.get(i) != null) {
 					DoubleMatrix tmp = MatrixFunctions.pow(ttOutputs.get(i).sub(cActualOutputs.get(i)), 2);
@@ -120,7 +124,7 @@ public class SBP
 			}
 			errorVec.mmuli(0.5);
 			System.out.println(errorVec);
-			double error = 0;
+			double error = errorVec.get(0,0);
 			if(error < errorThreshold) {
 				/* save best network so far to disk */
 				network.writeNetworkToFile(error);

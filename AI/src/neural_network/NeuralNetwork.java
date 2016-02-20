@@ -149,7 +149,7 @@ public class NeuralNetwork implements SBPImpl
 	public void writeNetworkToFile(double error) {
 		//read file and see if this error is less
 		String writeStr = this.toString() + "|" + error;
-		
+		System.out.println(writeStr);
 	}
 
 }

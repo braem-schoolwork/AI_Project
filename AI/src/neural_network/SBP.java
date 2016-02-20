@@ -7,7 +7,7 @@ import org.jblas.*;
 public class SBP
 {
 	//class params
-	private static int epochs = 5;
+	private static int epochs = 400;
 	private static int trainingIterations = 1000;
 	private static double errorThreshold = 0.5;
 	private static double learningRate = 0.1;
@@ -23,8 +23,11 @@ public class SBP
 	
 	//SBP method
 	public static void apply(TrainingData trainingData) {
+		
 		ArrayList<TrainingTuple> data = trainingData.getData();
+		
 		for(int epoch=0; epoch<epochs; epoch++) {
+			
 			ArrayList<DoubleMatrix> ttOutputs = new ArrayList<DoubleMatrix>();
 			for(TrainingTuple tt : data)
 				ttOutputs.add(tt.getAnswers());
@@ -32,9 +35,17 @@ public class SBP
 			for(int i=0; i<ttOutputs.size(); i++) {
 				cActualOutputs.add(null);
 			}
+			
 			/* initialize NN */
 			network.init();
+			
+			//momentum related
 			boolean firstPass = true;
+			DoubleMatrix deltaWkjPrev = null;
+			DoubleMatrix deltaWkbiasPrev = null;
+			DoubleMatrix deltaWjiPrev = null;
+			DoubleMatrix deltaWjbiasPrev = null;
+			
 			for(int iter=0; iter<trainingIterations; iter++) {
 				//TT -1,1|-1
 				/* pick a training tuple from trainer at random */
@@ -98,8 +109,10 @@ public class SBP
 				
 				/* Apply Momentum */
 				if(!firstPass) {
-					
-					firstPass = false;
+					deltaWkj = deltaWkj.mmul(1-alpha).add(deltaWkjPrev.mmul(alpha));
+					deltaWkbias = deltaWkbias.mmul(1-alpha).add(deltaWkbiasPrev.mmul(alpha));
+					deltaWji = deltaWji.mmul(1-alpha).add(deltaWjiPrev.mmul(alpha));
+					deltaWjbias = deltaWjbias.mmul(1-alpha).add(deltaWjbiasPrev.mmul(alpha));
 				}
 				
 				/* apply updates */
@@ -111,9 +124,14 @@ public class SBP
 				network.applyWjiUpdate(deltaWji);
 				//delta Wjbias
 				network.applyWjbiasUpdate(deltaWjbias);
+				
+				deltaWkjPrev = deltaWkj;
+				deltaWkbiasPrev = deltaWkbias;
+				deltaWjiPrev = deltaWji;
+				deltaWjbiasPrev = deltaWjbias;
+				firstPass = false;
 			}
 			
-			System.out.println("Error Test");
 			/* Check error */
 			DoubleMatrix errorVec = DoubleMatrix.zeros(1, ttOutputs.get(0).columns);
 			for(int i=0; i<ttOutputs.size(); i++) {
@@ -123,7 +141,6 @@ public class SBP
 				}
 			}
 			errorVec.mmuli(0.5);
-			System.out.println(errorVec);
 			double error = errorVec.get(0,0);
 			if(error < errorThreshold) {
 				/* save best network so far to disk */

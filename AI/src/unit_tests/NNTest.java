@@ -7,7 +7,11 @@ import java.util.ArrayList;
 import org.jblas.*;
 
 import org.junit.Test;
+
+import algorithms.SBP;
 import neural_network.*;
+import training_data.TrainingData;
+import training_data.TrainingTuple;
 
 public class NNTest {
 	
@@ -23,12 +27,12 @@ public class NNTest {
 		tuples.add(t1); tuples.add(t2); tuples.add(t3); tuples.add(t4); 
 		TrainingData data = new TrainingData(tuples);
 		SBP.apply(data);
+		
 	}
 	
 	@Test
 	public void mTest() {
-		DoubleMatrix matrix1 = new DoubleMatrix(new double[][] {{-1,1}});
-		DoubleMatrix matrix2 = new DoubleMatrix(new double[][] {{20,20}, {20,20}});
+		
 	}
 
 }

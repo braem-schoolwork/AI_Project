@@ -1,6 +1,7 @@
 package experiments;
 
 import search.*;
+import training_data.RubiksCubeTrainingDataGenerator;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -76,7 +77,7 @@ public class Experiment
 			//training data entry
 			String mEntry = "";
 			if(i!=cubes.size()-1)
-				mEntry = ((RubiksCube) cubes.get(i)).toTrainingData()+"|";
+				mEntry = RubiksCubeTrainingDataGenerator.genTrainingData(((RubiksCube) cubes.get(i)))+"|";
 			try {
 				hEntry += "," + moves.get(i).toString().replaceAll(",", "");
 				mEntry += ((Move) moves.get(i)).toTrainingData();

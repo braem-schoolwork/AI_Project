@@ -2,12 +2,15 @@ package neural_network;
 
 import org.jblas.*;
 
+import algorithms.SBPImpl;
+
 /**
  * 
  * @author braem
  *
  * 
  */
+
 public class NeuralNetwork implements SBPImpl
 {
 	private DoubleMatrix Wji;			//Weight matrices
@@ -89,6 +92,9 @@ public class NeuralNetwork implements SBPImpl
 	public DoubleMatrix getNETj() { return NETj; }
 	@Override
 	public DoubleMatrix getWkj() { return Wkj; }
+	DoubleMatrix getWji() { return Wji; }
+	DoubleMatrix getWjbias() { return Wji; }
+	DoubleMatrix getWkbias() { return Wji; }
 	
 	//setters
 	public void setInputLayerSize(int p) { this.inputLayerSize = p; }
@@ -121,35 +127,14 @@ public class NeuralNetwork implements SBPImpl
 				Wkbias.put(i, j, initialEdgeWeight);
 	}
 	
-	/* To & From string methods */
 	@Override
-	public String toString() {
-		String rtnStr = inputLayerSize+"|"+hiddenLayerSize+"|"+outputLayerSize+"|"+
-				Wji+"|"+Wjbias+"|"+Wkj+"|"+Wkbias;
-		return rtnStr;
-	}
-	public static NeuralNetwork fromString(String fileContents) {
-		String[] contents = fileContents.split("|");
-		NeuralNetwork newNN = new NeuralNetwork();
-		newNN.inputLayerSize = Integer.parseInt(contents[0]);
-		newNN.hiddenLayerSize = Integer.parseInt(contents[1]);
-		newNN.outputLayerSize = Integer.parseInt(contents[2]);
-		newNN.Wji = DoubleMatrix.valueOf(contents[3]);
-		newNN.Wjbias = DoubleMatrix.valueOf(contents[4]);
-		newNN.Wkj = DoubleMatrix.valueOf(contents[5]);
-		newNN.Wkbias = DoubleMatrix.valueOf(contents[6]);
-		return newNN;
+	public void saveToDisk(double error) {
+		NeuralNetworkIO.writeNetwork(this, error);
 	}
 
-	public void saveToDisk() {
-		
-	}
-	
 	@Override
-	public void writeNetworkToFile(double error) {
-		//read file and see if this error is less
-		String writeStr = this.toString() + "|" + error;
-		System.out.println(writeStr);
+	public boolean isBestSoFar(double error) {
+		return NeuralNetworkIO.isBestNetworkSoFar(error);
 	}
 
 }

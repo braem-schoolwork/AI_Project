@@ -1,4 +1,4 @@
-package neural_network;
+package training_data;
 
 import java.util.ArrayList;
 

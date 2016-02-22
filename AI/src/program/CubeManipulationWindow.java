@@ -428,7 +428,7 @@ public class CubeManipulationWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if(recommendedMoves!=null && !recommendedMoves.isEmpty()) {
 					for(Edge move : recommendedMoves) {
-						move.apply(cube);
+						((Move)move).apply(cube);
 						repaintCube(cube);
 					}
 					recommendedMovesTextPane.setText("");
@@ -445,7 +445,7 @@ public class CubeManipulationWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if(recommendedMoves!=null && !recommendedMoves.isEmpty()) {
 					Edge move = recommendedMoves.remove(0);
-					move.apply(cube);
+					((Move)move).apply(cube);
 					repaintCube(cube);
 					String textPaneContents = recommendedMovesTextPane.getText();
 					recommendedMovesTextPane.setText("");

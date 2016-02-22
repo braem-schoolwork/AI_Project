@@ -1,15 +1,18 @@
-package neural_network;
+package algorithms;
 
 import java.util.ArrayList;
 import java.util.Random;
 import org.jblas.*;
 
+import training_data.TrainingData;
+import training_data.TrainingTuple;
+
 public class SBP
 {
 	//class params
-	private static int epochs = 400;
+	private static int epochs = 10000;
 	private static int trainingIterations = 1000;
-	private static double errorThreshold = 0.5;
+	private static double errorThreshold = 0.05;
 	private static double learningRate = 0.1;
 	private static double alpha = 0.1;
 	private static SBPImpl network;
@@ -32,9 +35,8 @@ public class SBP
 			for(TrainingTuple tt : data)
 				ttOutputs.add(tt.getAnswers());
 			ArrayList<DoubleMatrix> cActualOutputs = new ArrayList<DoubleMatrix>(ttOutputs.size());
-			for(int i=0; i<ttOutputs.size(); i++) {
+			for(int i=0; i<ttOutputs.size(); i++)
 				cActualOutputs.add(null);
-			}
 			
 			/* initialize NN */
 			network.init();
@@ -125,28 +127,36 @@ public class SBP
 				//delta Wjbias
 				network.applyWjbiasUpdate(deltaWjbias);
 				
+				//set the previous weight differences as these
 				deltaWkjPrev = deltaWkj;
 				deltaWkbiasPrev = deltaWkbias;
 				deltaWjiPrev = deltaWji;
 				deltaWjbiasPrev = deltaWjbias;
+				
 				firstPass = false;
 			}
 			
-			/* Check error */
-			DoubleMatrix errorVec = DoubleMatrix.zeros(1, ttOutputs.get(0).columns);
-			for(int i=0; i<ttOutputs.size(); i++) {
-				if(ttOutputs.get(i) != null) {
-					DoubleMatrix tmp = MatrixFunctions.pow(ttOutputs.get(i).sub(cActualOutputs.get(i)), 2);
-					errorVec = errorVec.addi(tmp);
-				}
-			}
-			errorVec.mmuli(0.5);
-			double error = errorVec.get(0,0);
-			if(error < errorThreshold) {
-				/* save best network so far to disk */
-				network.writeNetworkToFile(error);
+			/* Calculate error */
+			double error = calculateError(ttOutputs, cActualOutputs);
+			
+			/* save best network so far to disk */
+			if(error < errorThreshold) { //if below threshold
+				if(network.isBestSoFar(error)) //if best network so far, save it to disk
+					network.saveToDisk(error);
 				return;
 			}
 		}
+	}
+	
+	private static double calculateError(ArrayList<DoubleMatrix> ttOutputs, ArrayList<DoubleMatrix> cActualOutputs) {
+		DoubleMatrix errorVec = DoubleMatrix.zeros(1, ttOutputs.get(0).columns);
+		for(int i=0; i<ttOutputs.size(); i++) {
+			if(ttOutputs.get(i) != null) {
+				DoubleMatrix tmp = MatrixFunctions.pow(ttOutputs.get(i).sub(cActualOutputs.get(i)), 2);
+				errorVec = errorVec.addi(tmp);
+			}
+		}
+		errorVec.mmuli(0.5);
+		return errorVec.get(0,0);
 	}
 }

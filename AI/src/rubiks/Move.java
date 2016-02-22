@@ -3,7 +3,6 @@ package rubiks;
 import java.util.Arrays;
 
 import search.Edge;
-import search.Searchable;
 
 /**
  * 
@@ -25,10 +24,10 @@ import search.Searchable;
  * 
  */
 
-
+//TODO implement move params
 public class Move implements Edge
 {	
-	
+	private MoveParams params;
 	private int sliceNum;
 	private Axis axis;
 	private Direction dir;
@@ -37,6 +36,10 @@ public class Move implements Edge
 		this.sliceNum = sliceNum;
 		this.axis = axis;
 		this.dir = dir;
+	}
+	
+	public Move(MoveParams params) {
+		this.params = params;
 	}
 	
 	public int getSliceNum() {
@@ -63,9 +66,8 @@ public class Move implements Edge
 	 * APPLY Method
 	 * applies this move to a cube parameter
 	 */
-	public void apply(Searchable obj) {
+	public void apply(RubiksCube cube) {
 		
-		RubiksCube cube = (RubiksCube) obj;
 		int size = cube.getSize();
 		
 		//initializations

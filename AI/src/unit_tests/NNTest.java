@@ -30,8 +30,6 @@ public class NNTest {
 		tuples.add(t4); 
 		TrainingData data = new TrainingData(tuples);
 		SBP.apply(data);
-		
-		
 	}
 	
 	@Test

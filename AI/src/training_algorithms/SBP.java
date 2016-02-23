@@ -10,9 +10,9 @@ import training_data.TrainingTuple;
 public class SBP
 {
 	//class params
-	private static int epochs = 1;
-	private static int trainingIterations = 400;
-	private static double errorThreshold = 0.5;
+	private static int epochs = 4000;
+	private static int trainingIterations = 100000;
+	private static double errorThreshold = 0.025;
 	private static double learningRate = 0.1;
 	private static double alpha = 0.1;
 	private static SBPImpl network;
@@ -58,14 +58,9 @@ public class SBP
 				
 				/* Get actual output from feed forward */
 				DoubleMatrix actualOutputVector = network.feedForward(inputVector);
-				if(cActualOutputs.get(randInt) != null) {
-					if(Math.pow(cActualOutputs.get(randInt).get(0,0), 2) > Math.pow(actualOutputVector.get(0,0),2)) {
-						cActualOutputs.set(randInt, actualOutputVector);
-					}
-				}
-				else {
-					cActualOutputs.set(randInt, actualOutputVector);
-				}
+				//System.out.println("expected: "+expectedOutputVector);
+				//System.out.println("actual "+actualOutputVector);
+				setCorrespondingOutput(cActualOutputs, expectedOutputVector, actualOutputVector, randInt);
 				
 				/* Calculate Updates */
 				DoubleMatrix deltaK = calcDeltaK(expectedOutputVector, actualOutputVector);
@@ -74,7 +69,21 @@ public class SBP
 				DoubleMatrix deltaJ = calcDeltaJ(deltaK, actualOutputVector, deltaWkj);
 				DoubleMatrix deltaWji = calcDeltaWji(deltaJ, inputVector);
 				DoubleMatrix deltaWjbias = calcDeltaWjbias(deltaJ);
-				//System.out.println(deltaWkj);
+				/*if(expectedOutputVector.get(0,0) == -1) {
+					System.out.println(-1);
+					System.out.println(deltaK);
+					System.out.println(deltaWkj);
+					System.out.println(deltaJ);
+					System.out.println(deltaWji);
+				}
+				else
+				{
+					System.out.println(1);
+					System.out.println(deltaK);
+					System.out.println(deltaWkj);
+					System.out.println(deltaJ);
+					System.out.println(deltaWji);
+				}*/
 				
 				/* Apply Momentum */
 				if(!firstPass)
@@ -106,6 +115,27 @@ public class SBP
 		}
 	}
 	
+	private static void setCorrespondingOutput(ArrayList<DoubleMatrix> cActualOutputs,
+			DoubleMatrix expectedOutputVector, DoubleMatrix actualOutputVector, int randInt) {
+		if(cActualOutputs.get(randInt) == null) {
+			cActualOutputs.set(randInt, actualOutputVector);
+		}
+		else if(expectedOutputVector.get(0,0) == -1) {
+			double difference1 = -1 - actualOutputVector.get(0,0);
+			double difference2 = -1 - cActualOutputs.get(randInt).get(0,0);
+			if(difference1 > difference2) {
+				cActualOutputs.set(randInt, actualOutputVector);
+			}
+		}
+		else if(expectedOutputVector.get(0,0) == 1) {
+			double difference1 = -1 - actualOutputVector.get(0,0);
+			double difference2 = -1 - cActualOutputs.get(randInt).get(0,0);
+			if(difference1 < difference2) {
+				cActualOutputs.set(randInt, actualOutputVector);
+			}
+		}
+	}
+	
 	private static DoubleMatrix calcDeltaK(DoubleMatrix expectedOutputVector, DoubleMatrix actualOutputVector) {
 		//delta k			(error at output layer)
 		//( (expect output k) - (actual output k) ) * sigmoid'(NETk)
@@ -114,7 +144,7 @@ public class SBP
 	}
 	
 	private static DoubleMatrix calcDeltaWkj(DoubleMatrix deltaK) {
-		DoubleMatrix Yj = network.getACTj();
+		DoubleMatrix Yj =(network.getACTj());
 		//delta Wkj			(matrix of weight difference) 
 		//(learning rate) * deltaK * ACTj
 		DoubleMatrix deltaWkj = new DoubleMatrix(network.getHiddenLayerSize(), network.getOutputLayerSize());
@@ -135,7 +165,7 @@ public class SBP
 		for(int i=0; i<deltaJ.columns; i++) {
 			double sum = 0.0;
 			for(int j=0; j<actualOutputVector.length; j++)
-				sum += deltaWkj.get(i,j)*deltaK.get(0,j);
+				sum += network.getWkj().get(i,j)*deltaK.get(0,j);
 			deltaJ.put(0, i, deltaJ.get(0,i)*sum);
 		}
 		return deltaJ;
@@ -143,7 +173,7 @@ public class SBP
 	
 	private static DoubleMatrix calcDeltaWji(DoubleMatrix deltaJ, DoubleMatrix inputVector) {
 		//activation at inputs
-		DoubleMatrix ACTi = network.applySigmoid(inputVector);
+		DoubleMatrix ACTi = (inputVector);
 		//delta Wji			(weight updates)
 		//(learning curve) * (activation at input i) * delta j
 		DoubleMatrix deltaWji = new DoubleMatrix(network.getInputLayerSize(), network.getHiddenLayerSize());
@@ -181,7 +211,7 @@ public class SBP
 	public static double calculateError(ArrayList<DoubleMatrix> ttOutputs, ArrayList<DoubleMatrix> cActualOutputs) {
 		DoubleMatrix errorVec = DoubleMatrix.zeros(1, ttOutputs.get(0).columns);
 		for(int i=0; i<ttOutputs.size(); i++) {
-			if(ttOutputs.get(i) != null) {
+			if(cActualOutputs.get(i) != null) {
 				DoubleMatrix tmp = MatrixFunctions.pow(ttOutputs.get(i).sub(cActualOutputs.get(i)), 2);
 				errorVec = errorVec.add(tmp);
 			}

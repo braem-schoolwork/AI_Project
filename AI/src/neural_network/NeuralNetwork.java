@@ -17,15 +17,15 @@ public class NeuralNetwork implements SBPImpl
 	private DoubleMatrix Wkj;
 	private DoubleMatrix Wjbias;
 	private DoubleMatrix Wkbias;
-	private double A = 1;			//Sigmoid function related
-	private double bias = 1;
+	private double A = 1.716;			//Sigmoid function related
+	private double bias = 0.667;
 	private DoubleMatrix NETk;			//Nets stored in feedForward for SBP
 	private DoubleMatrix NETj;
 	private DoubleMatrix ACTj;
 	private int inputLayerSize = 2;		//layer sizes
 	private int hiddenLayerSize = 2;
 	private int outputLayerSize = 1;
-	private double initialEdgeWeight = 5.0;
+	private double initialEdgeWeight = 5.12;
 	
 	/* FEED FORWARD */
 	@Override
@@ -33,7 +33,7 @@ public class NeuralNetwork implements SBPImpl
 		
 		/* HIDDEN LAYER */
 		//Hidden Net Matrix = inputVector*Wji + Wjbias*bias
-		DoubleMatrix hiddenNetMatrix = inputVector.mmul(Wji).add(Wjbias.mul(bias));
+		DoubleMatrix hiddenNetMatrix = inputVector.mmul(Wji).add(Wjbias.mmul(bias));
 		NETj = hiddenNetMatrix;
 		
 		//Hidden Act Matrix = tanh(hiddenNetMatrix*bias)*A
@@ -41,19 +41,17 @@ public class NeuralNetwork implements SBPImpl
 		ACTj = hiddenActMatrix;
 		/* OUTPUT LAYER */
 		//Output Net Matrix = hiddenActMatrix*Wkj + Wkbias*bias
-		DoubleMatrix outputNetMatrix = hiddenActMatrix.mmul(Wkj).add(Wkbias.mul(bias));
+		DoubleMatrix outputNetMatrix = hiddenActMatrix.mmul(Wkj).add(Wkbias.mmul(bias));
 		NETk = outputNetMatrix;
 		
 		//Actual Output Matrix = tanh(outputNetMatrix*bias)*A
 		DoubleMatrix outputActMatrix = applySigmoid(outputNetMatrix);
 		
-		/*
 		System.out.println("FF");
 		System.out.println(Wji);
 		System.out.println(Wjbias);
 		System.out.println(Wkj);
 		System.out.println(Wkbias);
-		*/
 		
 		//return actual output matrix
 		return outputActMatrix;

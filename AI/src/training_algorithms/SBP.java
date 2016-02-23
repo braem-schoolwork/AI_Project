@@ -11,7 +11,7 @@ public class SBP
 {
 	//class params
 	private static int epochs = 1;
-	private static int trainingIterations = 40;
+	private static int trainingIterations = 400;
 	private static double errorThreshold = 0.5;
 	private static double learningRate = 0.1;
 	private static double alpha = 0.1;
@@ -71,9 +71,10 @@ public class SBP
 				DoubleMatrix deltaK = calcDeltaK(expectedOutputVector, actualOutputVector);
 				DoubleMatrix deltaWkj = calcDeltaWkj(deltaK);
 				DoubleMatrix deltaWkbias = calcDeltaWkbias(deltaK);
-				DoubleMatrix deltaJ = calcDeltaJ(deltaK, actualOutputVector);
+				DoubleMatrix deltaJ = calcDeltaJ(deltaK, actualOutputVector, deltaWkj);
 				DoubleMatrix deltaWji = calcDeltaWji(deltaJ, inputVector);
 				DoubleMatrix deltaWjbias = calcDeltaWjbias(deltaJ);
+				//System.out.println(deltaWkj);
 				
 				/* Apply Momentum */
 				if(!firstPass)
@@ -128,13 +129,13 @@ public class SBP
 		return deltaK.mul(learningRate);
 	}
 	
-	private static DoubleMatrix calcDeltaJ(DoubleMatrix deltaK, DoubleMatrix actualOutputVector) {
+	private static DoubleMatrix calcDeltaJ(DoubleMatrix deltaK, DoubleMatrix actualOutputVector, DoubleMatrix deltaWkj) {
 		//sigmoid'(NETj) * (sum(Wkj) k=0 to n) * delta k
 		DoubleMatrix deltaJ = network.applySigmoidDeriv(network.getNETj());
 		for(int i=0; i<deltaJ.columns; i++) {
 			double sum = 0.0;
 			for(int j=0; j<actualOutputVector.length; j++)
-				sum += network.getWkj().get(i,j)*deltaK.get(0,j);
+				sum += deltaWkj.get(i,j)*deltaK.get(0,j);
 			deltaJ.put(0, i, deltaJ.get(0,i)*sum);
 		}
 		return deltaJ;

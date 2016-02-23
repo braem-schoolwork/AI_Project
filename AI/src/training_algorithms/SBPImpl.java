@@ -1,4 +1,4 @@
-package algorithms;
+package training_algorithms;
 
 import org.jblas.DoubleMatrix;
 
@@ -17,6 +17,7 @@ public interface SBPImpl
 	public int getOutputLayerSize();
 	public DoubleMatrix getNETk();
 	public DoubleMatrix getNETj();
+	public DoubleMatrix getACTj();
 	public DoubleMatrix getWkj();
 	
 	public void applyWkjUpdate(DoubleMatrix Wkj);

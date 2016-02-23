@@ -2,7 +2,7 @@ package neural_network;
 
 import org.jblas.*;
 
-import algorithms.SBPImpl;
+import training_algorithms.SBPImpl;
 
 /**
  * 
@@ -17,14 +17,15 @@ public class NeuralNetwork implements SBPImpl
 	private DoubleMatrix Wkj;
 	private DoubleMatrix Wjbias;
 	private DoubleMatrix Wkbias;
-	private double A = 1.716;			//Sigmoid function related
-	private double bias = 0.667;
+	private double A = 1;			//Sigmoid function related
+	private double bias = 1;
 	private DoubleMatrix NETk;			//Nets stored in feedForward for SBP
 	private DoubleMatrix NETj;
+	private DoubleMatrix ACTj;
 	private int inputLayerSize = 2;		//layer sizes
 	private int hiddenLayerSize = 2;
 	private int outputLayerSize = 1;
-	private double initialEdgeWeight = 1.0;
+	private double initialEdgeWeight = 5.0;
 	
 	/* FEED FORWARD */
 	@Override
@@ -37,7 +38,7 @@ public class NeuralNetwork implements SBPImpl
 		
 		//Hidden Act Matrix = tanh(hiddenNetMatrix*bias)*A
 		DoubleMatrix hiddenActMatrix = applySigmoid(hiddenNetMatrix);
-		
+		ACTj = hiddenActMatrix;
 		/* OUTPUT LAYER */
 		//Output Net Matrix = hiddenActMatrix*Wkj + Wkbias*bias
 		DoubleMatrix outputNetMatrix = hiddenActMatrix.mmul(Wkj).add(Wkbias.mul(bias));
@@ -59,7 +60,7 @@ public class NeuralNetwork implements SBPImpl
 		
 	}
 	
-	//sigmoid function application
+	/* sigmoid function application */
 	@Override
 	public DoubleMatrix applySigmoid(DoubleMatrix inc) {
 		return MatrixFunctions.tanh(inc.mmul(bias)).mmul(A);
@@ -69,7 +70,7 @@ public class NeuralNetwork implements SBPImpl
 		return MatrixFunctions.pow( MatrixFunctions.tanh(inc.mmul(bias)),2 ).mmul(-A*bias).add(A*bias);
 	}
 	
-	//update application
+	/* update application */
 	@Override
 	public void applyWkjUpdate (DoubleMatrix Wkj) { this.Wkj.addi(Wkj); }
 	@Override
@@ -92,9 +93,11 @@ public class NeuralNetwork implements SBPImpl
 	public DoubleMatrix getNETj() { return NETj; }
 	@Override
 	public DoubleMatrix getWkj() { return Wkj; }
+	@Override
+	public DoubleMatrix getACTj() { return ACTj; }
 	DoubleMatrix getWji() { return Wji; }
-	DoubleMatrix getWjbias() { return Wji; }
-	DoubleMatrix getWkbias() { return Wji; }
+	DoubleMatrix getWjbias() { return Wjbias; }
+	DoubleMatrix getWkbias() { return Wkbias; }
 	
 	//setters
 	public void setInputLayerSize(int p) { this.inputLayerSize = p; }

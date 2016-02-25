@@ -7,14 +7,19 @@ import org.jblas.*;
 import training_data.TrainingData;
 import training_data.TrainingTuple;
 
+/**
+ * 
+ * @author braem
+ *
+ */
 public class SBP
 {
-	//class params
-	private static int epochs = 40;
-	private static int trainingIterations = 50;
-	private static double errorThreshold = 0.025;
-	private static double learningRate = 0.35;
-	private static double momentumRate = 0.6;
+	//class params initialized to best values from experimentation
+	private static int epochs = 5000;
+	private static int trainingIterations = 3500;
+	private static double errorThreshold = 0.00001;
+	private static double learningRate = 0.30;
+	private static double momentumRate = 0.65;
 	private static SBPImpl sbpObj;
 	private static double error;
 	

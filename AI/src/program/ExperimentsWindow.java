@@ -84,9 +84,9 @@ public class ExperimentsWindow extends JFrame {
 		fileExtensionComboBox.setBounds(222, 11, 102, 43);
 		contentPane.add(fileExtensionComboBox);
 		
-		JComboBox<Experiment> ExperimentSelectComboBox = new JComboBox<Experiment>();
+		JComboBox<Phase1Experiment> ExperimentSelectComboBox = new JComboBox<Phase1Experiment>();
 		ExperimentSelectComboBox.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		ExperimentSelectComboBox.addItem(new Experiment(1, new AstarSearch(), 3));
+		ExperimentSelectComboBox.addItem(new Phase1Experiment(1, new AstarSearch(), 3));
 		ExperimentSelectComboBox.setSelectedIndex(0);
 		ExperimentSelectComboBox.setBounds(10, 11, 202, 43);
 		contentPane.add(ExperimentSelectComboBox);
@@ -94,7 +94,7 @@ public class ExperimentsWindow extends JFrame {
 		JButton btnRunExperiment = new JButton("Run Experiment");
 		btnRunExperiment.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Experiment exp = (Experiment) ExperimentSelectComboBox.getSelectedItem();
+				Phase1Experiment exp = (Phase1Experiment) ExperimentSelectComboBox.getSelectedItem();
 				exp.runExperiment((String)fileExtensionComboBox.getSelectedItem(),
 						chckbxGenerateHumanReadable.isSelected(), chckbxGenerateTrainingData.isSelected());
 			}

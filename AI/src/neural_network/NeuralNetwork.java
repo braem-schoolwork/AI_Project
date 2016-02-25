@@ -17,8 +17,8 @@ public class NeuralNetwork implements SBPImpl
 	private DoubleMatrix Wkj;
 	private DoubleMatrix Wjbias;
 	private DoubleMatrix Wkbias;
-	private double A = 1;			//Sigmoid function related
-	private double bias = 1;
+	private double A = 1.716;			//Sigmoid function related
+	private double bias = 0.667;
 	private DoubleMatrix NETk;			//Nets stored in feedForward for SBP
 	private DoubleMatrix NETj;
 	private DoubleMatrix ACTj;
@@ -129,10 +129,10 @@ public class NeuralNetwork implements SBPImpl
 	
 	@Override
 	public void saveToDisk(double error) {
-		NeuralNetworkIO.writeNetwork(this, error);
+		if(isBestSoFar(error)) //if best network so far, save it to disk
+			NeuralNetworkIO.writeNetwork(this, error);
 	}
 
-	@Override
 	public boolean isBestSoFar(double error) {
 		return NeuralNetworkIO.isBestNetworkSoFar(error);
 	}

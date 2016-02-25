@@ -21,6 +21,4 @@ public interface SBPImpl
 	public void applyWkbiasUpdate(DoubleMatrix Wkbias);
 	public void applyWjiUpdate(DoubleMatrix Wji);
 	public void applyWjbiasUpdate(DoubleMatrix Wjbias);
-	
-	public boolean isBestSoFar(double error);
 }

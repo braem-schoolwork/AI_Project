@@ -10,12 +10,13 @@ import training_data.TrainingTuple;
 public class SBP
 {
 	//class params
-	private static int epochs = 4000;
-	private static int trainingIterations = 1000;
+	private static int epochs = 40;
+	private static int trainingIterations = 50;
 	private static double errorThreshold = 0.025;
-	private static double learningRate = 0.25;
-	private static double alpha = 0.1;
-	private static SBPImpl network;
+	private static double learningRate = 0.35;
+	private static double momentumRate = 0.6;
+	private static SBPImpl sbpObj;
+	private static double error;
 	
 	//keeping track of previous values
 	private static DoubleMatrix deltaWkjPrev;
@@ -28,7 +29,17 @@ public class SBP
 	public static void setTrainingIterations(int trainingIterations) { SBP.trainingIterations = trainingIterations; }
 	public static void setErrorThreshold(double errorThreshold) { SBP.errorThreshold = errorThreshold; }
 	public static void setLearningRate(double learningRate) { SBP.learningRate = learningRate; }
-	public static void setNetwork(SBPImpl nwrk) { network = nwrk; }
+	public static void setMomentumRate(double momentumRate) { SBP.momentumRate = momentumRate; }
+	public static void setSBPImpl(SBPImpl sbpObj) { SBP.sbpObj = sbpObj; }
+	
+	//getters
+	public static int getEpochs() { return epochs; }
+	public static int getTrainingIterations() { return trainingIterations; }
+	public static double getErrorThreshold() { return errorThreshold; }
+	public static double getLearningRate() { return learningRate; }
+	public static double getMomentumRate() { return momentumRate; }
+	public static SBPImpl getSBPImpl() { return sbpObj; }
+	public static double getError() { return error; }
 	
 	//SBP method
 	public static void apply(TrainingData trainingData) {
@@ -44,7 +55,7 @@ public class SBP
 				cActualOutputs.add(null);
 			
 			/* initialize NN */
-			network.init();
+			sbpObj.init();
 			
 			boolean firstPass = true; //dont apply momentum on first pass
 			
@@ -57,7 +68,7 @@ public class SBP
 				DoubleMatrix expectedOutputVector = chosenTuple.getAnswers();
 				
 				/* Get actual output from feed forward */
-				DoubleMatrix actualOutputVector = network.feedForward(inputVector);
+				DoubleMatrix actualOutputVector = sbpObj.feedForward(inputVector);
 				//System.out.println("expected: "+expectedOutputVector);
 				//System.out.println("actual "+actualOutputVector);
 				setCorrespondingOutput(cActualOutputs, expectedOutputVector, actualOutputVector, randInt);
@@ -69,21 +80,6 @@ public class SBP
 				DoubleMatrix deltaWkbias = calcDeltaWkbias(deltaK);
 				DoubleMatrix deltaWji = calcDeltaWji(deltaJ, inputVector, inputVector.columns, deltaJ.columns);
 				DoubleMatrix deltaWjbias = calcDeltaWjbias(deltaJ);
-				/*if(expectedOutputVector.get(0,0) == -1) {
-					System.out.println(-1);
-					System.out.println(deltaK);
-					System.out.println(deltaWkj);
-					System.out.println(deltaJ);
-					System.out.println(deltaWji);
-				}
-				else
-				{
-					System.out.println(1);
-					System.out.println(deltaK);
-					System.out.println(deltaWkj);
-					System.out.println(deltaJ);
-					System.out.println(deltaWji);
-				}*/
 				
 				/* Apply Momentum */
 				if(!firstPass)
@@ -103,13 +99,10 @@ public class SBP
 			
 			/* Calculate error */
 			double error = calculateError(ttOutputs, cActualOutputs);
-			System.out.println(ttOutputs);
-			System.out.println(cActualOutputs);
-			System.out.println(error);
 			/* save best network so far to disk */
 			if(error < errorThreshold) { //if below threshold
-				if(network.isBestSoFar(error)) //if best network so far, save it to disk
-					network.saveToDisk(error);
+				sbpObj.saveToDisk(error);
+				SBP.error = error;
 				return;
 			}
 		}
@@ -140,11 +133,11 @@ public class SBP
 		//delta k			(error at output layer)
 		//( (expect output k) - (actual output k) ) * sigmoid'(NETk)
 		return ( expectedOutputVector.sub(actualOutputVector) ).
-				mulRowVector(network.applySigmoidDeriv(network.getNETk()));
+				mulRowVector(sbpObj.applySigmoidDeriv(sbpObj.getNETk()));
 	}
 	
 	private static DoubleMatrix calcDeltaWkj(DoubleMatrix deltaK, int rows, int cols) {
-		DoubleMatrix Yj =(network.getACTj());
+		DoubleMatrix Yj =(sbpObj.getACTj());
 		//delta Wkj			(matrix of weight difference) 
 		//(learning rate) * deltaK * ACTj
 		DoubleMatrix deltaWkj = new DoubleMatrix(rows, cols);
@@ -161,11 +154,11 @@ public class SBP
 	
 	private static DoubleMatrix calcDeltaJ(DoubleMatrix deltaK, DoubleMatrix actualOutputVector) {
 		//sigmoid'(NETj) * (sum(Wkj) k=0 to n) * delta k
-		DoubleMatrix deltaJ = network.applySigmoidDeriv(network.getNETj());
+		DoubleMatrix deltaJ = sbpObj.applySigmoidDeriv(sbpObj.getNETj());
 		for(int i=0; i<deltaJ.columns; i++) {
 			double sum = 0.0;
 			for(int j=0; j<actualOutputVector.length; j++)
-				sum += network.getWkj().get(i,j)*deltaK.get(0,j);
+				sum += sbpObj.getWkj().get(i,j)*deltaK.get(0,j);
 			deltaJ.put(0, i, deltaJ.get(0,i)*sum);
 		}
 		return deltaJ;
@@ -190,22 +183,22 @@ public class SBP
 	
 	private static void applyMomentum(DoubleMatrix deltaWji, DoubleMatrix deltaWjbias,
 			DoubleMatrix deltaWkj, DoubleMatrix deltaWkbias) {
-		deltaWkj = deltaWkj.mmul(1-alpha).add(deltaWkjPrev.mmul(alpha));
-		deltaWkbias = deltaWkbias.mmul(1-alpha).add(deltaWkbiasPrev.mmul(alpha));
-		deltaWji = deltaWji.mmul(1-alpha).add(deltaWjiPrev.mmul(alpha));
-		deltaWjbias = deltaWjbias.mmul(1-alpha).add(deltaWjbiasPrev.mmul(alpha));
+		deltaWkj = deltaWkj.mmul(1-momentumRate).add(deltaWkjPrev.mmul(momentumRate));
+		deltaWkbias = deltaWkbias.mmul(1-momentumRate).add(deltaWkbiasPrev.mmul(momentumRate));
+		deltaWji = deltaWji.mmul(1-momentumRate).add(deltaWjiPrev.mmul(momentumRate));
+		deltaWjbias = deltaWjbias.mmul(1-momentumRate).add(deltaWjbiasPrev.mmul(momentumRate));
 	}
 	
 	private static void applyUpdates(DoubleMatrix deltaWji, DoubleMatrix deltaWjbias,
 			DoubleMatrix deltaWkj, DoubleMatrix deltaWkbias) {
 		//delta Wkj
-		network.applyWkjUpdate(deltaWkj);
+		sbpObj.applyWkjUpdate(deltaWkj);
 		//delta Wkbias
-		network.applyWkbiasUpdate(deltaWkbias);
+		sbpObj.applyWkbiasUpdate(deltaWkbias);
 		//delta Wji
-		network.applyWjiUpdate(deltaWji);
+		sbpObj.applyWjiUpdate(deltaWji);
 		//delta Wjbias
-		network.applyWjbiasUpdate(deltaWjbias);
+		sbpObj.applyWjbiasUpdate(deltaWjbias);
 	}
 	
 	public static double calculateError(ArrayList<DoubleMatrix> ttOutputs, ArrayList<DoubleMatrix> cActualOutputs) {

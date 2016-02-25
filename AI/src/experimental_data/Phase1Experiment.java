@@ -19,7 +19,7 @@ import rubiks.*;
  * 
  */
 
-public class Experiment
+public class Phase1Experiment
 {
 	private Search search;
 	private int cubeSize;
@@ -31,7 +31,7 @@ public class Experiment
 	private boolean genHumanReadableFile;
 	private boolean genTrainingData;
 	
-	public Experiment(int experimentNum, Search search, int cubeSize) {
+	public Phase1Experiment(int experimentNum, Search search, int cubeSize) {
 		this.experimentNum = experimentNum;
 		this.search = search;
 		this.cubeSize = cubeSize;

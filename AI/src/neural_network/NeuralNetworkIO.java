@@ -54,12 +54,12 @@ public class NeuralNetworkIO
 	}
 	
 	private static List<String> readFile(String filename) throws IOException {
-		Path path = Paths.get(FILE_NAME);
+		Path path = Paths.get(filename);
 		return Files.readAllLines(path, ENCODING);
 	}
 	
 	private static void writeToFile(List<String> lines, String filename) throws IOException {
-		Path path = Paths.get(FILE_NAME);
+		Path path = Paths.get(filename);
 		Files.write(path, lines, ENCODING);
 	}
 }

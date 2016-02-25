@@ -8,6 +8,7 @@ import org.jblas.*;
 
 import org.junit.Test;
 
+import experimental_data.Phase2Experiment;
 import neural_network.*;
 import training_algorithms.SBP;
 import training_data.TrainingData;
@@ -18,7 +19,7 @@ public class NNTest {
 	@Test
 	public void nnTest() {
 		NeuralNetwork NN = new NeuralNetwork();
-		SBP.setNetwork(NN);
+		SBP.setSBPImpl(NN);
 		TrainingTuple t1 = new TrainingTuple(new DoubleMatrix(new double[][] {{-1,1}}), new DoubleMatrix(new double[][] {{1}}));
 		TrainingTuple t2 = new TrainingTuple(new DoubleMatrix(new double[][] {{1,1}}), new DoubleMatrix(new double[][] {{-1}}));
 		TrainingTuple t3 = new TrainingTuple(new DoubleMatrix(new double[][] {{-1,-1}}), new DoubleMatrix(new double[][] {{-1}}));
@@ -34,10 +35,9 @@ public class NNTest {
 	
 	@Test
 	public void calcErrorTest() {
-		DoubleMatrix matrix1 = new DoubleMatrix(new double[][] {{1,-1,1,-1}});
-		ArrayList<DoubleMatrix> da = new ArrayList<DoubleMatrix>();
-		da.add(matrix1);
-		assertTrue(SBP.calculateError(da, da) == 0);
+		Phase2Experiment.runExperimentLRTR();
+		Phase2Experiment.runExperimentMRTR();
+		Phase2Experiment.runExperimentLRMR();
 	}
 
 }

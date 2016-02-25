@@ -1,4 +1,4 @@
-package experiments;
+package experimental_data;
 
 import search.*;
 import training_data.RubiksCubeTrainingDataGenerator;

@@ -11,10 +11,7 @@ public interface SBPImpl
 	
 	public void init();
 	public void saveToDisk(double error);
-	
-	public int getInputLayerSize();
-	public int getHiddenLayerSize();
-	public int getOutputLayerSize();
+
 	public DoubleMatrix getNETk();
 	public DoubleMatrix getNETj();
 	public DoubleMatrix getACTj();

@@ -25,7 +25,7 @@ public class NeuralNetwork implements SBPImpl
 	private int inputLayerSize = 2;		//layer sizes
 	private int hiddenLayerSize = 2;
 	private int outputLayerSize = 1;
-	private double initialEdgeWeight = 0.5;
+	private double initialEdgeWeight = 0.1;
 	
 	/* FEED FORWARD */
 	@Override
@@ -79,12 +79,11 @@ public class NeuralNetwork implements SBPImpl
 	public void applyWjbiasUpdate (DoubleMatrix Wjbias) { this.Wjbias.addi(Wjbias); }
 
 	//getters
-	@Override
 	public int getInputLayerSize() { return inputLayerSize; }
-	@Override
 	public int getHiddenLayerSize() { return hiddenLayerSize; }
-	@Override
 	public int getOutputLayerSize() { return outputLayerSize; }
+	public double getAVal() { return A; }
+	public double getBiasVal() { return bias; }
 	@Override
 	public DoubleMatrix getNETk() { return NETk; }
 	@Override

@@ -25,6 +25,8 @@ public class NeuralNetworkIO
 		contents.add(NN.getInputLayerSize()+"");
 		contents.add(NN.getHiddenLayerSize()+"");
 		contents.add(NN.getOutputLayerSize()+"");
+		contents.add(NN.getAVal()+"");
+		contents.add(NN.getBiasVal()+"");
 		contents.add(NN.getWji()+"");
 		contents.add(NN.getWjbias()+"");
 		contents.add(NN.getWkj()+"");
@@ -42,7 +44,7 @@ public class NeuralNetworkIO
 	static boolean isBestNetworkSoFar(double error) {
 		try {
 			List<String> contents = readFile(FILE_NAME);
-			if(Double.parseDouble(contents.get(7)) > error)
+			if(Double.parseDouble(contents.get(9)) > error)
 				return true;
 			else
 				return false;

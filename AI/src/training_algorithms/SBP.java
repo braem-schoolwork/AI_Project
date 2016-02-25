@@ -11,9 +11,9 @@ public class SBP
 {
 	//class params
 	private static int epochs = 4000;
-	private static int trainingIterations = 100000;
+	private static int trainingIterations = 1000;
 	private static double errorThreshold = 0.025;
-	private static double learningRate = 0.1;
+	private static double learningRate = 0.25;
 	private static double alpha = 0.1;
 	private static SBPImpl network;
 	
@@ -64,10 +64,10 @@ public class SBP
 				
 				/* Calculate Updates */
 				DoubleMatrix deltaK = calcDeltaK(expectedOutputVector, actualOutputVector);
-				DoubleMatrix deltaWkj = calcDeltaWkj(deltaK);
+				DoubleMatrix deltaJ = calcDeltaJ(deltaK, actualOutputVector);
+				DoubleMatrix deltaWkj = calcDeltaWkj(deltaK, deltaJ.columns, expectedOutputVector.columns);
 				DoubleMatrix deltaWkbias = calcDeltaWkbias(deltaK);
-				DoubleMatrix deltaJ = calcDeltaJ(deltaK, actualOutputVector, deltaWkj);
-				DoubleMatrix deltaWji = calcDeltaWji(deltaJ, inputVector);
+				DoubleMatrix deltaWji = calcDeltaWji(deltaJ, inputVector, inputVector.columns, deltaJ.columns);
 				DoubleMatrix deltaWjbias = calcDeltaWjbias(deltaJ);
 				/*if(expectedOutputVector.get(0,0) == -1) {
 					System.out.println(-1);
@@ -143,11 +143,11 @@ public class SBP
 				mulRowVector(network.applySigmoidDeriv(network.getNETk()));
 	}
 	
-	private static DoubleMatrix calcDeltaWkj(DoubleMatrix deltaK) {
+	private static DoubleMatrix calcDeltaWkj(DoubleMatrix deltaK, int rows, int cols) {
 		DoubleMatrix Yj =(network.getACTj());
 		//delta Wkj			(matrix of weight difference) 
 		//(learning rate) * deltaK * ACTj
-		DoubleMatrix deltaWkj = new DoubleMatrix(network.getHiddenLayerSize(), network.getOutputLayerSize());
+		DoubleMatrix deltaWkj = new DoubleMatrix(rows, cols);
 		for(int i=0; i<deltaWkj.columns; i++)
 			for(int j=0; j<deltaWkj.rows; j++)
 				deltaWkj.put(j, i, learningRate*deltaK.get(0, i)*Yj.get(0, j) );
@@ -159,7 +159,7 @@ public class SBP
 		return deltaK.mul(learningRate);
 	}
 	
-	private static DoubleMatrix calcDeltaJ(DoubleMatrix deltaK, DoubleMatrix actualOutputVector, DoubleMatrix deltaWkj) {
+	private static DoubleMatrix calcDeltaJ(DoubleMatrix deltaK, DoubleMatrix actualOutputVector) {
 		//sigmoid'(NETj) * (sum(Wkj) k=0 to n) * delta k
 		DoubleMatrix deltaJ = network.applySigmoidDeriv(network.getNETj());
 		for(int i=0; i<deltaJ.columns; i++) {
@@ -171,12 +171,12 @@ public class SBP
 		return deltaJ;
 	}
 	
-	private static DoubleMatrix calcDeltaWji(DoubleMatrix deltaJ, DoubleMatrix inputVector) {
+	private static DoubleMatrix calcDeltaWji(DoubleMatrix deltaJ, DoubleMatrix inputVector, int rows, int cols) {
 		//activation at inputs
 		DoubleMatrix ACTi = (inputVector);
 		//delta Wji			(weight updates)
 		//(learning curve) * (activation at input i) * delta j
-		DoubleMatrix deltaWji = new DoubleMatrix(network.getInputLayerSize(), network.getHiddenLayerSize());
+		DoubleMatrix deltaWji = new DoubleMatrix(rows, cols);
 		for(int i=0; i<deltaWji.rows; i++)
 			for(int j=0; j<deltaWji.columns; j++)
 				deltaWji.put(i, j, learningRate*ACTi.get(0,i)*deltaJ.get(0,j));

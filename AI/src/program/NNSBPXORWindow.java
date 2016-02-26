@@ -63,7 +63,7 @@ public class NNSBPXORWindow extends JFrame {
 	 */
 	public NNSBPXORWindow() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 710, 394);
+		setBounds(100, 100, 735, 426);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -205,7 +205,7 @@ public class NNSBPXORWindow extends JFrame {
 		contentPane.add(learningRateTF);
 		
 		momentumRateTF = new JTextField();
-		momentumRateTF.setText("0.65");
+		momentumRateTF.setText("0.3");
 		momentumRateTF.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		momentumRateTF.setColumns(10);
 		momentumRateTF.setBounds(556, 191, 106, 25);
@@ -265,7 +265,7 @@ public class NNSBPXORWindow extends JFrame {
 		contentPane.add(btnBack);
 		
 		JLabel lblnoteThatAll = new JLabel("*All default parameters are chosen through experimentation");
-		lblnoteThatAll.setBounds(10, 324, 359, 14);
+		lblnoteThatAll.setBounds(10, 324, 630, 14);
 		contentPane.add(lblnoteThatAll);
 		
 		JButton btnResetToDefaults = new JButton("Reset to Defaults");
@@ -276,9 +276,9 @@ public class NNSBPXORWindow extends JFrame {
 				biasValTF.setText("0.667");
 				epochsTF.setText("5000");
 				trainingIterationsTF.setText("3500");
-				errorThresholdTF.setText("0.0001");
+				errorThresholdTF.setText("0.00001");
 				learningRateTF.setText("0.3");
-				momentumRateTF.setText("0.65");
+				momentumRateTF.setText("0.3");
 			}
 		});
 		btnResetToDefaults.setFont(new Font("Tahoma", Font.PLAIN, 20));

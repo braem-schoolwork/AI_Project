@@ -20,8 +20,8 @@ public class Phase2Experiment implements Experiment
 {
 	private final static Charset ENCODING = StandardCharsets.UTF_8;
 	private static String LRMR_FILE_NAME = System.getProperty("user.dir")+"\\LRMR";
-	private static String LRTR_FILE_NAME = System.getProperty("user.dir")+"\\LRTR";
-	private static String MRTR_FILE_NAME = System.getProperty("user.dir")+"\\MRTR";
+	private static String LRTI_FILE_NAME = System.getProperty("user.dir")+"\\LRTI";
+	private static String MRTI_FILE_NAME = System.getProperty("user.dir")+"\\MRTI";
 	private static TrainingData trainingData;
 	
 	private static double startingLearningRate = 0.05;
@@ -36,20 +36,20 @@ public class Phase2Experiment implements Experiment
 	private static double applySBPamount = 100;
 	
 	private static double defaultLearningRate = 0.3;
-	private static double defaultMomentumRate = 0.65;
+	private static double defaultMomentumRate = 0.3;
 	private static int defaultTrainingIter = 3500;
 	
 	@Override
 	public void runExperiment(String fileExtension) {
 		LRMR_FILE_NAME += fileExtension;
-		LRTR_FILE_NAME += fileExtension;
-		MRTR_FILE_NAME += fileExtension;
-		runExperimentMRTR();
-		runExperimentLRTR();
+		LRTI_FILE_NAME += fileExtension;
+		MRTI_FILE_NAME += fileExtension;
+		runExperimentMRTI();
+		runExperimentLRTI();
 		runExperimentLRMR();
 	}
 	
-	private static void runExperimentMRTR() {
+	private static void runExperimentMRTI() {
 		setupTuples();
 		List<String> contents = new ArrayList<String>();
 		String firstRow = "MomentumRate|TrainingIterations";
@@ -74,14 +74,14 @@ public class Phase2Experiment implements Experiment
 		}
 		contents.add(0, firstRow);
 		try {
-			writeToFile(contents, MRTR_FILE_NAME);
+			writeToFile(contents, MRTI_FILE_NAME);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	private static void runExperimentLRTR() {
+	private static void runExperimentLRTI() {
 		setupTuples();
 		List<String> contents = new ArrayList<String>();
 		String firstRow = "LearningRate|TrainingIterations";
@@ -106,7 +106,7 @@ public class Phase2Experiment implements Experiment
 		}
 		contents.add(0, firstRow);
 		try {
-			writeToFile(contents, LRTR_FILE_NAME);
+			writeToFile(contents, LRTI_FILE_NAME);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -19,30 +19,19 @@ import rubiks.*;
  * 
  */
 
-public class Phase1Experiment
+public class Phase1Experiment implements Experiment
 {
-	private Search search;
-	private int cubeSize;
-	private int experimentNum;
-	private String hFriendlyFileName;
-	private String mFriendlyFileName;
-	private PrintWriter humanFriendlyWriter;
-	private PrintWriter machineFriendlyWriter;
-	private boolean genHumanReadableFile;
-	private boolean genTrainingData;
+	private static Search search = new AstarSearch();
+	private static int cubeSize = 3;
+	private static String hFriendlyFileName;
+	private static String mFriendlyFileName;
+	private static PrintWriter humanFriendlyWriter;
+	private static PrintWriter machineFriendlyWriter;
 	
-	public Phase1Experiment(int experimentNum, Search search, int cubeSize) {
-		this.experimentNum = experimentNum;
-		this.search = search;
-		this.cubeSize = cubeSize;
-	}
-	
-	public void runExperiment(String fileExtension, boolean genHumanReadableFile, boolean genTrainingData) {
-		this.genHumanReadableFile = genHumanReadableFile;
-		this.genTrainingData = genTrainingData;
+	@Override
+	public void runExperiment(String fileExtension) {
 		setupFiles(fileExtension);
-		if(genHumanReadableFile)
-			humanFriendlyWriter.println("Experiment Number, Number of Perturbations, Rubik's Cube, Move Applied, Runtime");
+		humanFriendlyWriter.println("Experiment Number, Number of Perturbations, Rubik's Cube, Move Applied, Runtime");
 		for(int j=1; j<=8; j++) {
 			for(int k=1; k<=5; k++) {
 				RubiksCube rubiksCube = new RubiksCube(cubeSize);
@@ -60,19 +49,16 @@ public class Phase1Experiment
 					moves.clear();
 				
 			}
-			if(genHumanReadableFile)
-				humanFriendlyWriter.println();
+			humanFriendlyWriter.println();
 		}
-		if(genHumanReadableFile)
-			humanFriendlyWriter.close();
-		if(genTrainingData)
-			machineFriendlyWriter.close();
+		humanFriendlyWriter.close();
+		machineFriendlyWriter.close();
 	}
 	
-	private void writeResults(ArrayList<Searchable> cubes, ArrayList<Edge> moves, int perturbations, double duration) {
+	private static void writeResults(ArrayList<Searchable> cubes, ArrayList<Edge> moves, int perturbations, double duration) {
 		for(int i=0; i<cubes.size(); i++) {
 			//human readable entry
-			String hEntry = experimentNum + "," + perturbations + "," + cubes.get(i).toString().replaceAll(",", "");
+			String hEntry = "Phase 1" + "," + perturbations + "," + cubes.get(i).toString().replaceAll(",", "");
 			
 			//training data entry
 			String mEntry = "";
@@ -84,46 +70,40 @@ public class Phase1Experiment
 			} catch(Exception e) {
 				hEntry += ",," + duration;
 			}
-			if(genHumanReadableFile)
-				humanFriendlyWriter.println(hEntry);
-			if(genTrainingData)
-				machineFriendlyWriter.print(mEntry+'\t');
+			humanFriendlyWriter.println(hEntry);
+			machineFriendlyWriter.print(mEntry+'\t');
 		}
 	}
 
-	private void setupFiles(String fileExtension) {
-		if(genHumanReadableFile) {
-			this.hFriendlyFileName = System.getProperty("user.dir") + "\\Experiment"+experimentNum+fileExtension;
-			try {
-				this.humanFriendlyWriter = new PrintWriter(hFriendlyFileName, "UTF-8");
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-			System.out.println("Human Readable File written to: ");
-			System.out.println(hFriendlyFileName);
-			System.out.println();
+	private static void setupFiles(String fileExtension) {
+		hFriendlyFileName = System.getProperty("user.dir") + "\\Phase1Experiment"+fileExtension;
+		try {
+			humanFriendlyWriter = new PrintWriter(hFriendlyFileName, "UTF-8");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
 		}
+		System.out.println("Human Readable File written to: ");
+		System.out.println(hFriendlyFileName);
+		System.out.println();
 		
-		if(genTrainingData) {
-			this.mFriendlyFileName = System.getProperty("user.dir")+"\\Experiment"+experimentNum+"TrainingData"+fileExtension;
-			try {
-				this.machineFriendlyWriter = new PrintWriter(mFriendlyFileName, "UTF-8");
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-			System.out.println("Training Data File written to: ");
-			System.out.println(mFriendlyFileName);
-			System.out.println();
-			System.out.println();
+		mFriendlyFileName = System.getProperty("user.dir")+"\\Phase1Experiment_TrainingData"+fileExtension;
+		try {
+			machineFriendlyWriter = new PrintWriter(mFriendlyFileName, "UTF-8");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
 		}
+		System.out.println("Training Data File written to: ");
+		System.out.println(mFriendlyFileName);
+		System.out.println();
+		System.out.println();
 	}
 	
 	@Override
 	public String toString() {
-		return "Experiment "+experimentNum;
+		return "Phase1";
 	}
 }

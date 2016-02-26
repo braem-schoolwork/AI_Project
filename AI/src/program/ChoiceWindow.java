@@ -54,7 +54,7 @@ public class ChoiceWindow extends JFrame {
 	 */
 	public ChoiceWindow() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 325, 234);
+		setBounds(100, 100, 523, 317);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -69,10 +69,10 @@ public class ChoiceWindow extends JFrame {
 			}
 		});
 		btnRunExperiments.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		btnRunExperiments.setBounds(10, 11, 264, 71);
+		btnRunExperiments.setBounds(103, 11, 264, 71);
 		contentPane.add(btnRunExperiments);
 		
-		JButton btnCreateManipulate = new JButton("Create & Manipulate");
+		JButton btnCreateManipulate = new JButton("Create & Manipulate a Rubik's Cube");
 		btnCreateManipulate.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		btnCreateManipulate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -81,8 +81,20 @@ public class ChoiceWindow extends JFrame {
 				window.enable();
 			}
 		});
-		btnCreateManipulate.setBounds(10, 89, 264, 71);
+		btnCreateManipulate.setBounds(10, 93, 464, 71);
 		contentPane.add(btnCreateManipulate);
+		
+		JButton btnCreateNn = new JButton("Create NN & Run SBP on XOR");
+		btnCreateNn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				NNSBPXORWindow window = new NNSBPXORWindow();
+				thisFrame.dispose();
+				window.enable();
+			}
+		});
+		btnCreateNn.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		btnCreateNn.setBounds(35, 175, 410, 71);
+		contentPane.add(btnCreateNn);
 	}
 
 }

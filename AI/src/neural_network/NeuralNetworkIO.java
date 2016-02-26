@@ -70,11 +70,14 @@ public class NeuralNetworkIO
 	static boolean isBestNetworkSoFar(double error) {
 		try {
 			List<String> contents = readFile(FILE_NAME);
-			if(Double.parseDouble(contents.get(9)) > error)
+			if(Double.parseDouble(contents.get(9)) > error) {
+				System.out.println("New Best Neural Network Found!");
 				return true;
+			}
 			else
 				return false;
 		} catch (IOException e) {
+			System.out.println("New Best Neural Network Found!");
 			return true;
 		}
 	}

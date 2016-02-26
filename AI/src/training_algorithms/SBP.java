@@ -12,6 +12,7 @@ import training_data.TrainingTuple;
  * @author braem
  *
  * Stochastic Back Propagation Algorithm
+ * 
  */
 public class SBP
 {
@@ -36,7 +37,7 @@ public class SBP
 	public static void setErrorThreshold(double errorThreshold) { SBP.errorThreshold = errorThreshold; }
 	public static void setLearningRate(double learningRate) { SBP.learningRate = learningRate; }
 	public static void setMomentumRate(double momentumRate) { SBP.momentumRate = momentumRate; }
-	public static void setTrainee(SBPImpl sbpObj) { SBP.trainee = sbpObj; }
+	public static void setTrainee(SBPImpl trainee) { SBP.trainee = trainee; }
 	
 	//getters
 	public static int getEpochs() { return epochs; }
@@ -49,6 +50,7 @@ public class SBP
 	
 	//SBP method
 	public static void apply(TrainingData trainingData) {
+		
 		for(int epoch=0; epoch<epochs; epoch++) { //epoch loop
 			
 			//keep track of training tuple outputs
@@ -110,6 +112,7 @@ public class SBP
 				return;
 			}
 		}
+		
 	}
 	
 	private static void setCorrespondingOutput(ArrayList<DoubleMatrix> cActualOutputs,
@@ -141,7 +144,7 @@ public class SBP
 	}
 	
 	private static DoubleMatrix calcDeltaWkj(DoubleMatrix deltaK, int rows, int cols) {
-		DoubleMatrix Yj =(trainee.getACTj());
+		DoubleMatrix Yj = trainee.getACTj();
 		//delta Wkj			(matrix of weight difference) 
 		//(learning rate) * deltaK * ACTj
 		DoubleMatrix deltaWkj = new DoubleMatrix(rows, cols);
@@ -170,7 +173,7 @@ public class SBP
 	
 	private static DoubleMatrix calcDeltaWji(DoubleMatrix deltaJ, DoubleMatrix inputVector, int rows, int cols) {
 		//activation at inputs
-		DoubleMatrix ACTi = (inputVector);
+		DoubleMatrix ACTi = inputVector;
 		//delta Wji			(weight updates)
 		//(learning curve) * (activation at input i) * delta j
 		DoubleMatrix deltaWji = new DoubleMatrix(rows, cols);
@@ -205,7 +208,7 @@ public class SBP
 		trainee.applyWjbiasUpdate(deltaWjbias);
 	}
 	
-	public static double calculateError(ArrayList<DoubleMatrix> ttOutputs, ArrayList<DoubleMatrix> cActualOutputs) {
+	private static double calculateError(ArrayList<DoubleMatrix> ttOutputs, ArrayList<DoubleMatrix> cActualOutputs) {
 		DoubleMatrix errorVec = DoubleMatrix.zeros(1, ttOutputs.get(0).columns);
 		for(int i=0; i<ttOutputs.size(); i++) {
 			if(cActualOutputs.get(i) != null) {
@@ -214,6 +217,10 @@ public class SBP
 			}
 		}
 		errorVec.mmuli(0.5);
-		return errorVec.get(0,0);
+		double error = 0.0;
+		for(int i=0; i<errorVec.columns; i++) {
+			error += errorVec.get(0,i);
+		}
+		return error;
 	}
 }

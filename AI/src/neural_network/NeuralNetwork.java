@@ -8,24 +8,43 @@ import training_algorithms.SBPImpl;
  * 
  * @author braem
  *
+ * Input/Hidden/Output Layered Neural Network
  * 
  */
 
 public class NeuralNetwork implements SBPImpl
 {
-	private DoubleMatrix Wji;			//Weight matrices
+	private DoubleMatrix Wji;		//Weight matrices
 	private DoubleMatrix Wkj;
 	private DoubleMatrix Wjbias;
 	private DoubleMatrix Wkbias;
-	private double A = 1.716;			//Sigmoid function related
-	private double bias = 0.667;
-	private DoubleMatrix NETk;			//Nets stored in feedForward for SBP
+	private double A;				//Sigmoid function related
+	private double bias;
+	private DoubleMatrix NETk;		//Nets stored in feedForward for SBP
 	private DoubleMatrix NETj;
 	private DoubleMatrix ACTj;
-	private int inputLayerSize = 2;		//layer sizes
-	private int hiddenLayerSize = 2;
-	private int outputLayerSize = 1;
-	private double initialEdgeWeight = 0.1;
+	private int inputLayerSize;		//layer sizes
+	private int hiddenLayerSize;
+	private int outputLayerSize;
+	private double initialEdgeWeight;
+	
+	public NeuralNetwork() { //initialize for basic XOR NN
+		A = 1.716;	
+		bias = 0.667;
+		inputLayerSize = 2;	
+		hiddenLayerSize = 2;
+		outputLayerSize = 1;
+		initialEdgeWeight = 0.1;
+	}
+	
+	public NeuralNetwork(double A, double bias, int inputLayerSize, int hiddenLayerSize, int outputLayerSize, double initialEdgeWeight) {
+		this.A = A;
+		this.bias = bias;
+		this.inputLayerSize = inputLayerSize;
+		this.hiddenLayerSize = hiddenLayerSize;
+		this.outputLayerSize = outputLayerSize;
+		this.initialEdgeWeight = initialEdgeWeight;
+	}
 	
 	/* FEED FORWARD */
 	@Override
@@ -39,6 +58,7 @@ public class NeuralNetwork implements SBPImpl
 		//Hidden Act Matrix = tanh(hiddenNetMatrix*bias)*A
 		DoubleMatrix hiddenActMatrix = applySigmoid(hiddenNetMatrix);
 		ACTj = hiddenActMatrix;
+		
 		/* OUTPUT LAYER */
 		//Output Net Matrix = hiddenActMatrix*Wkj + Wkbias*bias
 		DoubleMatrix outputNetMatrix = hiddenActMatrix.mmul(Wkj).add(Wkbias.mmul(bias));
@@ -46,12 +66,6 @@ public class NeuralNetwork implements SBPImpl
 		
 		//Actual Output Matrix = tanh(outputNetMatrix*bias)*A
 		DoubleMatrix outputActMatrix = applySigmoid(outputNetMatrix);
-		
-		/*System.out.println("FF");
-		System.out.println(Wji);
-		System.out.println(Wjbias);
-		System.out.println(Wkj);
-		System.out.println(Wkbias);*/
 		
 		//return actual output matrix
 		return outputActMatrix;
@@ -82,6 +96,7 @@ public class NeuralNetwork implements SBPImpl
 	public int getInputLayerSize() { return inputLayerSize; }
 	public int getHiddenLayerSize() { return hiddenLayerSize; }
 	public int getOutputLayerSize() { return outputLayerSize; }
+	public double getInitialEdgeWeight() { return initialEdgeWeight; }
 	public double getAVal() { return A; }
 	public double getBiasVal() { return bias; }
 	@Override
@@ -137,7 +152,7 @@ public class NeuralNetwork implements SBPImpl
 			NeuralNetworkIO.writeNetwork(this, error);
 	}
 
-	public boolean isBestSoFar(double error) {
+	public static boolean isBestSoFar(double error) {
 		return NeuralNetworkIO.isBestNetworkSoFar(error);
 	}
 

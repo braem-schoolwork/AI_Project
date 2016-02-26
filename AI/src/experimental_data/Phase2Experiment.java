@@ -16,12 +16,12 @@ import training_algorithms.SBP;
 import training_data.TrainingData;
 import training_data.TrainingTuple;
 
-public class Phase2Experiment
+public class Phase2Experiment implements Experiment
 {
 	private final static Charset ENCODING = StandardCharsets.UTF_8;
-	private final static String LRMR_FILE_NAME = System.getProperty("user.dir")+"\\LRMR.csv";
-	private final static String LRTR_FILE_NAME = System.getProperty("user.dir")+"\\LRTR.csv";
-	private final static String MRTR_FILE_NAME = System.getProperty("user.dir")+"\\MRTR.csv";
+	private static String LRMR_FILE_NAME = System.getProperty("user.dir")+"\\LRMR";
+	private static String LRTR_FILE_NAME = System.getProperty("user.dir")+"\\LRTR";
+	private static String MRTR_FILE_NAME = System.getProperty("user.dir")+"\\MRTR";
 	private static TrainingData trainingData;
 	
 	private static double startingLearningRate = 0.05;
@@ -36,13 +36,24 @@ public class Phase2Experiment
 	private static double applySBPamount = 100;
 	
 	private static double defaultLearningRate = 0.3;
-	private static double defaultMomentumRate = 0.3;
-	private static int defaultTrainingIter = 1000;
+	private static double defaultMomentumRate = 0.65;
+	private static int defaultTrainingIter = 3500;
 	
-	public static void runExperimentMRTR() {
+	@Override
+	public void runExperiment(String fileExtension) {
+		LRMR_FILE_NAME += fileExtension;
+		LRTR_FILE_NAME += fileExtension;
+		MRTR_FILE_NAME += fileExtension;
+		runExperimentMRTR();
+		runExperimentLRTR();
+		runExperimentLRMR();
+	}
+	
+	private static void runExperimentMRTR() {
 		setupTuples();
 		List<String> contents = new ArrayList<String>();
-		String firstRow = "LearningRate|TrainingIterations";
+		String firstRow = "MomentumRate|TrainingIterations";
+		boolean firstPass = true;
 		for(double i=startingMomentumRate; i<=endingMomentumRate; i+=momentumRateIncrease) {
 			String row = i+"";
 			SBP.setMomentumRate(i);
@@ -54,11 +65,12 @@ public class Phase2Experiment
 					errorAvg += SBP.getError();
 				}
 				errorAvg /= applySBPamount;
-				firstRow += ","+j;
+				if(firstPass) firstRow += ","+j;
 				row += ","+errorAvg;
 			}
 			contents.add(row);
 			System.out.println(i);
+			firstPass = false;
 		}
 		contents.add(0, firstRow);
 		try {
@@ -69,10 +81,11 @@ public class Phase2Experiment
 		}
 	}
 	
-	public static void runExperimentLRTR() {
+	private static void runExperimentLRTR() {
 		setupTuples();
 		List<String> contents = new ArrayList<String>();
 		String firstRow = "LearningRate|TrainingIterations";
+		boolean firstPass = true;
 		for(double i=startingLearningRate; i<=endingLearningRate; i+=learningRateIncrease) {
 			String row = i+"";
 			SBP.setLearningRate(i);
@@ -84,11 +97,12 @@ public class Phase2Experiment
 					errorAvg += SBP.getError();
 				}
 				errorAvg /= applySBPamount;
-				firstRow += ","+j;
+				if(firstPass) firstRow += ","+j;
 				row += ","+errorAvg;
 			}
 			contents.add(row);
 			System.out.println(i);
+			firstPass = false;
 		}
 		contents.add(0, firstRow);
 		try {
@@ -99,10 +113,11 @@ public class Phase2Experiment
 		}
 	}
 	
-	public static void runExperimentLRMR() {
+	private static void runExperimentLRMR() {
 		setupTuples();
 		List<String> contents = new ArrayList<String>();
 		String firstRow = "LearningRate|MomentumRate";
+		boolean firstPass = true;
 		for(double i=startingLearningRate; i<=endingLearningRate; i+=learningRateIncrease) {
 			String row = i+"";
 			SBP.setLearningRate(i);
@@ -114,11 +129,12 @@ public class Phase2Experiment
 					errorAvg += SBP.getError();
 				}
 				errorAvg /= applySBPamount;
-				firstRow += ","+j;
+				if(firstPass) firstRow += ","+j;
 				row += ","+errorAvg;
 			}
 			contents.add(row);
 			System.out.println(i);
+			firstPass = false;
 		}
 		contents.add(0, firstRow);
 		try {
@@ -154,5 +170,10 @@ public class Phase2Experiment
 		SBP.setMomentumRate(defaultMomentumRate);
 		SBP.setTrainingIterations(defaultTrainingIter);
 		SBP.setErrorThreshold(Double.MAX_VALUE);
+	}
+
+	@Override
+	public String toString() {
+		return "Phase2";
 	}
 }

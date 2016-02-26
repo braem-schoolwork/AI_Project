@@ -11,16 +11,17 @@ import training_data.TrainingTuple;
  * 
  * @author braem
  *
+ * Stochastic Back Propagation Algorithm
  */
 public class SBP
 {
 	//class params initialized to best values from experimentation
 	private static int epochs = 5000;
 	private static int trainingIterations = 3500;
-	private static double errorThreshold = 0.00001;
+	private static double errorThreshold = 0.0001;
 	private static double learningRate = 0.30;
 	private static double momentumRate = 0.65;
-	private static SBPImpl sbpObj;
+	private static SBPImpl trainee;
 	private static double error;
 	
 	//keeping track of previous values
@@ -35,7 +36,7 @@ public class SBP
 	public static void setErrorThreshold(double errorThreshold) { SBP.errorThreshold = errorThreshold; }
 	public static void setLearningRate(double learningRate) { SBP.learningRate = learningRate; }
 	public static void setMomentumRate(double momentumRate) { SBP.momentumRate = momentumRate; }
-	public static void setSBPImpl(SBPImpl sbpObj) { SBP.sbpObj = sbpObj; }
+	public static void setTrainee(SBPImpl sbpObj) { SBP.trainee = sbpObj; }
 	
 	//getters
 	public static int getEpochs() { return epochs; }
@@ -43,39 +44,37 @@ public class SBP
 	public static double getErrorThreshold() { return errorThreshold; }
 	public static double getLearningRate() { return learningRate; }
 	public static double getMomentumRate() { return momentumRate; }
-	public static SBPImpl getSBPImpl() { return sbpObj; }
+	public static SBPImpl getTrainee() { return trainee; }
 	public static double getError() { return error; }
 	
 	//SBP method
 	public static void apply(TrainingData trainingData) {
-		//get the training data
-		ArrayList<TrainingTuple> data = trainingData.getData();
-		for(int epoch=0; epoch<epochs; epoch++) {
+		for(int epoch=0; epoch<epochs; epoch++) { //epoch loop
 			
+			//keep track of training tuple outputs
 			ArrayList<DoubleMatrix> ttOutputs = new ArrayList<DoubleMatrix>();
-			for(TrainingTuple tt : data)
+			for(TrainingTuple tt : trainingData.getData())
 				ttOutputs.add(tt.getAnswers());
+			//keep track of best actual output corresponding to each tuple output
 			ArrayList<DoubleMatrix> cActualOutputs = new ArrayList<DoubleMatrix>(ttOutputs.size());
 			for(int i=0; i<ttOutputs.size(); i++)
 				cActualOutputs.add(null);
 			
-			/* initialize NN */
-			sbpObj.init();
+			/* initialize trainee */
+			trainee.init();
 			
 			boolean firstPass = true; //dont apply momentum on first pass
 			
-			for(int iter=0; iter<trainingIterations; iter++) {
+			for(int iter=0; iter<trainingIterations; iter++) { //training iteration loop
 				/* pick a training tuple from trainer at random */
 				Random rand = new Random();
-				int randInt = rand.nextInt(data.size());
-				TrainingTuple chosenTuple = data.get(randInt);
+				int randInt = rand.nextInt(trainingData.getData().size());
+				TrainingTuple chosenTuple = trainingData.getData().get(randInt);
 				DoubleMatrix inputVector = chosenTuple.getInputs();
 				DoubleMatrix expectedOutputVector = chosenTuple.getAnswers();
 				
 				/* Get actual output from feed forward */
-				DoubleMatrix actualOutputVector = sbpObj.feedForward(inputVector);
-				//System.out.println("expected: "+expectedOutputVector);
-				//System.out.println("actual "+actualOutputVector);
+				DoubleMatrix actualOutputVector = trainee.feedForward(inputVector);
 				setCorrespondingOutput(cActualOutputs, expectedOutputVector, actualOutputVector, randInt);
 				
 				/* Calculate Updates */
@@ -106,7 +105,7 @@ public class SBP
 			double error = calculateError(ttOutputs, cActualOutputs);
 			/* save best network so far to disk */
 			if(error < errorThreshold) { //if below threshold
-				sbpObj.saveToDisk(error);
+				trainee.saveToDisk(error);
 				SBP.error = error;
 				return;
 			}
@@ -138,11 +137,11 @@ public class SBP
 		//delta k			(error at output layer)
 		//( (expect output k) - (actual output k) ) * sigmoid'(NETk)
 		return ( expectedOutputVector.sub(actualOutputVector) ).
-				mulRowVector(sbpObj.applySigmoidDeriv(sbpObj.getNETk()));
+				mulRowVector(trainee.applySigmoidDeriv(trainee.getNETk()));
 	}
 	
 	private static DoubleMatrix calcDeltaWkj(DoubleMatrix deltaK, int rows, int cols) {
-		DoubleMatrix Yj =(sbpObj.getACTj());
+		DoubleMatrix Yj =(trainee.getACTj());
 		//delta Wkj			(matrix of weight difference) 
 		//(learning rate) * deltaK * ACTj
 		DoubleMatrix deltaWkj = new DoubleMatrix(rows, cols);
@@ -159,11 +158,11 @@ public class SBP
 	
 	private static DoubleMatrix calcDeltaJ(DoubleMatrix deltaK, DoubleMatrix actualOutputVector) {
 		//sigmoid'(NETj) * (sum(Wkj) k=0 to n) * delta k
-		DoubleMatrix deltaJ = sbpObj.applySigmoidDeriv(sbpObj.getNETj());
+		DoubleMatrix deltaJ = trainee.applySigmoidDeriv(trainee.getNETj());
 		for(int i=0; i<deltaJ.columns; i++) {
 			double sum = 0.0;
 			for(int j=0; j<actualOutputVector.length; j++)
-				sum += sbpObj.getWkj().get(i,j)*deltaK.get(0,j);
+				sum += trainee.getWkj().get(i,j)*deltaK.get(0,j);
 			deltaJ.put(0, i, deltaJ.get(0,i)*sum);
 		}
 		return deltaJ;
@@ -197,13 +196,13 @@ public class SBP
 	private static void applyUpdates(DoubleMatrix deltaWji, DoubleMatrix deltaWjbias,
 			DoubleMatrix deltaWkj, DoubleMatrix deltaWkbias) {
 		//delta Wkj
-		sbpObj.applyWkjUpdate(deltaWkj);
+		trainee.applyWkjUpdate(deltaWkj);
 		//delta Wkbias
-		sbpObj.applyWkbiasUpdate(deltaWkbias);
+		trainee.applyWkbiasUpdate(deltaWkbias);
 		//delta Wji
-		sbpObj.applyWjiUpdate(deltaWji);
+		trainee.applyWjiUpdate(deltaWji);
 		//delta Wjbias
-		sbpObj.applyWjbiasUpdate(deltaWjbias);
+		trainee.applyWjbiasUpdate(deltaWjbias);
 	}
 	
 	public static double calculateError(ArrayList<DoubleMatrix> ttOutputs, ArrayList<DoubleMatrix> cActualOutputs) {

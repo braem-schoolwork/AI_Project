@@ -13,31 +13,30 @@ import neural_network.*;
 import training_algorithms.SBP;
 import training_data.TrainingData;
 import training_data.TrainingTuple;
+import training_data.XORTrainingDataGenerator;
 
 public class NNTest {
 	
 	@Test
-	public void nnTest() {
-		NeuralNetwork NN = new NeuralNetwork();
-		SBP.setSBPImpl(NN);
-		TrainingTuple t1 = new TrainingTuple(new DoubleMatrix(new double[][] {{-1,1}}), new DoubleMatrix(new double[][] {{1}}));
-		TrainingTuple t2 = new TrainingTuple(new DoubleMatrix(new double[][] {{1,1}}), new DoubleMatrix(new double[][] {{-1}}));
-		TrainingTuple t3 = new TrainingTuple(new DoubleMatrix(new double[][] {{-1,-1}}), new DoubleMatrix(new double[][] {{-1}}));
-		TrainingTuple t4 = new TrainingTuple(new DoubleMatrix(new double[][] {{1,-1}}), new DoubleMatrix(new double[][] {{1}}));
-		ArrayList<TrainingTuple> tuples = new ArrayList<TrainingTuple>();
-		tuples.add(t1); 
-		tuples.add(t2); 
-		tuples.add(t3); 
-		tuples.add(t4); 
-		TrainingData data = new TrainingData(tuples);
-		SBP.apply(data);
+	public void errorTest() {
+		SBP.setTrainee(new NeuralNetwork());
+		SBP.apply(XORTrainingDataGenerator.gen());
+		assertTrue(SBP.getError() >= 0);
 	}
 	
 	@Test
 	public void calcErrorTest() {
-		Phase2Experiment.runExperimentLRTR();
+		/*Phase2Experiment.runExperimentLRTR();
 		Phase2Experiment.runExperimentMRTR();
-		Phase2Experiment.runExperimentLRMR();
+		Phase2Experiment.runExperimentLRMR();*/
+	}
+	
+	@Test
+	public void matrixIOText() {
+		DoubleMatrix m1 = new DoubleMatrix(new double[][] {{-1,1}});
+		String m1str = m1.toString().replace('[', ' ').replace(']', ' ').replace(',', ' ');
+		DoubleMatrix m2 = DoubleMatrix.valueOf(m1str);
+		assertTrue(m1.equals(m2));
 	}
 
 }

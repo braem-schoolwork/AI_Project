@@ -103,6 +103,10 @@ public class NeuralNetwork implements SBPImpl
 	public void setInitialEdgeWeight(double p) { this.initialEdgeWeight = p; }
 	public void setA(double a) { this.A = a; }
 	public void setBias(double bias) { this.bias = bias; }
+	void setWji(DoubleMatrix Wji) { this.Wji = Wji; }
+	void setWjbias(DoubleMatrix Wjbias) { this.Wjbias = Wjbias; }
+	void setWkj(DoubleMatrix Wkj) { this.Wkj = Wkj; }
+	void setWkbias(DoubleMatrix Wkbias) { this.Wkbias = Wkbias; }
 
 	/* Initialize this network */
 	@Override

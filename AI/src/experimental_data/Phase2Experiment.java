@@ -136,7 +136,7 @@ public class Phase2Experiment
 	
 	private static void setupTuples() {
 		NeuralNetwork NN = new NeuralNetwork();
-		SBP.setSBPImpl(NN);
+		SBP.setTrainee(NN);
 		TrainingTuple t1 = new TrainingTuple(new DoubleMatrix(new double[][] {{-1,1}}), new DoubleMatrix(new double[][] {{1}}));
 		TrainingTuple t2 = new TrainingTuple(new DoubleMatrix(new double[][] {{1,1}}), new DoubleMatrix(new double[][] {{-1}}));
 		TrainingTuple t3 = new TrainingTuple(new DoubleMatrix(new double[][] {{-1,-1}}), new DoubleMatrix(new double[][] {{-1}}));

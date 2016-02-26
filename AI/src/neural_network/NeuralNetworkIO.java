@@ -9,6 +9,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jblas.DoubleMatrix;
+
 /**
  * 
  * @author braem
@@ -39,6 +41,30 @@ public class NeuralNetworkIO
 		} catch (IOException e) {
 			return false;
 		}
+	}
+	
+	static NeuralNetwork readNetwork() {
+		NeuralNetwork NN = new NeuralNetwork();
+		List<String> contents;
+		try {
+			contents = readFile(FILE_NAME);
+		} catch (IOException e) {
+			return null;
+		}
+		try {
+			NN.setInputLayerSize(Integer.parseInt(contents.get(0)));
+			NN.setHiddenLayerSize(Integer.parseInt(contents.get(1)));
+			NN.setOutputLayerSize(Integer.parseInt(contents.get(2)));
+			NN.setA(Double.parseDouble(contents.get(3)));
+			NN.setBias(Double.parseDouble(contents.get(4)));
+			NN.setWji(DoubleMatrix.valueOf(contents.get(5).replace('[', ' ').replace(']', ' ').replace(',', ' ')));
+			NN.setWjbias(DoubleMatrix.valueOf(contents.get(6).replace('[', ' ').replace(']', ' ').replace(',', ' ')));
+			NN.setWkj(DoubleMatrix.valueOf(contents.get(7).replace('[', ' ').replace(']', ' ').replace(',', ' ')));
+			NN.setWkbias(DoubleMatrix.valueOf(contents.get(8).replace('[', ' ').replace(']', ' ').replace(',', ' ')));
+		} catch(NumberFormatException e) {
+			return null;
+		}
+		return NN;
 	}
 	
 	static boolean isBestNetworkSoFar(double error) {

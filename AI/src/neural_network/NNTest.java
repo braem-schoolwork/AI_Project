@@ -1,12 +1,10 @@
-package unit_tests;
+package neural_network;
 
 import static org.junit.Assert.*;
 
 import org.jblas.*;
 
 import org.junit.Test;
-
-import neural_network.*;
 
 public class NNTest {
 	

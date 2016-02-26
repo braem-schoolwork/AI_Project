@@ -21,7 +21,7 @@ public class SBP
 	private static int trainingIterations = 3500;
 	private static double errorThreshold = 0.0001;
 	private static double learningRate = 0.30;
-	private static double momentumRate = 0.65;
+	private static double momentumRate = 0.30;
 	private static SBPImpl trainee;
 	private static double error;
 	
@@ -50,9 +50,7 @@ public class SBP
 	
 	//SBP method
 	public static void apply(TrainingData trainingData) {
-		
 		for(int epoch=0; epoch<epochs; epoch++) { //epoch loop
-			
 			//keep track of training tuple outputs
 			ArrayList<DoubleMatrix> ttOutputs = new ArrayList<DoubleMatrix>();
 			for(TrainingTuple tt : trainingData.getData())
@@ -61,12 +59,9 @@ public class SBP
 			ArrayList<DoubleMatrix> cActualOutputs = new ArrayList<DoubleMatrix>(ttOutputs.size());
 			for(int i=0; i<ttOutputs.size(); i++)
 				cActualOutputs.add(null);
-			
 			/* initialize trainee */
 			trainee.init();
-			
 			boolean firstPass = true; //dont apply momentum on first pass
-			
 			for(int iter=0; iter<trainingIterations; iter++) { //training iteration loop
 				/* pick a training tuple from trainer at random */
 				Random rand = new Random();
@@ -208,7 +203,7 @@ public class SBP
 		trainee.applyWjbiasUpdate(deltaWjbias);
 	}
 	
-	private static double calculateError(ArrayList<DoubleMatrix> ttOutputs, ArrayList<DoubleMatrix> cActualOutputs) {
+	static double calculateError(ArrayList<DoubleMatrix> ttOutputs, ArrayList<DoubleMatrix> cActualOutputs) {
 		DoubleMatrix errorVec = DoubleMatrix.zeros(1, ttOutputs.get(0).columns);
 		for(int i=0; i<ttOutputs.size(); i++) {
 			if(cActualOutputs.get(i) != null) {

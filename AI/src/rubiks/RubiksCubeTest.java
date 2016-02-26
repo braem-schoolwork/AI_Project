@@ -1,7 +1,6 @@
-package unit_tests;
+package rubiks;
 
 import static org.junit.Assert.*;
-import rubiks.*;
 
 import org.junit.Test;
 

@@ -52,7 +52,7 @@ public class Phase2Experiment implements Experiment
 	private static void runExperimentMRTI() {
 		setupTuples();
 		List<String> contents = new ArrayList<String>();
-		String firstRow = "MomentumRate|TrainingIterations";
+		String firstRow = "MR|TI";
 		boolean firstPass = true;
 		for(double i=startingMomentumRate; i<=endingMomentumRate; i+=momentumRateIncrease) {
 			String row = i+"";
@@ -69,22 +69,18 @@ public class Phase2Experiment implements Experiment
 				row += ","+errorAvg;
 			}
 			contents.add(row);
-			System.out.println(i);
 			firstPass = false;
 		}
 		contents.add(0, firstRow);
 		try {
 			writeToFile(contents, MRTI_FILE_NAME);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (IOException e) { }
 	}
 	
 	private static void runExperimentLRTI() {
 		setupTuples();
 		List<String> contents = new ArrayList<String>();
-		String firstRow = "LearningRate|TrainingIterations";
+		String firstRow = "LR|TI";
 		boolean firstPass = true;
 		for(double i=startingLearningRate; i<=endingLearningRate; i+=learningRateIncrease) {
 			String row = i+"";
@@ -101,22 +97,18 @@ public class Phase2Experiment implements Experiment
 				row += ","+errorAvg;
 			}
 			contents.add(row);
-			System.out.println(i);
 			firstPass = false;
 		}
 		contents.add(0, firstRow);
 		try {
 			writeToFile(contents, LRTI_FILE_NAME);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (IOException e) { }
 	}
 	
 	private static void runExperimentLRMR() {
 		setupTuples();
 		List<String> contents = new ArrayList<String>();
-		String firstRow = "LearningRate|MomentumRate";
+		String firstRow = "LR|MR";
 		boolean firstPass = true;
 		for(double i=startingLearningRate; i<=endingLearningRate; i+=learningRateIncrease) {
 			String row = i+"";
@@ -133,16 +125,12 @@ public class Phase2Experiment implements Experiment
 				row += ","+errorAvg;
 			}
 			contents.add(row);
-			System.out.println(i);
 			firstPass = false;
 		}
 		contents.add(0, firstRow);
 		try {
 			writeToFile(contents, LRMR_FILE_NAME);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (IOException e) { }
 	}
 	
 	private static void writeToFile(List<String> lines, String filename) throws IOException {

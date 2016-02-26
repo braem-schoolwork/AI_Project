@@ -37,6 +37,7 @@ public class NNSBPXORWindow extends JFrame {
 	private JTextField errorThresholdTF;
 	private JTextField learningRateTF;
 	private JTextField momentumRateTF;
+	private JTextField trainingErrorTF;
 
 	/**
 	 * Launch the application.
@@ -63,7 +64,7 @@ public class NNSBPXORWindow extends JFrame {
 	 */
 	public NNSBPXORWindow() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 735, 426);
+		setBounds(100, 100, 738, 455);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -241,6 +242,7 @@ public class NNSBPXORWindow extends JFrame {
 					SBP.setMomentumRate(momentumRate);
 					SBP.setTrainee(NN);
 					SBP.apply(XORTrainingDataGenerator.gen());
+					trainingErrorTF.setText(SBP.getError()+"");
 					lblError.setText("");
 				} catch(NumberFormatException e) {
 					lblError.setText("Invalid Parameters");
@@ -265,7 +267,7 @@ public class NNSBPXORWindow extends JFrame {
 		contentPane.add(btnBack);
 		
 		JLabel lblnoteThatAll = new JLabel("*All default parameters are chosen through experimentation");
-		lblnoteThatAll.setBounds(10, 324, 630, 14);
+		lblnoteThatAll.setBounds(10, 362, 630, 14);
 		contentPane.add(lblnoteThatAll);
 		
 		JButton btnResetToDefaults = new JButton("Reset to Defaults");
@@ -276,7 +278,7 @@ public class NNSBPXORWindow extends JFrame {
 				biasValTF.setText("0.667");
 				epochsTF.setText("5000");
 				trainingIterationsTF.setText("3500");
-				errorThresholdTF.setText("0.00001");
+				errorThresholdTF.setText("0.0001");
 				learningRateTF.setText("0.3");
 				momentumRateTF.setText("0.3");
 			}
@@ -284,5 +286,15 @@ public class NNSBPXORWindow extends JFrame {
 		btnResetToDefaults.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		btnResetToDefaults.setBounds(344, 263, 195, 50);
 		contentPane.add(btnResetToDefaults);
+		
+		JLabel lblTrainingError = new JLabel("Training Error:");
+		lblTrainingError.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		lblTrainingError.setBounds(10, 324, 172, 27);
+		contentPane.add(lblTrainingError);
+		
+		trainingErrorTF = new JTextField();
+		trainingErrorTF.setBounds(180, 324, 292, 27);
+		contentPane.add(trainingErrorTF);
+		trainingErrorTF.setColumns(10);
 	}
 }

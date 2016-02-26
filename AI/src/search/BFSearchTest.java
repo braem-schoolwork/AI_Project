@@ -1,12 +1,10 @@
-package unit_tests;
+package search;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
 import rubiks.*;
-
-import search.BFSearch;
 
 public class BFSearchTest {
 

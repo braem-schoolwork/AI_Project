@@ -1,8 +1,7 @@
-package unit_tests;
+package search;
 
 import static org.junit.Assert.*;
 import rubiks.*;
-import search.AstarSearch;
 
 import org.junit.Test;
 

@@ -1,10 +1,9 @@
-package unit_tests;
+package data_structures;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import data_structures.*;
 import rubiks.*;
 import search.*;
 

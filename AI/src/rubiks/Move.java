@@ -2,8 +2,6 @@ package rubiks;
 
 import java.util.Arrays;
 
-import search.Edge;
-
 /**
  * 
  * @author braem
@@ -25,41 +23,26 @@ import search.Edge;
  */
 
 //TODO implement move params
-public class Move implements Edge
+public class Move
 {	
 	private MoveParams params;
-	private int sliceNum;
-	private Axis axis;
-	private Direction dir;
-
-	public Move(int sliceNum, Axis axis, Direction dir) {
-		this.sliceNum = sliceNum;
-		this.axis = axis;
-		this.dir = dir;
-	}
 	
 	public Move(MoveParams params) {
 		this.params = params;
-	}
-	
-	public int getSliceNum() {
-		return sliceNum;
-	}
-	public Axis getAxis() {
-		return axis;
-	}
-	public Direction getDirection() {
-		return dir;
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
 		if(!(obj instanceof Move)) return false;
 		Move move = (Move)obj;
-		if(this.sliceNum == move.getSliceNum() && this.axis.equals(move.getAxis()) &&
-				this.dir.equals(move.getDirection())) 
+		if(this.params.getSliceNum() == move.params.getSliceNum() && this.params.getAxis().equals(move.params.getAxis()) &&
+				this.params.getDirection().equals(move.params.getDirection())) 
 			return true;
 		else return false;
+	}
+	
+	public MoveParams getMoveParams() {
+		return params;
 	}
 	
 	/*
@@ -67,7 +50,8 @@ public class Move implements Edge
 	 * applies this move to a cube parameter
 	 */
 	public void apply(RubiksCube cube) {
-		
+		int sliceNum = params.getSliceNum();
+		Axis axis = params.getAxis();
 		int size = cube.getSize();
 		
 		//initializations
@@ -195,7 +179,7 @@ public class Move implements Edge
 		for(int i=0; i<=(n-1)/2; i++)
 			for(int j=i; j<n-i-1; j++) {
 				byte tmp;
-				if(dir.equals(Direction.CW)) {
+				if(params.getDirection().equals(Direction.CW)) {
 					tmp = face[i][j];
 					face[i][j] = face[n-j-1][i];
 					face[n-j-1][i] = face[n-i-1][n-j-1];
@@ -213,19 +197,19 @@ public class Move implements Edge
 	}
 	//faces effected by edge moves
 	private int findEffectedEdgeFace() {
-		switch(axis) {
+		switch(params.getAxis()) {
 		case X:
-			if(sliceNum == 0)
+			if(params.getSliceNum() == 0)
 				return 0;
 			else
 				return 1;
 		case Y:
-			if(sliceNum == 0)
+			if(params.getSliceNum() == 0)
 				return 2;
 			else
 				return 3;
 		case Z:
-			if(sliceNum == 0)
+			if(params.getSliceNum() == 0)
 				return 4;
 			else
 				return 5;
@@ -234,9 +218,9 @@ public class Move implements Edge
 	}
 	//faces effected on move
 	private int[] findEffectedFaces() {
-		switch(axis) {
+		switch(params.getAxis()) {
 		case X:
-			if(dir.equals(Direction.CW)) {
+			if(params.getDirection().equals(Direction.CW)) {
 				int[] effectedX = { 5, 3, 4, 2 };
 				return effectedX;
 			}
@@ -245,7 +229,7 @@ public class Move implements Edge
 				return effectedX;
 			}
 		case Y:
-			if(dir.equals(Direction.CW)) {
+			if(params.getDirection().equals(Direction.CW)) {
 				int[] effectedY = { 5, 0, 4, 1 };
 				return effectedY;
 			}
@@ -254,7 +238,7 @@ public class Move implements Edge
 				return effectedY;
 			}
 		case Z:
-			if(dir.equals(Direction.CW)) {
+			if(params.getDirection().equals(Direction.CW)) {
 				int[] effectedZ = { 3, 1, 2, 0 };
 				return effectedZ;
 			}
@@ -268,12 +252,12 @@ public class Move implements Edge
 	
 	@Override
 	public String toString() {
-		return "("+sliceNum+", "+axis+", "+dir+")";
+		return "("+params.getSliceNum()+", "+params.getAxis()+", "+params.getDirection()+")";
 	}
 	
 	public String toTrainingData() {
 		String rtnStr = "";
-		switch(sliceNum) {
+		switch(params.getSliceNum()) {
 		case 0: 
 			byte[] slice0Stream = { -1,-1,1 };
 			rtnStr += Arrays.toString(slice0Stream); break;
@@ -285,7 +269,7 @@ public class Move implements Edge
 			rtnStr += Arrays.toString(slice2Stream); break;
 		}
 		rtnStr += ",";
-		switch(axis) {
+		switch(params.getAxis()) {
 		case X:
 			byte[] XaxisStream = { -1,-1,1 };
 			rtnStr += Arrays.toString(XaxisStream); break;
@@ -297,7 +281,7 @@ public class Move implements Edge
 			rtnStr += Arrays.toString(ZaxisStream); break;
 		}
 		rtnStr += ",";
-		if(dir.equals(Direction.CW)) rtnStr += -1;
+		if(params.getDirection().equals(Direction.CW)) rtnStr += -1;
 		else rtnStr += 1;
 		return rtnStr;
 	}

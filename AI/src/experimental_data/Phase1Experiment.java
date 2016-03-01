@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
 
 import rubiks.*;
 
@@ -35,13 +36,16 @@ public class Phase1Experiment implements Experiment
 		for(int j=1; j<=8; j++) {
 			for(int k=1; k<=5; k++) {
 				RubiksCube rubiksCube = new RubiksCube(cubeSize);
-				rubiksCube.perturb(j);
+				Perturber.perturb(j, rubiksCube);
 				double startTime = System.nanoTime();
 				search.search(rubiksCube, new RubiksCube(rubiksCube.getSize()));
 				double endTime = System.nanoTime();
 				double duration = (endTime - startTime)/1000000000;
-				ArrayList<Searchable> cubes = search.getPath();
-				ArrayList<Edge> moves = search.getEdges();
+				List<Searchable> cubes = search.getPath();
+				List<Move> moves = new ArrayList<Move>();
+				for(Searchable obj : cubes)
+					moves.add( ((RubiksCube)obj).getLastMoveApplied() );
+				moves.remove(0);
 				writeResults(cubes, moves, j, duration);
 				if(cubes != null)
 					cubes.clear();
@@ -55,7 +59,7 @@ public class Phase1Experiment implements Experiment
 		machineFriendlyWriter.close();
 	}
 	
-	private static void writeResults(ArrayList<Searchable> cubes, ArrayList<Edge> moves, int perturbations, double duration) {
+	private static void writeResults(List<Searchable> cubes, List<Move> moves, int perturbations, double duration) {
 		for(int i=0; i<cubes.size(); i++) {
 			//human readable entry
 			String hEntry = "Phase 1" + "," + perturbations + "," + cubes.get(i).toString().replaceAll(",", "");

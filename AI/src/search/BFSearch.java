@@ -2,6 +2,7 @@ package search;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import data_structures.HashSet;
@@ -18,12 +19,10 @@ import data_structures.HashSet;
 public class BFSearch implements Search
 {
 	private ArrayList<Searchable> path;
-	private ArrayList<Edge> edges;
 	private boolean searched = false;
 	
 	public BFSearch() {
 		path = new ArrayList<Searchable>();
-		edges = new ArrayList<Edge>();
 	}
 	
 	@Override
@@ -34,49 +33,42 @@ public class BFSearch implements Search
 			return null;
 	}
 	
-	@Override
-	public ArrayList<Edge> getEdges() {
-		if(searched)
-			return edges;
-		else
-			return null;
-	}
-	
 	public Searchable search(Searchable startState, Searchable goalState)
 	{
 		
 		//queue for objects to be searched
-		Queue<Searchable> openList = new LinkedList<Searchable>();
+		Queue<SearchListNode> openList = new LinkedList<SearchListNode>();
 		//queue for objects that have already been searched
-		HashSet<Searchable> closedList = new HashSet<Searchable>();
+		HashSet<SearchListNode> closedList = new HashSet<SearchListNode>();
 		Searchable[] childList; //array for the generated children
 		
-		openList.add(startState); //add start state to the queue of objects to be searched
-		
+		SearchListNode startingListNode = new SearchListNode(null, startState, 0);
+		openList.add(startingListNode); //add start state to the queue of objects to be searched
 		//search loop
 		while(!openList.isEmpty())
 		{
-			Searchable current = openList.poll(); //get the next unexplored obj
+			SearchListNode current = openList.poll(); //get the next unexplored obj
 			closedList.add(current); //explored this
 			
 			//check if current state is a goal state
 			if(current.equals(goalState)) {
-				backTrace(startState, current); //backtrace steps taken
+				backTrace(startingListNode, current); //backtrace steps taken
 				searched = true; //done search
-				return current;
+				return current.getSearchableObj();
 			}
 			
 			//generate every possible object adjacent to this object
-			childList = current.genChildren();
+			childList = current.getSearchableObj().genChildren();
 			
 			//search every adjacent object
 			for(Searchable child : childList) {
+				SearchListNode childNode = new SearchListNode(current, child, 1+current.getGVal());
 				boolean addChild = true;
 				
 				//check the items that have been searched
-				for(Searchable item : openList) //O(n)
+				for(SearchListNode item : openList) //O(n)
 					//if we find the same item, dont bother searching it
-					if(child.equals(item)) {
+					if(childNode.equals(item)) {
 						addChild = false;
 						openList.remove(item);
 						break;
@@ -84,7 +76,7 @@ public class BFSearch implements Search
 				
 				if(addChild) { //if we should add the child
 					//check the set of items to be searched
-					Searchable matchingElem = (Searchable)closedList.containsRef(child);
+					SearchListNode matchingElem = (SearchListNode)closedList.containsRef(childNode);
 					//if we find the same item, dont bother searching it
 					if(matchingElem != null) {
 						addChild = false;
@@ -94,7 +86,7 @@ public class BFSearch implements Search
 				
 				//if we should add the child
 				if(addChild) {
-					openList.add(child); //add it to the queue of items to be searched
+					openList.add(childNode); //add it to the queue of items to be searched
 				}
 				
 			}//foreach child
@@ -104,25 +96,25 @@ public class BFSearch implements Search
 	}//end search
 	
 	//backtrace the path of the A* Search
-	private void backTrace(Searchable start, Searchable end) {
+	private void backTrace(SearchListNode startNode, SearchListNode endNode) {
+		List<SearchListNode> nodes = new ArrayList<SearchListNode>();
+		nodes.add(endNode);
 		
-		path.add(end);
-		edges.add(end.getEdge());
-		
-		if(path.get(0).getParent() != null) {
+		if(nodes.get(0).getParent() != null) {
 			boolean isStartState = false;
 			while(!isStartState) {
-				Searchable parent = path.get(0).getParent();
-				if(parent.equals(start)) {
+				SearchListNode parentNode = nodes.get(0).getParent();
+				if(parentNode.equals(startNode)) {
 					isStartState = true;
-					path.add(0, parent);
+					nodes.add(0, parentNode);
 				}
 				else {
-					path.add(0, parent);
-					edges.add(0, parent.getEdge());
+					nodes.add(0, parentNode);
 				}
 			}
-		}
+		}//end if
+		for(SearchListNode sln : nodes)
+			path.add(sln.getSearchableObj());
 	}
 	
 }

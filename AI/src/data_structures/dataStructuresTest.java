@@ -15,7 +15,7 @@ public class dataStructuresTest {
 		RubiksCube cube = new RubiksCube(3);
 		Searchable[] children = cube.genChildren();
 		
-		Move move1 = new Move(0, Axis.X, Direction.CW);
+		Move move1 = new Move(new MoveParams(0, Axis.X, Direction.CW));
 		move1.apply(cube);
 		for(Searchable child : children) {
 			pq.add(child);
@@ -40,7 +40,7 @@ public class dataStructuresTest {
 		RubiksCube cube = new RubiksCube(3);
 		Searchable[] children = cube.genChildren();
 		
-		Move move1 = new Move(0, Axis.X, Direction.CW);
+		Move move1 = new Move(new MoveParams(0, Axis.X, Direction.CW));
 		move1.apply(cube);
 		
 		for(Searchable child : children) {

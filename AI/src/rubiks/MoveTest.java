@@ -11,11 +11,11 @@ public class MoveTest {
 	@Test
 	public void size2MoveTest() {
 		RubiksCube cube = new RubiksCube(2);
-		Move move1 = new Move(0, Axis.X, Direction.CW);
+		Move move1 = new Move(new MoveParams(0, Axis.X, Direction.CW));
 		move1.apply(cube);
-		Move move2 = new Move(0, Axis.Y, Direction.CCW);
+		Move move2 = new Move(new MoveParams(0, Axis.Y, Direction.CCW));
 		move2.apply(cube);
-		Move move3 = new Move(1, Axis.Z, Direction.CCW);
+		Move move3 = new Move(new MoveParams(1, Axis.Z, Direction.CCW));
 		move3.apply(cube);
 		byte[][][] expectedCube = { {{'W', 'G'}, {'R', 'O'}},
 				{{'O', 'B'}, {'O', 'R'}},
@@ -29,11 +29,11 @@ public class MoveTest {
 	@Test
 	public void size3MoveTest() {
 		RubiksCube cube = new RubiksCube(3);
-		Move move1 = new Move(0, Axis.X, Direction.CW);
+		Move move1 = new Move(new MoveParams(0, Axis.X, Direction.CW));
 		move1.apply(cube);
-		Move move2 = new Move(2, Axis.Y, Direction.CCW);
+		Move move2 = new Move(new MoveParams(2, Axis.Y, Direction.CCW));
 		move2.apply(cube);
-		Move move3 = new Move(1, Axis.Z, Direction.CCW);
+		Move move3 = new Move(new MoveParams(1, Axis.Z, Direction.CCW));
 		move3.apply(cube);
 		byte[][][] expectedCube = { {{'W', 'W', 'O'}, {'G', 'W', 'G'}, {'G', 'W', 'G'}}, 
 				{{'Y', 'Y', 'R'}, {'B', 'Y', 'B'}, {'B', 'O', 'B'}},
@@ -48,9 +48,9 @@ public class MoveTest {
 	public void moveXAxisSize3Test() {
 		RubiksCube cube = new RubiksCube(3);
 		//do and undo a move
-		Move move1 = new Move(0, Axis.X, Direction.CW);
+		Move move1 = new Move(new MoveParams(0, Axis.X, Direction.CW));
 		move1.apply(cube);
-		Move move2 = new Move(0, Axis.X, Direction.CCW);
+		Move move2 = new Move(new MoveParams(0, Axis.X, Direction.CCW));
 		move2.apply(cube);
 		assertTrue(cube.isSolved());
 	}
@@ -59,9 +59,9 @@ public class MoveTest {
 	public void moveXAxisSize2Test() {
 		RubiksCube cube = new RubiksCube(2);
 		//do and undo a move
-		Move move1 = new Move(0, Axis.X, Direction.CW);
+		Move move1 = new Move(new MoveParams(0, Axis.X, Direction.CW));
 		move1.apply(cube);
-		Move move2 = new Move(0, Axis.X, Direction.CCW);
+		Move move2 = new Move(new MoveParams(0, Axis.X, Direction.CCW));
 		move2.apply(cube);
 		assertTrue(cube.isSolved());
 	}
@@ -70,9 +70,9 @@ public class MoveTest {
 	public void moveYAxisSize3Test() {
 		RubiksCube cube = new RubiksCube(3);
 		//do and undo a move
-		Move move1 = new Move(0, Axis.Y, Direction.CW);
+		Move move1 = new Move(new MoveParams(0, Axis.Y, Direction.CW));
 		move1.apply(cube);
-		Move move2 = new Move(0, Axis.Y, Direction.CCW);
+		Move move2 = new Move(new MoveParams(0, Axis.Y, Direction.CCW));
 		move2.apply(cube);
 		assertTrue(cube.isSolved());
 	}
@@ -81,9 +81,9 @@ public class MoveTest {
 	public void moveYAxisSize2Test() {
 		RubiksCube cube = new RubiksCube(2);
 		//do and undo a move
-		Move move1 = new Move(0, Axis.Y, Direction.CW);
+		Move move1 = new Move(new MoveParams(0, Axis.Y, Direction.CW));
 		move1.apply(cube);
-		Move move2 = new Move(0, Axis.Y, Direction.CCW);
+		Move move2 = new Move(new MoveParams(0, Axis.Y, Direction.CCW));
 		move2.apply(cube);
 		assertTrue(cube.isSolved());
 	}
@@ -92,9 +92,9 @@ public class MoveTest {
 	public void moveZAxisSize3Test() {
 		RubiksCube cube = new RubiksCube(3);
 		//do and undo a move
-		Move move1 = new Move(0, Axis.Z, Direction.CW);
+		Move move1 = new Move(new MoveParams(0, Axis.Z, Direction.CW));
 		move1.apply(cube);
-		Move move2 = new Move(0, Axis.Z, Direction.CCW);
+		Move move2 = new Move(new MoveParams(0, Axis.Z, Direction.CCW));
 		move2.apply(cube);
 		assertTrue(cube.isSolved());
 	}
@@ -103,9 +103,9 @@ public class MoveTest {
 	public void moveZAxisSize2Test() {
 		RubiksCube cube = new RubiksCube(2);
 		//do and undo a move
-		Move move1 = new Move(0, Axis.Z, Direction.CW);
+		Move move1 = new Move(new MoveParams(0, Axis.Z, Direction.CW));
 		move1.apply(cube);
-		Move move2 = new Move(0, Axis.Z, Direction.CCW);
+		Move move2 = new Move(new MoveParams(0, Axis.Z, Direction.CCW));
 		move2.apply(cube);
 		assertTrue(cube.isSolved());
 	}
@@ -114,13 +114,13 @@ public class MoveTest {
 	public void moveXYAxisTest() {
 		RubiksCube cube = new RubiksCube(3);
 		//do and undo moves
-		Move move1 = new Move(0, Axis.Y, Direction.CCW);
+		Move move1 = new Move(new MoveParams(0, Axis.Y, Direction.CCW));
 		move1.apply(cube);
-		Move move2 = new Move(0, Axis.X, Direction.CW);
+		Move move2 = new Move(new MoveParams(0, Axis.X, Direction.CW));
 		move2.apply(cube);
-		Move move3 = new Move(0, Axis.X, Direction.CCW);
+		Move move3 = new Move(new MoveParams(0, Axis.X, Direction.CCW));
 		move3.apply(cube);
-		Move move4 = new Move(0, Axis.Y, Direction.CW);
+		Move move4 = new Move(new MoveParams(0, Axis.Y, Direction.CW));
 		move4.apply(cube);
 		assertTrue(cube.isSolved());
 	}
@@ -129,13 +129,13 @@ public class MoveTest {
 	public void moveXZAxisTest() {
 		RubiksCube cube = new RubiksCube(3);
 		//do and undo moves
-		Move move1 = new Move(0, Axis.Z, Direction.CW);
+		Move move1 = new Move(new MoveParams(0, Axis.Z, Direction.CW));
 		move1.apply(cube);
-		Move move2 = new Move(0, Axis.X, Direction.CW);
+		Move move2 = new Move(new MoveParams(0, Axis.X, Direction.CW));
 		move2.apply(cube);
-		Move move3 = new Move(0, Axis.X, Direction.CCW);
+		Move move3 = new Move(new MoveParams(0, Axis.X, Direction.CCW));
 		move3.apply(cube);
-		Move move4 = new Move(0, Axis.Z, Direction.CCW);
+		Move move4 = new Move(new MoveParams(0, Axis.Z, Direction.CCW));
 		move4.apply(cube);
 		assertTrue(cube.isSolved());
 	}
@@ -144,13 +144,13 @@ public class MoveTest {
 	public void moveYZAxisTest() {
 		RubiksCube cube = new RubiksCube(3);
 		//do and undo moves
-		Move move1 = new Move(0, Axis.Y, Direction.CW);
+		Move move1 = new Move(new MoveParams(0, Axis.Y, Direction.CW));
 		move1.apply(cube);
-		Move move2 = new Move(0, Axis.Z, Direction.CW);
+		Move move2 = new Move(new MoveParams(0, Axis.Z, Direction.CW));
 		move2.apply(cube);
-		Move move3 = new Move(0, Axis.Z, Direction.CCW);
+		Move move3 = new Move(new MoveParams(0, Axis.Z, Direction.CCW));
 		move3.apply(cube);
-		Move move4 = new Move(0, Axis.Y, Direction.CCW);
+		Move move4 = new Move(new MoveParams(0, Axis.Y, Direction.CCW));
 		move4.apply(cube);
 		assertTrue(cube.isSolved());
 	}
@@ -159,17 +159,17 @@ public class MoveTest {
 	public void moveXYZAxisSize3Test() {
 		RubiksCube cube = new RubiksCube(3);
 		//do and undo moves
-		Move move1 = new Move(0, Axis.X, Direction.CW);
+		Move move1 = new Move(new MoveParams(0, Axis.X, Direction.CW));
 		move1.apply(cube);
-		Move move2 = new Move(0, Axis.Z, Direction.CW);
+		Move move2 = new Move(new MoveParams(0, Axis.Z, Direction.CW));
 		move2.apply(cube);
-		Move move3 = new Move(0, Axis.Y, Direction.CW);
+		Move move3 = new Move(new MoveParams(0, Axis.Y, Direction.CW));
 		move3.apply(cube);
-		Move move4 = new Move(0, Axis.Y, Direction.CCW);
+		Move move4 = new Move(new MoveParams(0, Axis.Y, Direction.CCW));
 		move4.apply(cube);
-		Move move5 = new Move(0, Axis.Z, Direction.CCW);
+		Move move5 = new Move(new MoveParams(0, Axis.Z, Direction.CCW));
 		move5.apply(cube);
-		Move move6 = new Move(0, Axis.X, Direction.CCW);
+		Move move6 = new Move(new MoveParams(0, Axis.X, Direction.CCW));
 		move6.apply(cube);
 		assertTrue(cube.isSolved());
 	}
@@ -178,17 +178,17 @@ public class MoveTest {
 	public void moveXYZAxisSize2Test() {
 		RubiksCube cube = new RubiksCube(2);
 		//do and undo moves
-		Move move1 = new Move(0, Axis.X, Direction.CW);
+		Move move1 = new Move(new MoveParams(0, Axis.X, Direction.CW));
 		move1.apply(cube);
-		Move move2 = new Move(0, Axis.Z, Direction.CW);
+		Move move2 = new Move(new MoveParams(0, Axis.Z, Direction.CW));
 		move2.apply(cube);
-		Move move3 = new Move(0, Axis.Y, Direction.CW);
+		Move move3 = new Move(new MoveParams(0, Axis.Y, Direction.CW));
 		move3.apply(cube);
-		Move move4 = new Move(0, Axis.Y, Direction.CCW);
+		Move move4 = new Move(new MoveParams(0, Axis.Y, Direction.CCW));
 		move4.apply(cube);
-		Move move5 = new Move(0, Axis.Z, Direction.CCW);
+		Move move5 = new Move(new MoveParams(0, Axis.Z, Direction.CCW));
 		move5.apply(cube);
-		Move move6 = new Move(0, Axis.X, Direction.CCW);
+		Move move6 = new Move(new MoveParams(0, Axis.X, Direction.CCW));
 		move6.apply(cube);
 		assertTrue(cube.isSolved());
 	}
@@ -197,13 +197,13 @@ public class MoveTest {
 	public void moveXYAxisTest2() {
 		RubiksCube cube = new RubiksCube(3);
 		//do and undo moves
-		Move move1 = new Move(0, Axis.X, Direction.CW);
+		Move move1 = new Move(new MoveParams(0, Axis.X, Direction.CW));
 		move1.apply(cube);
-		Move move2 = new Move(0, Axis.Y, Direction.CW);
+		Move move2 = new Move(new MoveParams(0, Axis.Y, Direction.CW));
 		move2.apply(cube);
-		Move move3 = new Move(0, Axis.X, Direction.CCW);
+		Move move3 = new Move(new MoveParams(0, Axis.X, Direction.CCW));
 		move3.apply(cube);
-		Move move4 = new Move(0, Axis.Y, Direction.CCW);
+		Move move4 = new Move(new MoveParams(0, Axis.Y, Direction.CCW));
 		move4.apply(cube);
 		assertTrue(!cube.isSolved());
 	}
@@ -212,17 +212,17 @@ public class MoveTest {
 	public void moveXYZAxisSize10Test() {
 		RubiksCube cube = new RubiksCube(10);
 		//do and undo moves
-		Move move1 = new Move(0, Axis.X, Direction.CW);
+		Move move1 = new Move(new MoveParams(0, Axis.X, Direction.CW));
 		move1.apply(cube);
-		Move move2 = new Move(0, Axis.Z, Direction.CW);
+		Move move2 = new Move(new MoveParams(0, Axis.Z, Direction.CW));
 		move2.apply(cube);
-		Move move3 = new Move(0, Axis.Y, Direction.CW);
+		Move move3 = new Move(new MoveParams(0, Axis.Y, Direction.CW));
 		move3.apply(cube);
-		Move move4 = new Move(0, Axis.Y, Direction.CCW);
+		Move move4 = new Move(new MoveParams(0, Axis.Y, Direction.CCW));
 		move4.apply(cube);
-		Move move5 = new Move(0, Axis.Z, Direction.CCW);
+		Move move5 = new Move(new MoveParams(0, Axis.Z, Direction.CCW));
 		move5.apply(cube);
-		Move move6 = new Move(0, Axis.X, Direction.CCW);
+		Move move6 = new Move(new MoveParams(0, Axis.X, Direction.CCW));
 		move6.apply(cube);
 		assertTrue(cube.isSolved());
 	}

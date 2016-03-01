@@ -26,10 +26,11 @@ import javax.swing.border.EmptyBorder;
 import rubiks.*;
 import search.AstarSearch;
 import search.BFSearch;
-import search.Edge;
+import search.Searchable;
 
 import java.awt.TextArea;
 import java.util.ArrayList;
+import java.util.List;
 import java.awt.Font;
 import javax.swing.JButton;
 import javax.swing.JTextPane;
@@ -79,7 +80,7 @@ public class CubeManipulationWindow extends JFrame {
 	private JTextField perturbDepthTextField;
 	private JButton btnPerturb;
 	private JLabel lblInvalidDepth;
-	ArrayList<Edge> recommendedMoves;
+	List<Move> recommendedMoves;
 	private JTextField BFSearchTimeTextField;
 	private JTextField AstarSearchTimeTextField;
 
@@ -185,14 +186,19 @@ public class CubeManipulationWindow extends JFrame {
 				//search to get goal state
 				try {
 					double startTime = System.nanoTime();
-					RubiksCube searchResult = (RubiksCube)bfSearch.search(cube, new RubiksCube(cube.getSize()));
+					Searchable searchResult = bfSearch.search(cube, new RubiksCube(cube.getSize()));
 					double endTime = System.nanoTime();
 					double duration = (endTime - startTime)/1000000000;
+					List<Searchable> path = bfSearch.getPath();
 					if(searchResult == null)
 						recommendedMovesTextPane.setText("Search did not\nfind a result");
 					else {
-						recommendedMoves = bfSearch.getEdges();
-						for(Edge move : recommendedMoves) {
+						List<Move> moves = new ArrayList<Move>();
+						for(Searchable obj : path)
+							moves.add( ((RubiksCube)obj).getLastMoveApplied() );
+						moves.remove(0);
+						recommendedMoves = moves;
+						for(Move move : recommendedMoves) {
 							recommendedMovesTextPane.setText(recommendedMovesTextPane.getText()+move+"\n");
 						}
 						String pattern = "####.###";
@@ -213,14 +219,19 @@ public class CubeManipulationWindow extends JFrame {
 				//search to get goal state
 				try {
 					double startTime = System.nanoTime();
-					RubiksCube searchResult = (RubiksCube)AstarSearch.search(cube, new RubiksCube(cube.getSize()));
+					Searchable searchResult = AstarSearch.search(cube, new RubiksCube(cube.getSize()));
 					double endTime = System.nanoTime();
 					double duration = (endTime - startTime)/1000000000;
+					List<Searchable> path = AstarSearch.getPath();
 					if(searchResult == null)
 						recommendedMovesTextPane.setText("Search did not\nfind a result");
 					else {
-						recommendedMoves = AstarSearch.getEdges();
-						for(Edge move : recommendedMoves) {
+						List<Move> moves = new ArrayList<Move>();
+						for(Searchable obj : path)
+							moves.add( ((RubiksCube)obj).getLastMoveApplied() );
+						moves.remove(0);
+						recommendedMoves = moves;
+						for(Move move : recommendedMoves) {
 							recommendedMovesTextPane.setText(recommendedMovesTextPane.getText()+move+"\n");
 						}
 						String pattern = "####.###";
@@ -427,8 +438,8 @@ public class CubeManipulationWindow extends JFrame {
 		btnApplyAllMoves.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(recommendedMoves!=null && !recommendedMoves.isEmpty()) {
-					for(Edge move : recommendedMoves) {
-						((Move)move).apply(cube);
+					for(Move move : recommendedMoves) {
+						move.apply(cube);
 						repaintCube(cube);
 					}
 					recommendedMovesTextPane.setText("");
@@ -444,8 +455,8 @@ public class CubeManipulationWindow extends JFrame {
 		btnApplyOneMove.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(recommendedMoves!=null && !recommendedMoves.isEmpty()) {
-					Edge move = recommendedMoves.remove(0);
-					((Move)move).apply(cube);
+					Move move = recommendedMoves.remove(0);
+					move.apply(cube);
 					repaintCube(cube);
 					String textPaneContents = recommendedMovesTextPane.getText();
 					recommendedMovesTextPane.setText("");
@@ -488,7 +499,7 @@ public class CubeManipulationWindow extends JFrame {
 				if(isValid) {
 					lblInvalidDepth.setVisible(false);
 					try {
-						cube.perturb(depth);
+						Perturber.perturb(depth, cube);
 						repaintCube(cube);
 					} catch(IllegalDepthException exc) {
 						lblInvalidDepth.setVisible(true);

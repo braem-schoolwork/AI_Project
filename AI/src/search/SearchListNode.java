@@ -1,23 +1,38 @@
 package search;
 
-public class SearchListNode
+public class SearchListNode implements Comparable<SearchListNode>
 {
-	private Searchable parent;
-	private Searchable val;
+	private SearchListNode parent;
+	private Searchable searchableObj;
 	private int gVal;
-	private float hVal;
 	
-	public SearchListNode(int gVal) {
+	public SearchListNode(SearchListNode parent, Searchable searchableObj, int gVal) {
+		this.parent = parent;
+		this.searchableObj = searchableObj;
 		this.gVal = gVal;
 	}
 
-	public int g() {
-		return gVal;
-	}
-	/*public float h() {
-		return val.h();
-	}*/
+	public SearchListNode getParent() { return parent; }
+	public Searchable getSearchableObj() { return searchableObj; }
+	public int getGVal() { return gVal; }
 	public float f() {
-		return g(); //+ h();
+		return gVal + searchableObj.h();
+	}
+
+	@Override
+	public int compareTo(SearchListNode sln) {
+		if(this.f() > sln.f())
+			return 10;
+		else if(this.f() < sln.f())
+			return -10;
+		else
+			return 0;
+	}
+	public boolean equals(SearchListNode sln) {
+		return this.searchableObj.equals(sln.getSearchableObj());
+	}
+	@Override
+	public int hashCode() {
+		return searchableObj.hashCode();
 	}
 }

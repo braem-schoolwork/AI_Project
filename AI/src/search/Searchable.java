@@ -11,13 +11,6 @@ package search;
  */
 
 public interface Searchable {
-	
 	public Searchable[] genChildren();
-	public Edge getEdge();
-	public Searchable getParent();
-	public int g();
-	
-	@Override
-	public int hashCode();
-	
+	public float h();
 }

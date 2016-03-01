@@ -1,6 +1,7 @@
 package search;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import data_structures.HashSet;
 import data_structures.PriorityQueue;
@@ -29,12 +30,10 @@ import data_structures.PriorityQueue;
 public class AstarSearch implements Search {
 	
 	private ArrayList<Searchable> path;
-	private ArrayList<Edge> edges;
 	private boolean searched = false;
 	
 	public AstarSearch() {
 		path = new ArrayList<Searchable>();
-		edges = new ArrayList<Edge>();
 	}
 	
 	//returns path taken from search
@@ -47,54 +46,45 @@ public class AstarSearch implements Search {
 	}
 	
 	@Override
-	public ArrayList<Edge> getEdges() {
-		if(searched)
-			return edges;
-		else
-			return null;
-	}
-	
-	@Override
 	public Searchable search(Searchable startState, Searchable goalState)
 	{
 		
 		//queue for objects to be searched
-		PriorityQueue<Searchable> openList = new PriorityQueue<Searchable>();
+		PriorityQueue<SearchListNode> openList = new PriorityQueue<SearchListNode>();
 		//set for objects that have already been searched
-		HashSet<Searchable> closedList = new HashSet<Searchable>();
+		HashSet<SearchListNode> closedList = new HashSet<SearchListNode>();
 		//array for the children generated
 		Searchable[] childList;
 		
-		openList.add(startState); //add start state to the queue of objects to be searched
-		
-		while(!openList.peek().equals(goalState))
+		SearchListNode startingListNode = new SearchListNode(null, startState, 0);
+		openList.add(startingListNode); //add start state to the queue of objects to be searched
+		while(!openList.peek().getSearchableObj().equals(goalState))
 		{
-			Searchable current = openList.poll(); //get & remove minimum element
+			SearchListNode current = openList.poll(); //get & remove minimum element
 			closedList.add(current);
 			
-			childList = current.genChildren(); //generate child nodes
+			childList = current.getSearchableObj().genChildren(); //generate child nodes
 			
 			//search the children
 			for(Searchable child : childList) {
+				SearchListNode childNode = new SearchListNode(current, child, 1+current.getGVal());
 				boolean addChild = true;
-
 				/* consider closedList */
-				Searchable matchingElem = (Searchable)closedList.containsRef(child);
+				SearchListNode matchingElem = (SearchListNode)closedList.containsRef(childNode);
 				if(matchingElem != null) {
 					addChild = false;
 					//consider if it's cheaper to go this way
-					if(child.g() < matchingElem.g()) {
+					if(childNode.getGVal() < matchingElem.getGVal()) {
 						closedList.remove(matchingElem);
 						addChild = true;
 					}
 				}
-				
 				/* consider openList */
 				if(addChild) {
-					matchingElem = openList.containsRef(child);
+					matchingElem = openList.containsRef(childNode);
 					if(matchingElem != null) {
 						addChild = false;
-						if(child.g() < matchingElem.g()) {
+						if(childNode.getGVal() < matchingElem.getGVal()) {
 							openList.remove(matchingElem);
 							addChild = true;
 						}
@@ -103,38 +93,37 @@ public class AstarSearch implements Search {
 				
 				/* if we should add it, just do it already */
 				if(addChild) {
-					openList.add(child);
+					openList.add(childNode);
 				}
 			}//enhanced for
 		}//while
-		
 		searched = true; //completed search
-		backTrace(startState, openList.peek()); //backtrace nodes
+		backTrace(startingListNode, openList.peek()); //backtrace nodes
 		
-		return openList.peek(); // return result of search
+		return openList.peek().getSearchableObj(); // return result of search
 		
 	} //A*
 	
 	
 	//backtrace the path of the A* Search
-	private void backTrace(Searchable start, Searchable end) {
+	private void backTrace(SearchListNode startNode, SearchListNode endNode) {
+		List<SearchListNode> nodes = new ArrayList<SearchListNode>();
+		nodes.add(endNode);
 		
-		path.add(end);
-		edges.add(end.getEdge());
-		
-		if(path.get(0).getParent() != null) {
+		if(nodes.get(0).getParent() != null) {
 			boolean isStartState = false;
 			while(!isStartState) {
-				Searchable parent = path.get(0).getParent();
-				if(parent.equals(start)) {
+				SearchListNode parentNode = nodes.get(0).getParent();
+				if(parentNode.equals(startNode)) {
 					isStartState = true;
-					path.add(0, parent);
+					nodes.add(0, parentNode);
 				}
 				else {
-					path.add(0, parent);
-					edges.add(0, parent.getEdge());
+					nodes.add(0, parentNode);
 				}
 			}
-		}
+		}//end if
+		for(SearchListNode sln : nodes)
+			path.add(sln.getSearchableObj());
 	}
 }

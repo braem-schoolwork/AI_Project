@@ -1,9 +1,7 @@
 package rubiks;
 
 import java.util.Arrays;
-import java.util.Random;
 
-import search.Edge;
 import search.Searchable;
 
 /**
@@ -26,12 +24,9 @@ import search.Searchable;
  * 
  */
 
-public class RubiksCube implements Searchable, Comparable<RubiksCube>
+public class RubiksCube implements Searchable
 {
-	//links to parent to aid with searching
-	private RubiksCube parent; //parent 'node'
-	private Edge edge; //edge from parent to this
-	private int gValue; //A* search g value
+	private Move lastMoveApplied; //keeps track of the last move applied to this
 	
 	private final int size; //size=2 when dealing 2x2x2 cube & vice versa
 	private byte[][][] cube; //representation of the cube [6][size][size]
@@ -47,9 +42,6 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	private static byte defaultFace5Color = 'R';
 	
 	public RubiksCube(int size) {
-		this.parent = null;
-		this.edge = null;
-		this.gValue = 0;
 		if(size < 2)
 			throw new IllegalSizeException("Size for Rubiks Cube is less than 2");
 		else
@@ -61,8 +53,6 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	//copy constructor. only need to deep copy the array
 	//everything else can be pointers
 	public RubiksCube(RubiksCube rubiksCube) {
-		this.gValue = rubiksCube.g();
-		this.parent = rubiksCube;
 		this.size = rubiksCube.size;
 		byte[][][] cube = rubiksCube.cube;
 		byte[][][] newCube = new byte[6][size][size];
@@ -86,77 +76,6 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 		return size;
 	}
 	
-	//for tracing back moves from a search
-	@Override
-	public RubiksCube getParent() {
-		return parent;
-	}
-	@Override
-	public Edge getEdge() {
-		return edge;
-	}
-	
-	//private setters
-	private void setEdge(Edge move) {
-		this.edge = move;
-	}
-	//increments cost from start (g value)
-	private void incrementGVal() {
-		gValue++;
-	}
-	
-	/* 
-	 * Method to apply a number of random moves to the cube
-	 * 
-	 * try to preserve the integrity of perturbation by making sure moves
-	 * dont roll back to a previous state
-	 */
-	public void perturb(int depth) {
-		//check
-		if(depth <= 0 || depth > moveSet.length) throw new IllegalDepthException();
-		//variables
-		Move[] moveList = moveSet;
-		int consecutiveMoves = 0; //counts consecutive same moves
-		Random rand = new Random();
-		int randomMove; //index for a move in the list
-		
-		//apply a randomMove
-		randomMove = rand.nextInt(moveSet.length);
-		Move moveToApply = moveList[randomMove];
-		//copy this instead
-		Move lastMoveApplied = moveToApply;
-		moveToApply.apply(this);
-		//attempt to preserve depth integrity
-		for(int i=1; i<depth; i++) {
-			randomMove = rand.nextInt(moveSet.length);
-			moveToApply = moveList[randomMove];
-			//same axis && same sliceNum
-			if( lastMoveApplied.getAxis().equals(moveToApply.getAxis()) && lastMoveApplied.getSliceNum()==moveToApply.getSliceNum() )
-				if(!lastMoveApplied.getDirection().equals(lastMoveApplied.getDirection())) {//not same direction (undos previous move)
-					if(randomMove == moveList.length-1) //apply different move
-						moveToApply = moveList[0];
-					else
-						moveToApply = moveList[randomMove+1];
-					consecutiveMoves = 0;
-				}
-				else { //same move as previous
-					if(consecutiveMoves == 2) { //2 of the same moves applied already
-						if(randomMove == moveList.length-1) //apply different move
-							moveToApply = moveList[0];
-						else
-							moveToApply = moveList[randomMove+1];
-						consecutiveMoves = 0;
-					}
-					else //count consecutiveMoves
-						consecutiveMoves++;
-				}
-			else
-				consecutiveMoves = 0;
-			moveToApply.apply(this);
-			lastMoveApplied = moveToApply;
-		}
-	}
-	
 	/*
 	 * Generate children implementation from Searchable
 	 */
@@ -167,10 +86,9 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 		for(int i=0; i<moveList.length; i++) {
 			Move move = moveList[i];
 			RubiksCube cubeCopy = new RubiksCube(this);
-			cubeCopy.incrementGVal();
 			move.apply(cubeCopy);
 			allChildren[i] = cubeCopy;
-			allChildren[i].setEdge(move);
+			allChildren[i].lastMoveApplied = move;
 		}
 		return allChildren;
 	}
@@ -184,7 +102,7 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 		for(Axis axis : Axis.values())
 			for(Direction dir : Direction.values())
 				for(int i=0; i<size; i++) {
-					Move move = new Move(i%size, axis, dir);
+					Move move = new Move(new MoveParams(i%size, axis, dir));
 					//add to array
 					moveList[ctr] = move;
 					ctr++;
@@ -230,33 +148,16 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 	}
 	
 	/*
-	 * A* Search related methods
+	 * Heuristic Calculation
 	 */
-	public float f() { //Cost function, f(x) = g() + h()
-		float fVal = g() + h();
-		return fVal;
-	}
 	@Override
-	public int g() { //cost from start
-		return gValue;
-	}
 	public float h() { //estimate to end
-		float hVal = HeuristicCalculation.calculate(this);
-		return hVal;
+		return HeuristicCalculation.calculate(this);
 	}
 
 	/*
 	 * Comparison Method Overrides
 	 */
-	@Override
-	public int compareTo(RubiksCube cube) {
-		if(this.f() > cube.f())
-			return 10;
-		else if(this.f() < cube.f())
-			return -10;
-		else
-			return 0;
-	}
 	@Override
 	public boolean equals(Object obj) {
 		if(!(obj instanceof RubiksCube)) return false;
@@ -292,5 +193,12 @@ public class RubiksCube implements Searchable, Comparable<RubiksCube>
 		}
 		rtnStr += "]";
 		return rtnStr;
+	}
+
+	public Move getLastMoveApplied() {
+		return lastMoveApplied;
+	}
+	public void setLastMoveApplied(Move lastMoveApplied) {
+		this.lastMoveApplied = lastMoveApplied;
 	}
 }

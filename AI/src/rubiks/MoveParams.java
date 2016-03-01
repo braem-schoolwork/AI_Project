@@ -5,6 +5,13 @@ public class MoveParams
 	private int sliceNum;
 	private Axis axis;
 	private Direction dir;
+	
+	public MoveParams(int sliceNum, Axis axis, Direction dir) {
+		this.sliceNum = sliceNum;
+		this.axis = axis;
+		this.dir = dir;
+	}
+	
 	public int getSliceNum() {
 		return sliceNum;
 	}
@@ -17,12 +24,10 @@ public class MoveParams
 	public void setAxis(Axis axis) {
 		this.axis = axis;
 	}
-	public Direction getDir() {
+	public Direction getDirection() {
 		return dir;
 	}
 	public void setDir(Direction dir) {
 		this.dir = dir;
 	}
-	
-	
 }

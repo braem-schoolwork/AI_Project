@@ -52,11 +52,13 @@ public class NeuralNetworkIO
 			return null;
 		}
 		try {
-			NN.setInputLayerSize(Integer.parseInt(contents.get(0)));
-			NN.setHiddenLayerSize(Integer.parseInt(contents.get(1)));
-			NN.setOutputLayerSize(Integer.parseInt(contents.get(2)));
-			NN.setA(Double.parseDouble(contents.get(3)));
-			NN.setBias(Double.parseDouble(contents.get(4)));
+			NeuralNetworkParams params = new NeuralNetworkParams();
+			params.setInputLayerSize(Integer.parseInt(contents.get(0)));
+			params.setHiddenLayerSize(Integer.parseInt(contents.get(1)));
+			params.setOutputLayerSize(Integer.parseInt(contents.get(2)));
+			params.setA(Double.parseDouble(contents.get(3)));
+			params.setBias(Double.parseDouble(contents.get(4)));
+			NN.setParams(params);
 			NN.setWji(DoubleMatrix.valueOf(contents.get(5).replace('[', ' ').replace(']', ' ').replace(',', ' ')));
 			NN.setWjbias(DoubleMatrix.valueOf(contents.get(6).replace('[', ' ').replace(']', ' ').replace(',', ' ')));
 			NN.setWkj(DoubleMatrix.valueOf(contents.get(7).replace('[', ' ').replace(']', ' ').replace(',', ' ')));

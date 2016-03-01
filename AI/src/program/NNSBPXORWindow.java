@@ -7,7 +7,9 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import neural_network.NeuralNetwork;
+import neural_network.NeuralNetworkParams;
 import training_algorithms.SBP;
+import training_algorithms.SBPParams;
 import training_data.XORTrainingDataGenerator;
 
 import javax.swing.JTextField;
@@ -234,15 +236,13 @@ public class NNSBPXORWindow extends JFrame {
 					double errorThreshold = Double.parseDouble(errorThresholdTF.getText());
 					double learningRate = Double.parseDouble(learningRateTF.getText());
 					double momentumRate = Double.parseDouble(momentumRateTF.getText());
-					NeuralNetwork NN = new NeuralNetwork(AVal, biasVal, inputLayerSize, hiddenLayerSize, outputLayerSize, initialEdgeWeight);
-					SBP.setEpochs(epochs);
-					SBP.setErrorThreshold(errorThreshold);
-					SBP.setTrainingIterations(trainingIterations);
-					SBP.setLearningRate(learningRate);
-					SBP.setMomentumRate(momentumRate);
-					SBP.setTrainee(NN);
-					SBP.apply(XORTrainingDataGenerator.gen());
-					trainingErrorTF.setText(SBP.getError()+"");
+					NeuralNetworkParams NNparams = new NeuralNetworkParams(AVal, biasVal, inputLayerSize, hiddenLayerSize, outputLayerSize, 1, initialEdgeWeight);
+					NeuralNetwork NN = new NeuralNetwork(NNparams);
+					SBPParams sbpParams = new SBPParams(epochs, trainingIterations, errorThreshold, learningRate, momentumRate);
+					SBP sbp = new SBP(sbpParams);
+					sbp.setTrainee(NN);
+					sbp.apply(XORTrainingDataGenerator.gen());
+					trainingErrorTF.setText(sbp.getError()+"");
 					lblError.setText("");
 				} catch(NumberFormatException e) {
 					lblError.setText("Invalid Parameters");

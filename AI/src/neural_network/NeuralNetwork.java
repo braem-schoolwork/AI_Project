@@ -18,38 +18,23 @@ public class NeuralNetwork implements SBPImpl
 	private DoubleMatrix Wkj;
 	private DoubleMatrix Wjbias;
 	private DoubleMatrix Wkbias;
-	private double A;				//Sigmoid function related
-	private double bias;
 	private DoubleMatrix NETk;		//Nets stored in feedForward for SBP
 	private DoubleMatrix NETj;
 	private DoubleMatrix ACTj;
-	private int inputLayerSize;		//layer sizes
-	private int hiddenLayerSize;
-	private int outputLayerSize;
-	private double initialEdgeWeight;
+	private NeuralNetworkParams params;
 	
 	public NeuralNetwork() { //initialize for basic XOR NN
-		A = 1.716;	
-		bias = 0.667;
-		inputLayerSize = 2;	
-		hiddenLayerSize = 2;
-		outputLayerSize = 1;
-		initialEdgeWeight = 0.1;
+		params = new NeuralNetworkParams();
 	}
 	
-	public NeuralNetwork(double A, double bias, int inputLayerSize, int hiddenLayerSize, int outputLayerSize, double initialEdgeWeight) {
-		this.A = A;
-		this.bias = bias;
-		this.inputLayerSize = inputLayerSize;
-		this.hiddenLayerSize = hiddenLayerSize;
-		this.outputLayerSize = outputLayerSize;
-		this.initialEdgeWeight = initialEdgeWeight;
+	public NeuralNetwork(NeuralNetworkParams params) {
+		this.params = params;
 	}
 	
 	/* FEED FORWARD */
 	@Override
 	public DoubleMatrix feedForward(DoubleMatrix inputVector) {
-		
+		double bias = params.getBias();
 		/* HIDDEN LAYER */
 		//Hidden Net Matrix = inputVector*Wji + Wjbias*bias
 		DoubleMatrix hiddenNetMatrix = inputVector.mmul(Wji).add(Wjbias.mmul(bias));
@@ -75,10 +60,14 @@ public class NeuralNetwork implements SBPImpl
 	/* sigmoid function application */
 	@Override
 	public DoubleMatrix applySigmoid(DoubleMatrix inc) {
+		double bias = params.getBias();
+		double A = params.getA();
 		return MatrixFunctions.tanh(inc.mmul(bias)).mmul(A);
 	}
 	@Override
 	public DoubleMatrix applySigmoidDeriv(DoubleMatrix inc) {
+		double bias = params.getBias();
+		double A = params.getA();
 		return MatrixFunctions.pow( MatrixFunctions.tanh(inc.mmul(bias)),2 ).mmul(-A*bias).add(A*bias);
 	}
 	
@@ -93,12 +82,12 @@ public class NeuralNetwork implements SBPImpl
 	public void applyWjbiasUpdate (DoubleMatrix Wjbias) { this.Wjbias.addi(Wjbias); }
 
 	//getters
-	public int getInputLayerSize() { return inputLayerSize; }
-	public int getHiddenLayerSize() { return hiddenLayerSize; }
-	public int getOutputLayerSize() { return outputLayerSize; }
-	public double getInitialEdgeWeight() { return initialEdgeWeight; }
-	public double getAVal() { return A; }
-	public double getBiasVal() { return bias; }
+	public int getInputLayerSize() { return params.getInputLayerSize(); }
+	public int getHiddenLayerSize() { return params.getHiddenLayerSize(); }
+	public int getOutputLayerSize() { return params.getOutputLayerSize(); }
+	public double getInitialEdgeWeight() { return params.getInitialEdgeWeight(); }
+	public double getAVal() { return params.getA(); }
+	public double getBiasVal() { return params.getBias(); }
 	@Override
 	public DoubleMatrix getNETk() { return NETk; }
 	@Override
@@ -112,12 +101,7 @@ public class NeuralNetwork implements SBPImpl
 	DoubleMatrix getWkbias() { return Wkbias; }
 	
 	//setters
-	public void setInputLayerSize(int p) { this.inputLayerSize = p; }
-	public void setHiddenLayerSize(int p) { this.hiddenLayerSize = p; }
-	public void setOutputLayerSize(int p) { this.outputLayerSize = p; }
-	public void setInitialEdgeWeight(double p) { this.initialEdgeWeight = p; }
-	public void setA(double a) { this.A = a; }
-	public void setBias(double bias) { this.bias = bias; }
+	public void setParams(NeuralNetworkParams params) { this.params = params; }
 	void setWji(DoubleMatrix Wji) { this.Wji = Wji; }
 	void setWjbias(DoubleMatrix Wjbias) { this.Wjbias = Wjbias; }
 	void setWkj(DoubleMatrix Wkj) { this.Wkj = Wkj; }
@@ -126,24 +110,24 @@ public class NeuralNetwork implements SBPImpl
 	/* Initialize this network */
 	@Override
 	public void init() {
-		Wji = new DoubleMatrix(inputLayerSize, hiddenLayerSize);
-		Wkj = new DoubleMatrix(hiddenLayerSize, outputLayerSize);
-		Wjbias = new DoubleMatrix(1, hiddenLayerSize); //row vector
-		Wkbias = new DoubleMatrix(1, outputLayerSize); //row vector
+		Wji = new DoubleMatrix(params.getInputLayerSize(), params.getHiddenLayerSize());
+		Wkj = new DoubleMatrix(params.getHiddenLayerSize(), params.getOutputLayerSize());
+		Wjbias = new DoubleMatrix(1, params.getHiddenLayerSize()); //row vector
+		Wkbias = new DoubleMatrix(1, params.getOutputLayerSize()); //row vector
 		
 		//fill with initial edge weights
 		for(int i=0; i<Wji.rows; i++)
 			for(int j=0; j<Wji.columns; j++)
-				Wji.put(i, j, initialEdgeWeight);
+				Wji.put(i, j, params.getInitialEdgeWeight());
 		for(int i=0; i<Wkj.rows; i++)
 			for(int j=0; j<Wkj.columns; j++)
-				Wkj.put(i, j, initialEdgeWeight);
+				Wkj.put(i, j, params.getInitialEdgeWeight());
 		for(int i=0; i<Wjbias.rows; i++)
 			for(int j=0; j<Wjbias.columns; j++)
-				Wjbias.put(i, j, initialEdgeWeight);
+				Wjbias.put(i, j, params.getInitialEdgeWeight());
 		for(int i=0; i<Wkbias.rows; i++)
 			for(int j=0; j<Wkbias.columns; j++)
-				Wkbias.put(i, j, initialEdgeWeight);
+				Wkbias.put(i, j, params.getInitialEdgeWeight());
 	}
 	
 	@Override

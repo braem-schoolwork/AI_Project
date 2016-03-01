@@ -17,13 +17,9 @@ import training_data.TrainingTuple;
 public class SBP
 {
 	//class params initialized to best values from experimentation
-	private static int epochs = 5000;
-	private static int trainingIterations = 3500;
-	private static double errorThreshold = 0.0001;
-	private static double learningRate = 0.30;
-	private static double momentumRate = 0.30;
-	private static SBPImpl trainee;
-	private static double error;
+	private SBPParams params;
+	private SBPImpl trainee;
+	private double error;
 	
 	//keeping track of previous values
 	private static DoubleMatrix deltaWkjPrev;
@@ -31,26 +27,25 @@ public class SBP
 	private static DoubleMatrix deltaWjiPrev;
 	private static DoubleMatrix deltaWjbiasPrev;
 	
+	public SBP() {
+		params = new SBPParams();
+	}
+	public SBP(SBPParams params) {
+		this.params = params;
+	}
+	
 	//setters
-	public static void setEpochs(int epochs) { SBP.epochs = epochs; }
-	public static void setTrainingIterations(int trainingIterations) { SBP.trainingIterations = trainingIterations; }
-	public static void setErrorThreshold(double errorThreshold) { SBP.errorThreshold = errorThreshold; }
-	public static void setLearningRate(double learningRate) { SBP.learningRate = learningRate; }
-	public static void setMomentumRate(double momentumRate) { SBP.momentumRate = momentumRate; }
-	public static void setTrainee(SBPImpl trainee) { SBP.trainee = trainee; }
+	public void setParams(SBPParams params) { this.params = params; }
+	public void setTrainee(SBPImpl trainee) { this.trainee = trainee; }
 	
 	//getters
-	public static int getEpochs() { return epochs; }
-	public static int getTrainingIterations() { return trainingIterations; }
-	public static double getErrorThreshold() { return errorThreshold; }
-	public static double getLearningRate() { return learningRate; }
-	public static double getMomentumRate() { return momentumRate; }
-	public static SBPImpl getTrainee() { return trainee; }
-	public static double getError() { return error; }
+	public SBPParams getParams() { return params; }
+	public SBPImpl getTrainee() { return trainee; }
+	public double getError() { return error; }
 	
 	//SBP method
-	public static void apply(TrainingData trainingData) {
-		for(int epoch=0; epoch<epochs; epoch++) { //epoch loop
+	public void apply(TrainingData trainingData) {
+		for(int epoch=0; epoch<params.getEpochs(); epoch++) { //epoch loop
 			//keep track of training tuple outputs
 			ArrayList<DoubleMatrix> ttOutputs = new ArrayList<DoubleMatrix>();
 			for(TrainingTuple tt : trainingData.getData())
@@ -62,7 +57,7 @@ public class SBP
 			/* initialize trainee */
 			trainee.init();
 			boolean firstPass = true; //dont apply momentum on first pass
-			for(int iter=0; iter<trainingIterations; iter++) { //training iteration loop
+			for(int iter=0; iter<params.getTrainingIterations(); iter++) { //training iteration loop
 				/* pick a training tuple from trainer at random */
 				Random rand = new Random();
 				int randInt = rand.nextInt(trainingData.getData().size());
@@ -101,16 +96,15 @@ public class SBP
 			/* Calculate error */
 			double error = calculateError(ttOutputs, cActualOutputs);
 			/* save best network so far to disk */
-			if(error < errorThreshold) { //if below threshold
+			if(error < params.getErrorThreshold()) { //if below threshold
 				trainee.saveToDisk(error);
-				SBP.error = error;
+				this.error = error;
 				return;
 			}
 		}
-		
 	}
 	
-	private static void setCorrespondingOutput(ArrayList<DoubleMatrix> cActualOutputs,
+	private void setCorrespondingOutput(ArrayList<DoubleMatrix> cActualOutputs,
 			DoubleMatrix expectedOutputVector, DoubleMatrix actualOutputVector, int randInt) {
 		if(cActualOutputs.get(randInt) == null) {
 			cActualOutputs.set(randInt, actualOutputVector);
@@ -131,14 +125,15 @@ public class SBP
 		}
 	}
 	
-	private static DoubleMatrix calcDeltaK(DoubleMatrix expectedOutputVector, DoubleMatrix actualOutputVector) {
+	private DoubleMatrix calcDeltaK(DoubleMatrix expectedOutputVector, DoubleMatrix actualOutputVector) {
 		//delta k			(error at output layer)
 		//( (expect output k) - (actual output k) ) * sigmoid'(NETk)
 		return ( expectedOutputVector.sub(actualOutputVector) ).
 				mulRowVector(trainee.applySigmoidDeriv(trainee.getNETk()));
 	}
 	
-	private static DoubleMatrix calcDeltaWkj(DoubleMatrix deltaK, int rows, int cols) {
+	private DoubleMatrix calcDeltaWkj(DoubleMatrix deltaK, int rows, int cols) {
+		double learningRate = params.getLearningRate();
 		DoubleMatrix Yj = trainee.getACTj();
 		//delta Wkj			(matrix of weight difference) 
 		//(learning rate) * deltaK * ACTj
@@ -149,12 +144,13 @@ public class SBP
 		return deltaWkj;
 	}
 	
-	private static DoubleMatrix calcDeltaWkbias(DoubleMatrix deltaK) {
+	private DoubleMatrix calcDeltaWkbias(DoubleMatrix deltaK) {
+		double learningRate = params.getLearningRate();
 		//(learning rate) * deltaK * 1
 		return deltaK.mul(learningRate);
 	}
 	
-	private static DoubleMatrix calcDeltaJ(DoubleMatrix deltaK, DoubleMatrix actualOutputVector) {
+	private DoubleMatrix calcDeltaJ(DoubleMatrix deltaK, DoubleMatrix actualOutputVector) {
 		//sigmoid'(NETj) * (sum(Wkj) k=0 to n) * delta k
 		DoubleMatrix deltaJ = trainee.applySigmoidDeriv(trainee.getNETj());
 		for(int i=0; i<deltaJ.columns; i++) {
@@ -166,7 +162,8 @@ public class SBP
 		return deltaJ;
 	}
 	
-	private static DoubleMatrix calcDeltaWji(DoubleMatrix deltaJ, DoubleMatrix inputVector, int rows, int cols) {
+	private DoubleMatrix calcDeltaWji(DoubleMatrix deltaJ, DoubleMatrix inputVector, int rows, int cols) {
+		double learningRate = params.getLearningRate();
 		//activation at inputs
 		DoubleMatrix ACTi = inputVector;
 		//delta Wji			(weight updates)
@@ -178,20 +175,22 @@ public class SBP
 		return deltaWji;
 	}
 	
-	private static DoubleMatrix calcDeltaWjbias(DoubleMatrix deltaJ) {
+	private DoubleMatrix calcDeltaWjbias(DoubleMatrix deltaJ) {
+		double learningRate = params.getLearningRate();
 		//(learning curve) * delta j
 		return deltaJ.mul(learningRate);
 	}
 	
-	private static void applyMomentum(DoubleMatrix deltaWji, DoubleMatrix deltaWjbias,
+	private void applyMomentum(DoubleMatrix deltaWji, DoubleMatrix deltaWjbias,
 			DoubleMatrix deltaWkj, DoubleMatrix deltaWkbias) {
+		double momentumRate = params.getMomentumRate();
 		deltaWkj = deltaWkj.mmul(1-momentumRate).add(deltaWkjPrev.mmul(momentumRate));
 		deltaWkbias = deltaWkbias.mmul(1-momentumRate).add(deltaWkbiasPrev.mmul(momentumRate));
 		deltaWji = deltaWji.mmul(1-momentumRate).add(deltaWjiPrev.mmul(momentumRate));
 		deltaWjbias = deltaWjbias.mmul(1-momentumRate).add(deltaWjbiasPrev.mmul(momentumRate));
 	}
 	
-	private static void applyUpdates(DoubleMatrix deltaWji, DoubleMatrix deltaWjbias,
+	private void applyUpdates(DoubleMatrix deltaWji, DoubleMatrix deltaWjbias,
 			DoubleMatrix deltaWkj, DoubleMatrix deltaWkbias) {
 		//delta Wkj
 		trainee.applyWkjUpdate(deltaWkj);

@@ -14,9 +14,10 @@ public class SBPTest {
 
 	@Test
 	public void trainingErrorTest() {
-		SBP.setTrainee(new NeuralNetwork());
-		SBP.apply(XORTrainingDataGenerator.gen());
-		assertTrue(SBP.getError() >= 0);
+		SBP sbp = new SBP();
+		sbp.setTrainee(new NeuralNetwork());
+		sbp.apply(XORTrainingDataGenerator.gen());
+		assertTrue(sbp.getError() >= 0);
 	}
 	
 	@Test

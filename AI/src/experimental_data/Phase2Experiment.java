@@ -13,6 +13,7 @@ import org.jblas.DoubleMatrix;
 
 import neural_network.NeuralNetwork;
 import training_algorithms.SBP;
+import training_algorithms.SBPParams;
 import training_data.TrainingData;
 import training_data.TrainingTuple;
 
@@ -56,13 +57,15 @@ public class Phase2Experiment implements Experiment
 		boolean firstPass = true;
 		for(double i=startingMomentumRate; i<=endingMomentumRate; i+=momentumRateIncrease) {
 			String row = i+"";
-			SBP.setMomentumRate(i);
+			SBPParams sbpParams = new SBPParams();
+			sbpParams.setMomentumRate(i);
 			for(int j=startingTrainingIter; j<=endingTrainingIter; j+=trainingIterIncrease) {
-				SBP.setTrainingIterations(j);
+				sbpParams.setTrainingIterations(j);
 				double errorAvg = 0.0;
 				for(int k=0; k<applySBPamount; k++) {
-					SBP.apply(trainingData);
-					errorAvg += SBP.getError();
+					SBP sbp = new SBP(sbpParams);
+					sbp.apply(trainingData);
+					errorAvg += sbp.getError();
 				}
 				errorAvg /= applySBPamount;
 				if(firstPass) firstRow += ","+j;
@@ -84,13 +87,15 @@ public class Phase2Experiment implements Experiment
 		boolean firstPass = true;
 		for(double i=startingLearningRate; i<=endingLearningRate; i+=learningRateIncrease) {
 			String row = i+"";
-			SBP.setLearningRate(i);
+			SBPParams sbpParams = new SBPParams();
+			sbpParams.setLearningRate(i);
 			for(int j=startingTrainingIter; j<=endingTrainingIter; j+=trainingIterIncrease) {
-				SBP.setTrainingIterations(j);
+				sbpParams.setTrainingIterations(j);
 				double errorAvg = 0.0;
 				for(int k=0; k<applySBPamount; k++) {
-					SBP.apply(trainingData);
-					errorAvg += SBP.getError();
+					SBP sbp = new SBP(sbpParams);
+					sbp.apply(trainingData);
+					errorAvg += sbp.getError();
 				}
 				errorAvg /= applySBPamount;
 				if(firstPass) firstRow += ","+j;
@@ -112,13 +117,15 @@ public class Phase2Experiment implements Experiment
 		boolean firstPass = true;
 		for(double i=startingLearningRate; i<=endingLearningRate; i+=learningRateIncrease) {
 			String row = i+"";
-			SBP.setLearningRate(i);
+			SBPParams sbpParams = new SBPParams();
+			sbpParams.setLearningRate(i);
 			for(double j=startingMomentumRate; j<=endingMomentumRate; j+=momentumRateIncrease) {
-				SBP.setMomentumRate(j);
+				sbpParams.setMomentumRate(j);
 				double errorAvg = 0.0;
 				for(int k=0; k<applySBPamount; k++) {
-					SBP.apply(trainingData);
-					errorAvg += SBP.getError();
+					SBP sbp = new SBP(sbpParams);
+					sbp.apply(trainingData);
+					errorAvg += sbp.getError();
 				}
 				errorAvg /= applySBPamount;
 				if(firstPass) firstRow += ","+j;
@@ -140,7 +147,9 @@ public class Phase2Experiment implements Experiment
 	
 	private static void setupTuples() {
 		NeuralNetwork NN = new NeuralNetwork();
-		SBP.setTrainee(NN);
+		SBP sbp = new SBP();
+		SBPParams sbpParams = new SBPParams();
+		sbp.setTrainee(NN);
 		TrainingTuple t1 = new TrainingTuple(new DoubleMatrix(new double[][] {{-1,1}}), new DoubleMatrix(new double[][] {{1}}));
 		TrainingTuple t2 = new TrainingTuple(new DoubleMatrix(new double[][] {{1,1}}), new DoubleMatrix(new double[][] {{-1}}));
 		TrainingTuple t3 = new TrainingTuple(new DoubleMatrix(new double[][] {{-1,-1}}), new DoubleMatrix(new double[][] {{-1}}));
@@ -152,12 +161,13 @@ public class Phase2Experiment implements Experiment
 		tuples.add(t4); 
 		TrainingData data = new TrainingData(tuples);
 		trainingData = data;
-		SBP.apply(data);
-		SBP.setEpochs(1);
-		SBP.setLearningRate(defaultLearningRate);
-		SBP.setMomentumRate(defaultMomentumRate);
-		SBP.setTrainingIterations(defaultTrainingIter);
-		SBP.setErrorThreshold(Double.MAX_VALUE);
+		sbp.apply(data);
+		sbpParams.setEpochs(1);
+		sbpParams.setLearningRate(defaultLearningRate);
+		sbpParams.setMomentumRate(defaultMomentumRate);
+		sbpParams.setTrainingIterations(defaultTrainingIter);
+		sbpParams.setErrorThreshold(Double.MAX_VALUE);
+		sbp.setParams(sbpParams);
 	}
 
 	@Override

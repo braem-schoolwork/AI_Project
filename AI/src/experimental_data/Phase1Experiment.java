@@ -3,9 +3,12 @@ package experimental_data;
 import search.*;
 import training_data.RubiksCubeTrainingDataGenerator;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,88 +25,42 @@ import rubiks.*;
 
 public class Phase1Experiment implements Experiment
 {
+	private final static Charset ENCODING = StandardCharsets.UTF_8;
 	private static Search search = new AstarSearch();
 	private static int cubeSize = 3;
-	private static String hFriendlyFileName;
-	private static String mFriendlyFileName;
-	private static PrintWriter humanFriendlyWriter;
-	private static PrintWriter machineFriendlyWriter;
+	private static String fileName = System.getProperty("user.dir")+"\\Phase1Experiment_TrainingData";
 	
 	@Override
 	public void runExperiment(String fileExtension) {
-		setupFiles(fileExtension);
-		humanFriendlyWriter.println("Experiment Number, Number of Perturbations, Rubik's Cube, Move Applied, Runtime");
+		fileName += fileExtension;
+		List<String> content = new ArrayList<String>();
 		for(int j=1; j<=8; j++) {
 			for(int k=1; k<=5; k++) {
 				RubiksCube rubiksCube = new RubiksCube(cubeSize);
 				Perturber.perturb(j, rubiksCube);
-				double startTime = System.nanoTime();
 				search.search(rubiksCube, new RubiksCube(rubiksCube.getSize()));
-				double endTime = System.nanoTime();
-				double duration = (endTime - startTime)/1000000000;
-				List<Searchable> cubes = search.getPath();
+				List<Searchable> searchableObjs = search.getPath();
+				List<RubiksCube> cubes = new ArrayList<RubiksCube>();
+				for(Searchable obj : searchableObjs)
+					cubes.add( (RubiksCube)obj );
 				List<Move> moves = new ArrayList<Move>();
 				for(Searchable obj : cubes)
 					moves.add( ((RubiksCube)obj).getLastMoveApplied() );
 				moves.remove(0);
-				writeResults(cubes, moves, j, duration);
-				if(cubes != null)
-					cubes.clear();
-				if(moves != null)
-					moves.clear();
-				
+				content.addAll(RubiksCubeTrainingDataGenerator.genTrainingData(cubes, moves));
 			}
-			humanFriendlyWriter.println();
 		}
-		humanFriendlyWriter.close();
-		machineFriendlyWriter.close();
+		try {
+			writeToFile(content, fileName);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	private static void writeResults(List<Searchable> cubes, List<Move> moves, int perturbations, double duration) {
-		for(int i=0; i<cubes.size(); i++) {
-			//human readable entry
-			String hEntry = "Phase 1" + "," + perturbations + "," + cubes.get(i).toString().replaceAll(",", "");
-			
-			//training data entry
-			String mEntry = "";
-			if(i!=cubes.size()-1)
-				mEntry = RubiksCubeTrainingDataGenerator.genTrainingData(((RubiksCube) cubes.get(i)))+"|";
-			try {
-				hEntry += "," + moves.get(i).toString().replaceAll(",", "");
-				mEntry += ((Move) moves.get(i)).toTrainingData();
-			} catch(Exception e) {
-				hEntry += ",," + duration;
-			}
-			humanFriendlyWriter.println(hEntry);
-			machineFriendlyWriter.print(mEntry+'\t');
-		}
-	}
-
-	private static void setupFiles(String fileExtension) {
-		hFriendlyFileName = System.getProperty("user.dir") + "\\Phase1Experiment"+fileExtension;
-		try {
-			humanFriendlyWriter = new PrintWriter(hFriendlyFileName, "UTF-8");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Human Readable File written to: ");
-		System.out.println(hFriendlyFileName);
-		System.out.println();
-		
-		mFriendlyFileName = System.getProperty("user.dir")+"\\Phase1Experiment_TrainingData"+fileExtension;
-		try {
-			machineFriendlyWriter = new PrintWriter(mFriendlyFileName, "UTF-8");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Training Data File written to: ");
-		System.out.println(mFriendlyFileName);
-		System.out.println();
-		System.out.println();
+	private static void writeToFile(List<String> lines, String filename) throws IOException {
+		Path path = Paths.get(filename);
+		Files.write(path, lines, ENCODING);
 	}
 	
 	@Override

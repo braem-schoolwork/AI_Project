@@ -5,25 +5,29 @@ import org.jblas.DoubleMatrix;
 public class TrainingTuple
 {
 	DoubleMatrix inputs;
-	DoubleMatrix answers;
+	DoubleMatrix outputs;
 	
 	public TrainingTuple(DoubleMatrix inputs, DoubleMatrix answers) {
 		this.inputs = inputs;
-		this.answers = answers;
+		this.outputs = answers;
 	}
 	
 	public DoubleMatrix getInputs() {
 		return inputs;
 	}
-	public DoubleMatrix getAnswers() {
-		return answers;
+	public DoubleMatrix getOutputs() {
+		return outputs;
 	}
 	
 	public void setInputs(DoubleMatrix inputs) {
 		this.inputs = inputs;
 	}
-	public void setAnswers(DoubleMatrix answers) {
-		this.answers = answers;
+	public void setOutputs(DoubleMatrix outputs) {
+		this.outputs = outputs;
 	}
 	
+	@Override
+	public String toString() {
+		return inputs +"|"+ outputs;
+	}
 }

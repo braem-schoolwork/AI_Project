@@ -49,7 +49,7 @@ public class SBP
 			//keep track of training tuple outputs
 			ArrayList<DoubleMatrix> ttOutputs = new ArrayList<DoubleMatrix>();
 			for(TrainingTuple tt : trainingData.getData())
-				ttOutputs.add(tt.getAnswers());
+				ttOutputs.add(tt.getOutputs());
 			//keep track of best actual output corresponding to each tuple output
 			ArrayList<DoubleMatrix> cActualOutputs = new ArrayList<DoubleMatrix>(ttOutputs.size());
 			for(int i=0; i<ttOutputs.size(); i++)
@@ -63,7 +63,7 @@ public class SBP
 				int randInt = rand.nextInt(trainingData.getData().size());
 				TrainingTuple chosenTuple = trainingData.getData().get(randInt);
 				DoubleMatrix inputVector = chosenTuple.getInputs();
-				DoubleMatrix expectedOutputVector = chosenTuple.getAnswers();
+				DoubleMatrix expectedOutputVector = chosenTuple.getOutputs();
 				
 				/* Get actual output from feed forward */
 				DoubleMatrix actualOutputVector = trainee.feedForward(inputVector);

@@ -1,20 +1,28 @@
 package training_data;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class TrainingData
 {
-	ArrayList<TrainingTuple> data;
+	List<TrainingTuple> data;
 	
-	public TrainingData(ArrayList<TrainingTuple> data) {
+	public TrainingData(List<TrainingTuple> data) {
 		this.data = data;
 	}
 	
-	public ArrayList<TrainingTuple> getData() {
+	public List<TrainingTuple> getData() {
 		return data;
 	}
-	public void setData(ArrayList<TrainingTuple> data) {
+	public void setData(List<TrainingTuple> data) {
 		this.data = data;
 	}
 	
+	@Override
+	public String toString() {
+		String rtnStr = "";
+		for(TrainingTuple tt: data) {
+			rtnStr += tt.toString()+"\n";
+		}
+		return rtnStr;
+	}
 }

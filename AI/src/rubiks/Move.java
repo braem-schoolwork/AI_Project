@@ -1,7 +1,5 @@
 package rubiks;
 
-import java.util.Arrays;
-
 /**
  * 
  * @author braem
@@ -253,37 +251,6 @@ public class Move
 	@Override
 	public String toString() {
 		return "("+params.getSliceNum()+", "+params.getAxis()+", "+params.getDirection()+")";
-	}
-	
-	public String toTrainingData() {
-		String rtnStr = "";
-		switch(params.getSliceNum()) {
-		case 0: 
-			byte[] slice0Stream = { -1,-1,1 };
-			rtnStr += Arrays.toString(slice0Stream); break;
-		case 1:
-			byte[] slice1Stream = { -1,1,-1 };
-			rtnStr += Arrays.toString(slice1Stream); break;
-		case 2:
-			byte[] slice2Stream = { 1,-1,-1 };
-			rtnStr += Arrays.toString(slice2Stream); break;
-		}
-		rtnStr += ",";
-		switch(params.getAxis()) {
-		case X:
-			byte[] XaxisStream = { -1,-1,1 };
-			rtnStr += Arrays.toString(XaxisStream); break;
-		case Y:
-			byte[] YaxisStream = { -1,1,-1 };
-			rtnStr += Arrays.toString(YaxisStream); break;
-		case Z:
-			byte[] ZaxisStream = { 1,-1,-1 };
-			rtnStr += Arrays.toString(ZaxisStream); break;
-		}
-		rtnStr += ",";
-		if(params.getDirection().equals(Direction.CW)) rtnStr += -1;
-		else rtnStr += 1;
-		return rtnStr;
 	}
 	
 }

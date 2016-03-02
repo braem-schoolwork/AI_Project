@@ -1,5 +1,7 @@
 package training_algorithms;
 
+import java.util.List;
+
 import org.jblas.DoubleMatrix;
 
 public interface SBPImpl
@@ -13,12 +15,14 @@ public interface SBPImpl
 	public void saveToDisk(double error);
 
 	public DoubleMatrix getNETk();
-	public DoubleMatrix getNETj();
-	public DoubleMatrix getACTj();
+	public List<DoubleMatrix> getNETjs();
+	public List<DoubleMatrix> getACTjs();
 	public DoubleMatrix getWkj();
+	public List<DoubleMatrix> getWjs();
 	
 	public void applyWkjUpdate(DoubleMatrix Wkj);
 	public void applyWkbiasUpdate(DoubleMatrix Wkbias);
 	public void applyWjiUpdate(DoubleMatrix Wji);
-	public void applyWjbiasUpdate(DoubleMatrix Wjbias);
+	public void applyWjbiasUpdate(List<DoubleMatrix> Wjbias);
+	public void applyWjsUpdate(List<DoubleMatrix> Wjs);
 }

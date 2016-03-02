@@ -13,8 +13,8 @@ public class NeuralNetworkParams
 	private double initialEdgeWeight;
 	
 	public NeuralNetworkParams() {
-		setA(1.716);
-		setBias(0.667);
+		setA(1);
+		setBias(2.1);
 		setInputLayerSize(2);
 		List<Integer> sizes = new ArrayList<Integer>();
 		sizes.add(2);

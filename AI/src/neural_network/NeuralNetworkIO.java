@@ -65,7 +65,8 @@ public class NeuralNetworkIO
 			params.setBias(Double.parseDouble(contents.get(4)));
 			NN.setParams(params);
 			NN.setWji(DoubleMatrix.valueOf(contents.get(5).replace('[', ' ').replace(']', ' ').replace(',', ' ')));
-			NN.setWjbias(DoubleMatrix.valueOf(contents.get(6).replace('[', ' ').replace(']', ' ').replace(',', ' ')));
+			//TODO
+			//NN.setWjbias(DoubleMatrix.valueOf(contents.get(6).replace('[', ' ').replace(']', ' ').replace(',', ' ')));
 			NN.setWkj(DoubleMatrix.valueOf(contents.get(7).replace('[', ' ').replace(']', ' ').replace(',', ' ')));
 			NN.setWkbias(DoubleMatrix.valueOf(contents.get(8).replace('[', ' ').replace(']', ' ').replace(',', ' ')));
 		} catch(NumberFormatException e) {

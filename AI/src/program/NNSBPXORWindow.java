@@ -17,6 +17,8 @@ import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 
@@ -225,7 +227,9 @@ public class NNSBPXORWindow extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					int inputLayerSize = Integer.parseInt(inputLayerSizeTF.getText());
-					int hiddenLayerSize = Integer.parseInt(hiddenLayerSizeTF.getText());
+					List<Integer> hiddenLayerSizes = new ArrayList<Integer>();
+					hiddenLayerSizes.add(Integer.parseInt(hiddenLayerSizeTF.getText()));
+					hiddenLayerSizes.add(Integer.parseInt(hiddenLayerSizeTF.getText()));
 					int outputLayerSize = Integer.parseInt(outputLayerSizeTF.getText());
 					double initialEdgeWeight = Double.parseDouble(initialEdgeWeightsTF.getText());
 					double AVal = Double.parseDouble(AValTF.getText());
@@ -236,7 +240,7 @@ public class NNSBPXORWindow extends JFrame {
 					double errorThreshold = Double.parseDouble(errorThresholdTF.getText());
 					double learningRate = Double.parseDouble(learningRateTF.getText());
 					double momentumRate = Double.parseDouble(momentumRateTF.getText());
-					NeuralNetworkParams NNparams = new NeuralNetworkParams(AVal, biasVal, inputLayerSize, hiddenLayerSize, outputLayerSize, 1, initialEdgeWeight);
+					NeuralNetworkParams NNparams = new NeuralNetworkParams(AVal, biasVal, inputLayerSize, hiddenLayerSizes, outputLayerSize, initialEdgeWeight);
 					NeuralNetwork NN = new NeuralNetwork(NNparams);
 					SBPParams sbpParams = new SBPParams(epochs, trainingIterations, errorThreshold, learningRate, momentumRate);
 					SBP sbp = new SBP(sbpParams);

@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jblas.DoubleMatrix;
@@ -25,7 +26,7 @@ public class NeuralNetworkIO
 	static boolean writeNetwork(NeuralNetwork NN, double error) {
 		List<String> contents = new ArrayList<String>();
 		contents.add(NN.getInputLayerSize()+"");
-		contents.add(NN.getHiddenLayerSize()+"");
+		contents.add(NN.getHiddenLayerSizes()+""); //list of hidden layer sizes
 		contents.add(NN.getOutputLayerSize()+"");
 		contents.add(NN.getAVal()+"");
 		contents.add(NN.getBiasVal()+"");
@@ -54,7 +55,11 @@ public class NeuralNetworkIO
 		try {
 			NeuralNetworkParams params = new NeuralNetworkParams();
 			params.setInputLayerSize(Integer.parseInt(contents.get(0)));
-			params.setHiddenLayerSize(Integer.parseInt(contents.get(1)));
+			List<Integer> hiddenLayerSizes = new ArrayList<Integer>();
+			String[] line = contents.get(1).replace('[', ' ').replace(']', ' ').split(",");
+			for(int i=0; i<line.length; i++) 
+				hiddenLayerSizes.add(Integer.parseInt(line[i]));
+			params.setHiddenLayerSizes(hiddenLayerSizes);
 			params.setOutputLayerSize(Integer.parseInt(contents.get(2)));
 			params.setA(Double.parseDouble(contents.get(3)));
 			params.setBias(Double.parseDouble(contents.get(4)));

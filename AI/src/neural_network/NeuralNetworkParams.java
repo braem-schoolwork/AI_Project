@@ -1,33 +1,35 @@
 package neural_network;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NeuralNetworkParams
 {
 	private double A;				//Sigmoid function related
 	private double bias;
 	private int inputLayerSize;		//layer sizes
-	private int hiddenLayerSize;
+	private List<Integer> hiddenLayerSizes;
 	private int outputLayerSize;
-	private int hiddenLayers;
 	private double initialEdgeWeight;
 	
 	public NeuralNetworkParams() {
 		setA(1.716);
 		setBias(0.667);
 		setInputLayerSize(2);
-		setHiddenLayerSize(2);
+		List<Integer> sizes = new ArrayList<Integer>();
+		sizes.add(2);
+		setHiddenLayerSizes(sizes);
 		setOutputLayerSize(1);
-		setHiddenLayers(1);
 		setInitialEdgeWeight(0.1);
 	}
 	
-	public NeuralNetworkParams(double A, double bias, int inputLayerSize, int hiddenLayerSize,
-			int outputLayerSize, int hiddenLayers, double initialEdgeWeight) {
+	public NeuralNetworkParams(double A, double bias, int inputLayerSize, List<Integer> hiddenLayerSizes,
+			int outputLayerSize, double initialEdgeWeight) {
 		this.setA(A);
 		this.setBias(bias);
 		this.setInputLayerSize(inputLayerSize);
-		this.setHiddenLayerSize(hiddenLayerSize);
+		this.setHiddenLayerSizes(hiddenLayerSizes);
 		this.setOutputLayerSize(outputLayerSize);
-		this.setHiddenLayers(hiddenLayers);
 		this.setInitialEdgeWeight(initialEdgeWeight);
 	}
 
@@ -55,12 +57,12 @@ public class NeuralNetworkParams
 		this.inputLayerSize = inputLayerSize;
 	}
 
-	public int getHiddenLayerSize() {
-		return hiddenLayerSize;
+	public List<Integer> getHiddenLayerSizes() {
+		return hiddenLayerSizes;
 	}
 
-	public void setHiddenLayerSize(int hiddenLayerSize) {
-		this.hiddenLayerSize = hiddenLayerSize;
+	public void setHiddenLayerSizes(List<Integer> hiddenLayerSizes) {
+		this.hiddenLayerSizes = hiddenLayerSizes;
 	}
 
 	public int getOutputLayerSize() {
@@ -69,14 +71,6 @@ public class NeuralNetworkParams
 
 	public void setOutputLayerSize(int outputLayerSize) {
 		this.outputLayerSize = outputLayerSize;
-	}
-
-	public int getHiddenLayers() {
-		return hiddenLayers;
-	}
-
-	public void setHiddenLayers(int hiddenLayers) {
-		this.hiddenLayers = hiddenLayers;
 	}
 
 	public double getInitialEdgeWeight() {

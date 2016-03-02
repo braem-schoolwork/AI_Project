@@ -1,5 +1,8 @@
 package neural_network;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jblas.*;
 
 import training_algorithms.SBPImpl;
@@ -18,6 +21,7 @@ public class NeuralNetwork implements SBPImpl
 	private DoubleMatrix Wkj;
 	private DoubleMatrix Wjbias;
 	private DoubleMatrix Wkbias;
+	private List<DoubleMatrix> hiddenLayers;
 	private DoubleMatrix NETk;		//Nets stored in feedForward for SBP
 	private DoubleMatrix NETj;
 	private DoubleMatrix ACTj;
@@ -83,7 +87,7 @@ public class NeuralNetwork implements SBPImpl
 
 	//getters
 	public int getInputLayerSize() { return params.getInputLayerSize(); }
-	public int getHiddenLayerSize() { return params.getHiddenLayerSize(); }
+	public List<Integer> getHiddenLayerSizes() { return params.getHiddenLayerSizes(); }
 	public int getOutputLayerSize() { return params.getOutputLayerSize(); }
 	public double getInitialEdgeWeight() { return params.getInitialEdgeWeight(); }
 	public double getAVal() { return params.getA(); }
@@ -106,14 +110,25 @@ public class NeuralNetwork implements SBPImpl
 	void setWjbias(DoubleMatrix Wjbias) { this.Wjbias = Wjbias; }
 	void setWkj(DoubleMatrix Wkj) { this.Wkj = Wkj; }
 	void setWkbias(DoubleMatrix Wkbias) { this.Wkbias = Wkbias; }
+	void setHiddenLayers(List<DoubleMatrix> hiddenLayers) { this.hiddenLayers = hiddenLayers; }
 
 	/* Initialize this network */
 	@Override
 	public void init() {
-		Wji = new DoubleMatrix(params.getInputLayerSize(), params.getHiddenLayerSize());
-		Wkj = new DoubleMatrix(params.getHiddenLayerSize(), params.getOutputLayerSize());
-		Wjbias = new DoubleMatrix(1, params.getHiddenLayerSize()); //row vector
+		List<Integer> hiddenLayerSizes = params.getHiddenLayerSizes();
+		Wji = new DoubleMatrix(params.getInputLayerSize(), hiddenLayerSizes.get(0));
+		Wkj = new DoubleMatrix(hiddenLayerSizes.get(hiddenLayerSizes.size()-1), params.getOutputLayerSize());
+		Wjbias = new DoubleMatrix(1, params.getHiddenLayerSizes().get(0)); //row vector
 		Wkbias = new DoubleMatrix(1, params.getOutputLayerSize()); //row vector
+		hiddenLayers = new ArrayList<DoubleMatrix>();
+		
+		for(int i=1; i<hiddenLayerSizes.size(); i++) {
+			DoubleMatrix hiddenWeightsAtHi = new DoubleMatrix(hiddenLayerSizes.get(i-1), hiddenLayerSizes.get(i));
+			for(int j=0; j<hiddenWeightsAtHi.rows; j++) //fill the hidden matrix
+				for(int k=0; k<hiddenWeightsAtHi.columns; k++)
+					hiddenWeightsAtHi.put(j, k, params.getInitialEdgeWeight());
+			hiddenLayers.add(hiddenWeightsAtHi);
+		}
 		
 		//fill with initial edge weights
 		for(int i=0; i<Wji.rows; i++)

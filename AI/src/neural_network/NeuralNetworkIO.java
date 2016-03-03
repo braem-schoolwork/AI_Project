@@ -1,16 +1,18 @@
 package neural_network;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import org.jblas.DoubleMatrix;
 
 /**
  * 
@@ -22,19 +24,29 @@ public class NeuralNetworkIO
 {
 	private final static Charset ENCODING = StandardCharsets.UTF_8;
 	private final static String FILE_NAME = System.getProperty("user.dir")+"\\Network.txt";
+	private final static String SER_FILE_NAME = "Network.ser";
+	private final static String NEW_BEST_NETWORK_MSG = "New Best Neural Network Found!";
 	
-	static boolean writeNetwork(NeuralNetwork NN, double error) {
+	static boolean writeNetworkToFile(NeuralNetwork NN) {
 		List<String> contents = new ArrayList<String>();
-		contents.add(NN.getInputLayerSize()+"");
-		contents.add(NN.getHiddenLayerSizes()+""); //list of hidden layer sizes
-		contents.add(NN.getOutputLayerSize()+"");
-		contents.add(NN.getAVal()+"");
-		contents.add(NN.getBiasVal()+"");
-		contents.add(NN.getWji()+"");
-		contents.add(NN.getWjbias()+"");
-		contents.add(NN.getWkj()+"");
-		contents.add(NN.getWkbias()+"");
-		contents.add(error+"");
+		contents.add("-Layer Sizes-");
+		contents.add("Input Layer Size: "+NN.getInputLayerSize());
+		contents.add("Hidden Layers: "+NN.getHiddenLayerSizes().size()); //list of hidden layer sizes
+		contents.add("Hidden Layer Sizes: "+NN.getHiddenLayerSizes()); //list of hidden layer sizes
+		contents.add("Output Layer Size: "+NN.getOutputLayerSize());
+		contents.add("");
+		contents.add("-Sigmoid Function [f(x)=A*tanh(x*bias)] related values-");
+		contents.add("A value: "+NN.getAVal());
+		contents.add("bias value: "+NN.getBiasVal());
+		contents.add("");
+		contents.add("-Weight Matrices-");
+		contents.add("Hidden Layer 0 to Input Layer edge weights matrix (Wji): "+NN.getWji());
+		contents.add("Hidden Layers to bias matrices (Wjbias): "+NN.getWjbias());
+		contents.add("Output Layer to Hidden Layer n edge weights matrix (Wkj): "+NN.getWkj());
+		contents.add("Output Layer to bias matrix (Wkbias): "+NN.getWkbias());
+		contents.add("Hidden Layer i-1 to Hidden Layer i weight matrix (Wjs): "+NN.getWjs()); //matrices between hidden layers
+		contents.add("");
+		contents.add("Error of this Network: "+NN.getError());
 		
 		try {
 			writeToFile(contents, FILE_NAME);
@@ -44,55 +56,46 @@ public class NeuralNetworkIO
 		}
 	}
 	
-	static NeuralNetwork readNetwork() {
-		NeuralNetwork NN = new NeuralNetwork();
-		List<String> contents;
+	public static NeuralNetwork readNetwork() throws FileNotFoundException {
+		NeuralNetwork result = null;
 		try {
-			contents = readFile(FILE_NAME);
+			FileInputStream fis = new FileInputStream(SER_FILE_NAME);
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			result = (NeuralNetwork) ois.readObject();
+			ois.close();
 		} catch (IOException e) {
-			return null;
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		}
+		return result;
+	}
+	public static void writeNetwork(NeuralNetwork NN) {
 		try {
-			NeuralNetworkParams params = new NeuralNetworkParams();
-			params.setInputLayerSize(Integer.parseInt(contents.get(0)));
-			List<Integer> hiddenLayerSizes = new ArrayList<Integer>();
-			String[] line = contents.get(1).replace('[', ' ').replace(']', ' ').split(",");
-			for(int i=0; i<line.length; i++) 
-				hiddenLayerSizes.add(Integer.parseInt(line[i]));
-			params.setHiddenLayerSizes(hiddenLayerSizes);
-			params.setOutputLayerSize(Integer.parseInt(contents.get(2)));
-			params.setA(Double.parseDouble(contents.get(3)));
-			params.setBias(Double.parseDouble(contents.get(4)));
-			NN.setParams(params);
-			NN.setWji(DoubleMatrix.valueOf(contents.get(5).replace('[', ' ').replace(']', ' ').replace(',', ' ')));
-			//TODO
-			//NN.setWjbias(DoubleMatrix.valueOf(contents.get(6).replace('[', ' ').replace(']', ' ').replace(',', ' ')));
-			NN.setWkj(DoubleMatrix.valueOf(contents.get(7).replace('[', ' ').replace(']', ' ').replace(',', ' ')));
-			NN.setWkbias(DoubleMatrix.valueOf(contents.get(8).replace('[', ' ').replace(']', ' ').replace(',', ' ')));
-		} catch(NumberFormatException e) {
-			return null;
+			FileOutputStream fos = new FileOutputStream(SER_FILE_NAME);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(NN);
+			oos.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		return NN;
 	}
 	
 	static boolean isBestNetworkSoFar(double error) {
+		NeuralNetwork NN;
 		try {
-			List<String> contents = readFile(FILE_NAME);
-			if(Double.parseDouble(contents.get(9)) > error) {
-				System.out.println("New Best Neural Network Found!");
-				return true;
-			}
-			else
-				return false;
-		} catch (IOException e) {
-			System.out.println("New Best Neural Network Found!");
+			NN = readNetwork();
+		} catch (FileNotFoundException e) {
+			System.out.println(NEW_BEST_NETWORK_MSG);
 			return true;
 		}
-	}
-	
-	private static List<String> readFile(String filename) throws IOException {
-		Path path = Paths.get(filename);
-		return Files.readAllLines(path, ENCODING);
+		if(NN.getError() > error) {
+			System.out.println(NEW_BEST_NETWORK_MSG);
+			return true;
+		}
+		else return false;
 	}
 	
 	private static void writeToFile(List<String> lines, String filename) throws IOException {

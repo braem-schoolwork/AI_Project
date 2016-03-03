@@ -1,5 +1,6 @@
 package neural_network;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,24 +16,38 @@ import training_algorithms.SBPImpl;
  * 
  */
 
-public class NeuralNetwork implements SBPImpl
+public class NeuralNetwork implements SBPImpl, Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private DoubleMatrix Wji;		//Weight matrices
 	private DoubleMatrix Wkj;
 	private List<DoubleMatrix> Wjbias;
 	private DoubleMatrix Wkbias;
 	private List<DoubleMatrix> Wjs;
 	private DoubleMatrix NETk;		//Nets stored in feedForward for SBP
-	private List<DoubleMatrix> NETjs = null;
-	private List<DoubleMatrix> ACTjs = null;
+	private List<DoubleMatrix> NETjs;
+	private List<DoubleMatrix> ACTjs;
 	private NeuralNetworkParams params;
+	private boolean isTrained;
+	private double error;
 	
 	public NeuralNetwork() { //initialize for basic XOR NN
 		params = new NeuralNetworkParams();
+		isTrained = false;
+		error = Double.MAX_VALUE;
+		NETjs = null;
+		ACTjs = null;
 	}
 	
 	public NeuralNetwork(NeuralNetworkParams params) {
 		this.params = params;
+		isTrained = false;
+		error = Double.MAX_VALUE;
+		NETjs = null;
+		ACTjs = null;
 	}
 	
 	/* FEED FORWARD */
@@ -54,7 +69,7 @@ public class NeuralNetwork implements SBPImpl
 			if(i==0)
 				hNetMatrix = inputVector.mmul(Wji).add(Wjbias.get(i).mmul(bias));
 			else	//get previous layers ACT values then *weights. Then add the bias
-				hNetMatrix = hActMatrix.mmul(Wjs.get(i)) .add(Wjbias.get(i).mmul(bias));
+				hNetMatrix = hActMatrix.mmul(Wjs.get(i-1)) .add(Wjbias.get(i).mmul(bias));
 			hActMatrix = applySigmoid(hNetMatrix);
 			NETjs.add(hNetMatrix);
 			ACTjs.add(hActMatrix);
@@ -69,12 +84,7 @@ public class NeuralNetwork implements SBPImpl
 		
 		//Actual Output Matrix = tanh(outputNetMatrix*bias)*A
 		DoubleMatrix outputActMatrix = applySigmoid(outputNetMatrix);
-		/*
-		System.out.println("NN");
-		System.out.println(NETjs);
-		System.out.println(ACTjs);
-		System.out.println(outputNetMatrix);
-		System.out.println(outputActMatrix);*/
+		
 		//return actual output matrix
 		return outputActMatrix;
 	}
@@ -102,15 +112,11 @@ public class NeuralNetwork implements SBPImpl
 	public void applyWjiUpdate (DoubleMatrix Wji) { this.Wji.addi(Wji); }
 	@Override
 	public void applyWjbiasUpdate (List<DoubleMatrix> Wjbias) {
-		for(int i=0; i<Wjbias.size(); i++) {
-			this.Wjbias.get(i).addi(Wjbias.get(i));
-		}
+		for(int i=0; i<Wjbias.size(); i++) this.Wjbias.get(i).addi(Wjbias.get(i));
 	}
 	@Override
 	public void applyWjsUpdate (List<DoubleMatrix> Wjs) {
-		for(int i=0; i<Wjs.size(); i++) {
-			this.Wjs.get(i).addi(Wjs.get(i));
-		}
+		for(int i=0; i<Wjs.size(); i++) this.Wjs.get(i).addi(Wjs.get(i));
 	}
 
 	//getters
@@ -133,9 +139,12 @@ public class NeuralNetwork implements SBPImpl
 	DoubleMatrix getWji() { return Wji; }
 	List<DoubleMatrix> getWjbias() { return Wjbias; }
 	DoubleMatrix getWkbias() { return Wkbias; }
+	public Double getError() {
+		if(isTrained) return error; else return null;
+	}
 	
 	//setters
-	public void setParams(NeuralNetworkParams params) { this.params = params; }
+	public void setParams(NeuralNetworkParams params) { this.params = params; isTrained = false; }
 	void setWji(DoubleMatrix Wji) { this.Wji = Wji; }
 	void setWjbias(List<DoubleMatrix> Wjbias) { this.Wjbias = Wjbias; }
 	void setWkj(DoubleMatrix Wkj) { this.Wkj = Wkj; }
@@ -153,7 +162,12 @@ public class NeuralNetwork implements SBPImpl
 		Wjs = new ArrayList<DoubleMatrix>(); //will be empty if hidden layers = 1
 		
 		for(int i=0; i<hiddenLayerSizes.size(); i++) {
-			Wjbias.add(new DoubleMatrix(1, params.getHiddenLayerSizes().get(i)));
+			DoubleMatrix hiddenLayerToBias = new DoubleMatrix(1, params.getHiddenLayerSizes().get(i));
+			for(int j=0; j<hiddenLayerToBias.rows; j++)
+				for(int k=0; k<hiddenLayerToBias.columns; k++)
+					hiddenLayerToBias.put(j, k, params.getInitialEdgeWeight());
+			Wjbias.add(hiddenLayerToBias);
+			
 		}
 		for(int i=1; i<hiddenLayerSizes.size(); i++) {
 			DoubleMatrix hiddenWeightsAtHi = new DoubleMatrix(hiddenLayerSizes.get(i-1), hiddenLayerSizes.get(i));
@@ -177,12 +191,10 @@ public class NeuralNetwork implements SBPImpl
 	
 	@Override
 	public void saveToDisk(double error) {
-		if(isBestSoFar(error)) //if best network so far, save it to disk
-			NeuralNetworkIO.writeNetwork(this, error);
+		isTrained = true;
+		this.error = error;
+		if(NeuralNetworkIO.isBestNetworkSoFar(error)) { //if best network so far, save it to disk
+			NeuralNetworkIO.writeNetwork(this);
+		}
 	}
-
-	public static boolean isBestSoFar(double error) {
-		return NeuralNetworkIO.isBestNetworkSoFar(error);
-	}
-
 }

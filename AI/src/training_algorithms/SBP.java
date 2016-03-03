@@ -195,8 +195,8 @@ public class SBP
 					deltaJ.put(0, j, deltaJ.get(0,j)*sum);
 				}
 				else {
-					for(int k=0; k<deltaJs.get(i+1).columns; k++)
-						sum += trainee.getWjs().get(i).get(j,k)*deltaJs.get(i+1).get(0,k);
+					for(int k=0; k<deltaJs.get(i).columns; k++)
+						sum += trainee.getWjs().get(i-1).get(j,k)*deltaJs.get(i).get(0,k);
 					deltaJ.put(0, j, deltaJ.get(0,j)*sum);
 				}
 			}

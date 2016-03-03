@@ -50,12 +50,12 @@ public class SBP
 		for(int epoch=0; epoch<params.getEpochs(); epoch++) { //epoch loop
 			//keep track of training tuple outputs
 			List<DoubleMatrix> ttOutputs = new ArrayList<DoubleMatrix>();
-			for(TrainingTuple tt : trainingData.getData())
-				ttOutputs.add(tt.getOutputs());
+			/*for(TrainingTuple tt : trainingData.getData())
+				ttOutputs.add(tt.getOutputs());*/
 			//keep track of best actual output corresponding to each tuple output
-			List<DoubleMatrix> cActualOutputs = new ArrayList<DoubleMatrix>(ttOutputs.size());
-			for(int i=0; i<ttOutputs.size(); i++)
-				cActualOutputs.add(null);
+			List<DoubleMatrix> cActualOutputs = new ArrayList<DoubleMatrix>();
+			/*for(int i=0; i<ttOutputs.size(); i++)
+				cActualOutputs.add(null);*/
 			/* initialize trainee */
 			trainee.init();
 			boolean firstPass = true; //dont apply momentum on first pass
@@ -69,19 +69,25 @@ public class SBP
 				
 				/* Get actual output from feed forward */
 				DoubleMatrix actualOutputVector = trainee.feedForward(inputVector);
-				setCorrespondingOutput(cActualOutputs, expectedOutputVector, actualOutputVector, randInt);
+				ttOutputs.add(expectedOutputVector);
+				cActualOutputs.add(actualOutputVector);
+				System.out.println("Chosen Tuple: "+chosenTuple.getInputs());
+				System.out.println("Expected output: "+expectedOutputVector);
+				System.out.println("Actual output: "+actualOutputVector);
 				
 				/* Calculate Updates */
 				DoubleMatrix deltaK = calcDeltaK(expectedOutputVector, actualOutputVector);
 				List<DoubleMatrix> deltaJs = calcDeltaJs(deltaK, actualOutputVector);
-				DoubleMatrix deltaWkj = calcDeltaWkj(deltaK, deltaJs.get(deltaJs.size()-1).columns, expectedOutputVector.columns);
+				DoubleMatrix deltaWkj = calcDeltaWkj(deltaK, deltaJs.get(0).columns, expectedOutputVector.columns);
 				DoubleMatrix deltaWkbias = calcDeltaWkbias(deltaK);
-				DoubleMatrix deltaWji = calcDeltaWji(deltaJs.get(0), inputVector, inputVector.columns, deltaJs.get(0).columns);
+				DoubleMatrix deltaWji = calcDeltaWji(deltaJs.get(0), inputVector, inputVector.columns, deltaJs.get(deltaJs.size()-1).columns);
 				List<DoubleMatrix> deltaWjbias = calcDeltaWjbias(deltaJs);
 				List<DoubleMatrix> deltaWjs = calcDeltaWjs(deltaJs);
 				
 				//System.out.println(deltaK);
 				//System.out.println(deltaJs);
+				//System.out.println(deltaWkj);
+				//System.out.println(deltaWji);
 				
 				/* Apply Momentum */
 				if(!firstPass)
@@ -96,13 +102,14 @@ public class SBP
 				deltaWjiPrev = deltaWji;
 				deltaWjbiasPrev = deltaWjbias;
 				deltaWjsPrev = deltaWjs;
-			
+				
 				firstPass = false;
 			}
 			
 			/* Calculate error */
 			double error = calculateError(ttOutputs, cActualOutputs);
-			System.out.println(ttOutputs+""+cActualOutputs);
+			//System.out.println(ttOutputs);
+			//System.out.println(cActualOutputs);
 			/* save best network so far to disk */
 			if(error < params.getErrorThreshold()) { //if below threshold
 				trainee.saveToDisk(error);
@@ -112,33 +119,12 @@ public class SBP
 		}
 	}
 	
-	private void setCorrespondingOutput(List<DoubleMatrix> cActualOutputs,
-			DoubleMatrix expectedOutputVector, DoubleMatrix actualOutputVector, int randInt) {
-		if(cActualOutputs.get(randInt) == null) {
-			cActualOutputs.set(randInt, actualOutputVector);
-		}
-		else if(expectedOutputVector.get(0,0) == -1) {
-			double difference1 = -1 - actualOutputVector.get(0,0);
-			double difference2 = -1 - cActualOutputs.get(randInt).get(0,0);
-			if(difference1 > difference2) {
-				cActualOutputs.set(randInt, actualOutputVector);
-			}
-		}
-		else if(expectedOutputVector.get(0,0) == 1) {
-			double difference1 = -1 - actualOutputVector.get(0,0);
-			double difference2 = -1 - cActualOutputs.get(randInt).get(0,0);
-			if(difference1 < difference2) {
-				cActualOutputs.set(randInt, actualOutputVector);
-			}
-		}
-	}
-	
 	private List<DoubleMatrix> calcDeltaWjs(List<DoubleMatrix> deltaJs) {
 		double learningRate = params.getLearningRate();
 		List<DoubleMatrix> deltaWjs = new ArrayList<DoubleMatrix>();
 		List<DoubleMatrix> ACTjs = trainee.getACTjs();
 		for(int i=0; i<deltaJs.size()-2; i++) {
-			DoubleMatrix deltaWj = new DoubleMatrix(deltaJs.get(i).columns, deltaJs.get(i+1).columns); //TODO
+			DoubleMatrix deltaWj = new DoubleMatrix(deltaJs.get(i).columns, deltaJs.get(i+1).columns);
 			DoubleMatrix deltaJ = deltaJs.get(i);
 			DoubleMatrix ACTj = ACTjs.get(i);
 			for(int j=0; j<deltaWj.columns; j++) {
@@ -183,13 +169,13 @@ public class SBP
 		for(DoubleMatrix m : NETjs) {
 			deltaJs.add(trainee.applySigmoidDeriv(m));
 		}
+		//System.out.println(deltaJs);
 		//sigmoid'(NETj) * (sum(Wkj) k=0 to n) * delta k
-		//TODO fix
-		for(int i=deltaJs.size()-1; i>0; i--) {
+		for(int i=deltaJs.size()-1; i>=0; i--) {
 			DoubleMatrix deltaJ = deltaJs.get(i);
 			for(int j=0; j<deltaJ.columns; j++) {
 				double sum = 0.0;
-				if(i==deltaJs.size()) {
+				if(i==deltaJs.size()-1) {
 					for(int k=0; k<actualOutputVector.length; k++)
 						sum += trainee.getWkj().get(j,k)*deltaK.get(0,k);
 					deltaJ.put(0, j, deltaJ.get(0,j)*sum);
@@ -205,10 +191,8 @@ public class SBP
 		return deltaJs;
 	}
 	
-	private DoubleMatrix calcDeltaWji(DoubleMatrix deltaJfirst, DoubleMatrix inputVector, int rows, int cols) {
+	private DoubleMatrix calcDeltaWji(DoubleMatrix deltaJfirst, DoubleMatrix ACTi, int rows, int cols) {
 		double learningRate = params.getLearningRate();
-		//activation at inputs
-		DoubleMatrix ACTi = inputVector;
 		//delta Wji			(weight updates)
 		//(learning curve) * (activation at input i) * delta j
 		DoubleMatrix deltaWji = new DoubleMatrix(rows, cols);
@@ -218,10 +202,10 @@ public class SBP
 		return deltaWji;
 	}
 	
-	private List<DoubleMatrix> calcDeltaWjbias(List<DoubleMatrix> deltaJ) {
+	private List<DoubleMatrix> calcDeltaWjbias(List<DoubleMatrix> deltaJs) {
 		double learningRate = params.getLearningRate();
 		List<DoubleMatrix> deltaWjbias = new ArrayList<DoubleMatrix>();
-		for(DoubleMatrix m : deltaJ) {
+		for(DoubleMatrix m : deltaJs) {
 			deltaWjbias.add(m.mmul(learningRate));
 		}
 		//(learning curve) * delta j
@@ -230,6 +214,7 @@ public class SBP
 	
 	private void applyMomentum(DoubleMatrix deltaWji, List<DoubleMatrix> deltaWjbias,
 			DoubleMatrix deltaWkj, DoubleMatrix deltaWkbias, List<DoubleMatrix> deltaWjs) {
+		
 		double momentumRate = params.getMomentumRate();
 		deltaWkj = deltaWkj.mmul(1-momentumRate).add(deltaWkjPrev.mmul(momentumRate));
 		deltaWkbias = deltaWkbias.mmul(1-momentumRate).add(deltaWkbiasPrev.mmul(momentumRate));
@@ -260,7 +245,7 @@ public class SBP
 		trainee.applyWjsUpdate(deltaWjs);
 	}
 	
-	static double calculateError(List<DoubleMatrix> ttOutputs, List<DoubleMatrix> cActualOutputs) {
+	double calculateError(List<DoubleMatrix> ttOutputs, List<DoubleMatrix> cActualOutputs) {
 		DoubleMatrix errorVec = DoubleMatrix.zeros(1, ttOutputs.get(0).columns);
 		for(int i=0; i<ttOutputs.size(); i++) {
 			if(cActualOutputs.get(i) != null) {
@@ -269,10 +254,11 @@ public class SBP
 			}
 		}
 		errorVec.mmuli(0.5);
+		//System.out.println(errorVec);
 		double error = 0.0;
 		for(int i=0; i<errorVec.columns; i++) {
 			error += errorVec.get(0,i);
 		}
-		return error;
+		return error/params.getTrainingIterations();
 	}
 }

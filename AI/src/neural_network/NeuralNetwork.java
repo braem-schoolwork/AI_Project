@@ -3,6 +3,7 @@ package neural_network;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.jblas.*;
 
@@ -100,7 +101,7 @@ public class NeuralNetwork implements SBPImpl, Serializable
 	public DoubleMatrix applySigmoidDeriv(DoubleMatrix inc) {
 		double bias = params.getBias();
 		double A = params.getA();
-		return MatrixFunctions.pow( MatrixFunctions.tanh(inc.mmul(bias)),2 ).mmul(-A*bias).add(A*bias);
+		return MatrixFunctions.pow( MatrixFunctions.tanh(inc.mmul(bias)),2 ).mmul(A*bias*-1).add(A*bias);
 	}
 	
 	/* update application */
@@ -120,12 +121,8 @@ public class NeuralNetwork implements SBPImpl, Serializable
 	}
 
 	//getters
-	public int getInputLayerSize() { return params.getInputLayerSize(); }
-	public List<Integer> getHiddenLayerSizes() { return params.getHiddenLayerSizes(); }
 	public int getOutputLayerSize() { return params.getOutputLayerSize(); }
-	public double getInitialEdgeWeight() { return params.getInitialEdgeWeight(); }
-	public double getAVal() { return params.getA(); }
-	public double getBiasVal() { return params.getBias(); }
+	public NeuralNetworkParams getParams() { return params; }
 	@Override
 	public DoubleMatrix getNETk() { return NETk; }
 	@Override
@@ -139,9 +136,7 @@ public class NeuralNetwork implements SBPImpl, Serializable
 	DoubleMatrix getWji() { return Wji; }
 	List<DoubleMatrix> getWjbias() { return Wjbias; }
 	DoubleMatrix getWkbias() { return Wkbias; }
-	public Double getError() {
-		if(isTrained) return error; else return null;
-	}
+	public Double getError() { if(isTrained) return error; else return null; }
 	
 	//setters
 	public void setParams(NeuralNetworkParams params) { this.params = params; isTrained = false; }
@@ -154,6 +149,8 @@ public class NeuralNetwork implements SBPImpl, Serializable
 	/* Initialize this network */
 	@Override
 	public void init() {
+		Random rand = new Random();
+		
 		List<Integer> hiddenLayerSizes = params.getHiddenLayerSizes();
 		Wji = new DoubleMatrix(params.getInputLayerSize(), hiddenLayerSizes.get(0));
 		Wkj = new DoubleMatrix(hiddenLayerSizes.get(hiddenLayerSizes.size()-1), params.getOutputLayerSize());
@@ -165,28 +162,27 @@ public class NeuralNetwork implements SBPImpl, Serializable
 			DoubleMatrix hiddenLayerToBias = new DoubleMatrix(1, params.getHiddenLayerSizes().get(i));
 			for(int j=0; j<hiddenLayerToBias.rows; j++)
 				for(int k=0; k<hiddenLayerToBias.columns; k++)
-					hiddenLayerToBias.put(j, k, params.getInitialEdgeWeight());
+					hiddenLayerToBias.put(j, k, (rand.nextDouble()%2));
 			Wjbias.add(hiddenLayerToBias);
-			
 		}
 		for(int i=1; i<hiddenLayerSizes.size(); i++) {
 			DoubleMatrix hiddenWeightsAtHi = new DoubleMatrix(hiddenLayerSizes.get(i-1), hiddenLayerSizes.get(i));
 			for(int j=0; j<hiddenWeightsAtHi.rows; j++) //fill the hidden matrix
 				for(int k=0; k<hiddenWeightsAtHi.columns; k++)
-					hiddenWeightsAtHi.put(j, k, params.getInitialEdgeWeight());
+					hiddenWeightsAtHi.put(j, k, (rand.nextDouble()%2));
 			Wjs.add(hiddenWeightsAtHi);
 		}
 		
 		//fill with initial edge weights
 		for(int i=0; i<Wji.rows; i++)
 			for(int j=0; j<Wji.columns; j++)
-				Wji.put(i, j, params.getInitialEdgeWeight());
+				Wji.put(i, j, (rand.nextDouble()%2));
 		for(int i=0; i<Wkj.rows; i++)
 			for(int j=0; j<Wkj.columns; j++)
-				Wkj.put(i, j, params.getInitialEdgeWeight());
+				Wkj.put(i, j, (rand.nextDouble()%2));
 		for(int i=0; i<Wkbias.rows; i++)
 			for(int j=0; j<Wkbias.columns; j++)
-				Wkbias.put(i, j, params.getInitialEdgeWeight());
+				Wkbias.put(i, j, (rand.nextDouble()%2));
 	}
 	
 	@Override

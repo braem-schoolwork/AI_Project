@@ -27,11 +27,12 @@ public class SBPTest {
 		DoubleMatrix output3 = new DoubleMatrix(new double[][] {{1}});
 		DoubleMatrix output4 = new DoubleMatrix(new double[][] {{1}});
 		ArrayList<DoubleMatrix> ttOutputs = new ArrayList<DoubleMatrix>();
+		SBP sbp = new SBP();
 		ttOutputs.add(output1);
 		ttOutputs.add(output2);
 		ttOutputs.add(output3);
 		ttOutputs.add(output4);
-		double error = SBP.calculateError(ttOutputs, ttOutputs); //should be 0
+		double error = sbp.calculateError(ttOutputs, ttOutputs); //should be 0
 		assertTrue(error == 0.0);
 	}
 	
@@ -42,6 +43,7 @@ public class SBPTest {
 		DoubleMatrix output3 = new DoubleMatrix(new double[][] {{1}});
 		DoubleMatrix output4 = new DoubleMatrix(new double[][] {{1}});
 		ArrayList<DoubleMatrix> ttOutputs = new ArrayList<DoubleMatrix>();
+		SBP sbp = new SBP();
 		ttOutputs.add(output1);
 		ttOutputs.add(output2);
 		ttOutputs.add(output3);
@@ -51,7 +53,7 @@ public class SBPTest {
 		cActualOutputs.add(output2);
 		cActualOutputs.add(output3);
 		cActualOutputs.add(output1); //should get an error of 2
-		double error = SBP.calculateError(ttOutputs, cActualOutputs); //should be 2
+		double error = sbp.calculateError(ttOutputs, cActualOutputs); //should be 2
 		assertTrue(Math.round(error) == 2.0);
 	}
 

@@ -15,7 +15,6 @@ public class NeuralNetworkParams implements Serializable
 	private int inputLayerSize;		//layer sizes
 	private ArrayList<Integer> hiddenLayerSizes;
 	private int outputLayerSize;
-	private double initialEdgeWeight;
 	
 	public NeuralNetworkParams() {
 		setA(1);
@@ -25,17 +24,15 @@ public class NeuralNetworkParams implements Serializable
 		sizes.add(2);
 		setHiddenLayerSizes(sizes);
 		setOutputLayerSize(1);
-		setInitialEdgeWeight(0.1);
 	}
 	
-	public NeuralNetworkParams(double A, double bias, int inputLayerSize, ArrayList<Integer> hiddenLayerSizes,
-			int outputLayerSize, double initialEdgeWeight) {
+	public NeuralNetworkParams(double A, double bias, int inputLayerSize,
+			ArrayList<Integer> hiddenLayerSizes, int outputLayerSize) {
 		this.setA(A);
 		this.setBias(bias);
 		this.setInputLayerSize(inputLayerSize);
 		this.setHiddenLayerSizes(hiddenLayerSizes);
 		this.setOutputLayerSize(outputLayerSize);
-		this.setInitialEdgeWeight(initialEdgeWeight);
 	}
 
 	public double getA() {
@@ -78,11 +75,4 @@ public class NeuralNetworkParams implements Serializable
 		this.outputLayerSize = outputLayerSize;
 	}
 
-	public double getInitialEdgeWeight() {
-		return initialEdgeWeight;
-	}
-
-	public void setInitialEdgeWeight(double initialEdgeWeight) {
-		this.initialEdgeWeight = initialEdgeWeight;
-	}
 }

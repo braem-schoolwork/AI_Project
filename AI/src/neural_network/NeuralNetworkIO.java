@@ -27,17 +27,17 @@ public class NeuralNetworkIO
 	private final static String SER_FILE_NAME = "Network.ser";
 	private final static String NEW_BEST_NETWORK_MSG = "New Best Neural Network Found!";
 	
-	static boolean writeNetworkToFile(NeuralNetwork NN) {
+	public static boolean writeNetworkToFile(NeuralNetwork NN) {
 		List<String> contents = new ArrayList<String>();
 		contents.add("-Layer Sizes-");
-		contents.add("Input Layer Size: "+NN.getInputLayerSize());
-		contents.add("Hidden Layers: "+NN.getHiddenLayerSizes().size()); //list of hidden layer sizes
-		contents.add("Hidden Layer Sizes: "+NN.getHiddenLayerSizes()); //list of hidden layer sizes
+		contents.add("Input Layer Size: "+NN.getParams().getInputLayerSize());
+		contents.add("Hidden Layers: "+NN.getParams().getHiddenLayerSizes().size()); //list of hidden layer sizes
+		contents.add("Hidden Layer Sizes: "+NN.getParams().getHiddenLayerSizes()); //list of hidden layer sizes
 		contents.add("Output Layer Size: "+NN.getOutputLayerSize());
 		contents.add("");
 		contents.add("-Sigmoid Function [f(x)=A*tanh(x*bias)] related values-");
-		contents.add("A value: "+NN.getAVal());
-		contents.add("bias value: "+NN.getBiasVal());
+		contents.add("A value: "+NN.getParams().getA());
+		contents.add("bias value: "+NN.getParams().getBias());
 		contents.add("");
 		contents.add("-Weight Matrices-");
 		contents.add("Hidden Layer 0 to Input Layer edge weights matrix (Wji): "+NN.getWji());
@@ -55,8 +55,13 @@ public class NeuralNetworkIO
 			return false;
 		}
 	}
+	public static void writeBestNetworkToFile() {
+		NeuralNetwork NN = readNetwork();
+		if(NN != null)
+			writeNetworkToFile(NN);
+	}
 	
-	public static NeuralNetwork readNetwork() throws FileNotFoundException {
+	public static NeuralNetwork readNetwork() {
 		NeuralNetwork result = null;
 		try {
 			FileInputStream fis = new FileInputStream(SER_FILE_NAME);
@@ -64,7 +69,7 @@ public class NeuralNetworkIO
 			result = (NeuralNetwork) ois.readObject();
 			ois.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			return null;
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -85,13 +90,8 @@ public class NeuralNetworkIO
 	
 	static boolean isBestNetworkSoFar(double error) {
 		NeuralNetwork NN;
-		try {
-			NN = readNetwork();
-		} catch (FileNotFoundException e) {
-			System.out.println(NEW_BEST_NETWORK_MSG);
-			return true;
-		}
-		if(NN.getError() > error) {
+		NN = readNetwork();
+		if(NN == null || NN.getError() > error) {
 			System.out.println(NEW_BEST_NETWORK_MSG);
 			return true;
 		}

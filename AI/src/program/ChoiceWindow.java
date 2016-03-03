@@ -84,10 +84,10 @@ public class ChoiceWindow extends JFrame {
 		btnCreateManipulate.setBounds(10, 93, 464, 71);
 		contentPane.add(btnCreateManipulate);
 		
-		JButton btnCreateNn = new JButton("Create NN & Run SBP on XOR");
+		JButton btnCreateNn = new JButton("Create & Train Neural Networks");
 		btnCreateNn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				NNSBPXORWindow window = new NNSBPXORWindow();
+				NNWindow window = new NNWindow();
 				thisFrame.dispose();
 				window.enable();
 			}

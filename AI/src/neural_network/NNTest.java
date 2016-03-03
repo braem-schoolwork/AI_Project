@@ -21,4 +21,14 @@ public class NNTest {
 		assertTrue(NeuralNetworkIO.isBestNetworkSoFar(0.0));
 	}
 	
+	@Test
+	public void test() {
+		NeuralNetwork NN = NeuralNetworkIO.readNetwork();
+		DoubleMatrix output = NN.feedForward(new DoubleMatrix(new double[][] {{1,1}}));
+		System.out.println(output);
+		System.out.println(NN.feedForward(new DoubleMatrix(new double[][] {{-1,-1}})));
+		System.out.println(NN.feedForward(new DoubleMatrix(new double[][] {{-1,1}})));
+		System.out.println(NN.feedForward(new DoubleMatrix(new double[][] {{1,-1}})));
+	}
+	
 }

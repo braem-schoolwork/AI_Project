@@ -66,16 +66,16 @@ public class RubiksCubeTrainingDataGenerator
 		
 		double dirBit = Math.round(outputVector.get(0, 6));
 		
-		if(sliceBit0 == 1.0) sliceNum = 2;
-		else if(sliceBit1 == 1.0) sliceNum = 1;
-		else if(sliceBit2 == 1.0) sliceNum = 0;
+		if(sliceBit0 >= 0.0) sliceNum = 2;
+		else if(sliceBit1 >= 0.0) sliceNum = 1;
+		else if(sliceBit2 >= 0.0) sliceNum = 0;
 		
-		if(axisBit0 == 1.0) axis = Axis.Z;
-		else if(axisBit1 == 1.0) axis = Axis.Y;
-		else if(axisBit2 == 1.0) axis = Axis.X;
+		if(axisBit0 >= 0.0) axis = Axis.Z;
+		else if(axisBit1 >= 0.0) axis = Axis.Y;
+		else if(axisBit2 >= 0.0) axis = Axis.X;
 		
-		if(dirBit == 1.0) dir = Direction.CCW;
-		else if(dirBit == -1.0) dir = Direction.CW;
+		if(dirBit >= 0.0) dir = Direction.CCW;
+		else if(dirBit < 0.0) dir = Direction.CW;
 		
 		MoveParams moveParams = new MoveParams(sliceNum, axis, dir);
 		Move move = new Move(moveParams);

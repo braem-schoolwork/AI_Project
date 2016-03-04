@@ -88,7 +88,7 @@ public class RubiksCube implements Searchable
 			RubiksCube cubeCopy = new RubiksCube(this);
 			move.apply(cubeCopy);
 			allChildren[i] = cubeCopy;
-			allChildren[i].lastMoveApplied = move;
+			cubeCopy.lastMoveApplied = move;
 		}
 		return allChildren;
 	}

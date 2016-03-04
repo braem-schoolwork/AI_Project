@@ -95,7 +95,6 @@ public class SBP
 			
 			/* Calculate error */
 			DoubleMatrix error = calculateError(trainingData);
-			System.out.println(error);
 
 			/* save best network so far to disk */
 			if(isBelowThreshold(error)) { //if below threshold
@@ -168,7 +167,7 @@ public class SBP
 					deltaJ.put(0, j, deltaJ.get(0,j)*sum);
 				}
 				else {
-					for(int k=0; k<deltaJs.get(i).columns; k++)
+					for(int k=0; k<deltaJs.get(i).columns; k++) //TODO error here for diff sized hidden layers
 						sum += trainee.getWjs().get(i).get(j,k)*deltaJs.get(i+1).get(0,k);
 					deltaJ.put(0, j, deltaJ.get(0,j)*sum);
 				}

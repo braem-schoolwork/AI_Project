@@ -63,11 +63,25 @@ public class NNWindow extends JFrame {
 		contentPane.add(btnRunOn);
 		
 		JButton btnCreateTrain = new JButton("Create & train network with SBP");
+		btnCreateTrain.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CreateNetworkWindow window = new CreateNetworkWindow();
+				thisFrame.dispose();
+				window.enable();
+			}
+		});
 		btnCreateTrain.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		btnCreateTrain.setBounds(15, 93, 602, 61);
 		contentPane.add(btnCreateTrain);
 		
 		JButton btnTrainNetworkFor = new JButton("Train network for Rubik's Cube");
+		btnTrainNetworkFor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				RCNNWindow window = new RCNNWindow();
+				thisFrame.dispose();
+				window.enable();
+			}
+		});
 		btnTrainNetworkFor.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		btnTrainNetworkFor.setBounds(15, 170, 602, 61);
 		contentPane.add(btnTrainNetworkFor);

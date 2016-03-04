@@ -48,7 +48,7 @@ public class AstarSearch implements Search {
 	@Override
 	public Searchable search(Searchable startState, Searchable goalState)
 	{
-		
+		path.clear();
 		//queue for objects to be searched
 		PriorityQueue<SearchListNode> openList = new PriorityQueue<SearchListNode>();
 		//set for objects that have already been searched

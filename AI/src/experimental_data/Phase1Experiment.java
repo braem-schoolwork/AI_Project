@@ -28,7 +28,7 @@ public class Phase1Experiment implements Experiment
 	private final static Charset ENCODING = StandardCharsets.UTF_8;
 	private static Search search = new AstarSearch();
 	private static int cubeSize = 3;
-	private static String fileName = System.getProperty("user.dir")+"\\Phase1Experiment_TrainingData";
+	private static String fileName = System.getProperty("user.dir")+"\\training_data";
 	
 	@Override
 	public void runExperiment(String fileExtension) {
@@ -41,13 +41,16 @@ public class Phase1Experiment implements Experiment
 				search.search(rubiksCube, new RubiksCube(rubiksCube.getSize()));
 				List<Searchable> searchableObjs = search.getPath();
 				List<RubiksCube> cubes = new ArrayList<RubiksCube>();
-				for(Searchable obj : searchableObjs)
-					cubes.add( (RubiksCube)obj );
+				for(Searchable obj : searchableObjs) {
+					RubiksCube cube = (RubiksCube)obj;
+					cubes.add(cube);
+				}
 				List<Move> moves = new ArrayList<Move>();
-				for(Searchable obj : cubes)
-					moves.add( ((RubiksCube)obj).getLastMoveApplied() );
+				for(RubiksCube obj : cubes)
+					moves.add( obj.getLastMoveApplied() );
 				moves.remove(0);
-				content.addAll(RubiksCubeTrainingDataGenerator.genTrainingData(cubes, moves));
+				cubes.remove(cubes.size()-1);
+				content.addAll(RubiksCubeTrainingDataGenerator.genFileTrainingData(cubes, moves));
 			}
 		}
 		try {

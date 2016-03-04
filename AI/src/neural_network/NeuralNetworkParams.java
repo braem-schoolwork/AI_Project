@@ -15,7 +15,7 @@ public class NeuralNetworkParams implements Serializable
 	private int outputLayerSize;
 	
 	public NeuralNetworkParams() {
-		setBias(2.1);
+		setBias(1.0);
 		setInputLayerSize(2);
 		ArrayList<Integer> sizes = new ArrayList<Integer>();
 		sizes.add(2);

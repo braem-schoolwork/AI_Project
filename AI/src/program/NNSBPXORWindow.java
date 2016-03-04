@@ -174,6 +174,7 @@ public class NNSBPXORWindow extends JFrame {
 					double errorThreshold = Double.parseDouble(errorThresholdTF.getText());
 					double learningRate = Double.parseDouble(learningRateTF.getText());
 					double momentumRate = Double.parseDouble(momentumRateTF.getText());
+					
 					NeuralNetworkParams NNparams = new NeuralNetworkParams(1.0, inputLayerSize, hiddenLayerSizes, outputLayerSize);
 					NN = new NeuralNetwork(NNparams);
 					SBPParams sbpParams = new SBPParams(epochs, trainingIterations, errorThreshold, learningRate, momentumRate);
@@ -195,7 +196,7 @@ public class NNSBPXORWindow extends JFrame {
 		JButton btnBack = new JButton("back");
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ChoiceWindow window = new ChoiceWindow();
+				NNWindow window = new NNWindow();
 				thisFrame.dispose();
 				window.enable();
 			}

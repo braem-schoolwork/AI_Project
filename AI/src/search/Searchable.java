@@ -13,4 +13,10 @@ package search;
 public interface Searchable {
 	public Searchable[] genChildren();
 	public float h();
+	
+	@Override
+	public int hashCode();
+	
+	@Override
+	public boolean equals(Object obj);
 }

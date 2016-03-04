@@ -35,7 +35,7 @@ public class BFSearch implements Search
 	
 	public Searchable search(Searchable startState, Searchable goalState)
 	{
-		
+		path.clear();
 		//queue for objects to be searched
 		Queue<SearchListNode> openList = new LinkedList<SearchListNode>();
 		//queue for objects that have already been searched

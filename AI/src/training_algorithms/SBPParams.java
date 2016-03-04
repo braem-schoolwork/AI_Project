@@ -12,8 +12,8 @@ public class SBPParams
 		setEpochs(5000);
 		setTrainingIterations(3500);
 		setErrorThreshold(0.0001);
-		setLearningRate(0.30);
-		setMomentumRate(0.30);
+		setLearningRate(0.10);
+		setMomentumRate(0.10);
 	}
 	
 	public SBPParams(int epochs, int trainingIterations, double errorThreshold, double learningRate, double momentumRate) {

@@ -25,19 +25,17 @@ public class TrainingDataGenerator {
 		}
 		ArrayList<TrainingTuple> tts = new ArrayList<TrainingTuple>();
 		for(String tupleStr : fileContents) {
-			String[] tupleStrArr = tupleStr.split("|");
+			String[] tupleStrArr = tupleStr.split("[|]+");
 			String inputsStr = tupleStrArr[0];
 			String outputsStr = tupleStrArr[1];
-			String[] inputStrs = inputsStr.split(",");
-			String[] outputStrs = outputsStr.split(",");
+			String[] inputStrs = inputsStr.split("[,]+");
+			String[] outputStrs = outputsStr.split("[,]+");
 			DoubleMatrix inputs = new DoubleMatrix(1, inputStrs.length);
 			DoubleMatrix outputs = new DoubleMatrix(1, outputStrs.length);
-			for(int i=0; i<inputStrs.length; i++) {
-				inputs.put(0, Double.parseDouble(inputStrs[i]));
-			}
-			for(int i=0; i<outputStrs.length; i++) {
-				outputs.put(0, Double.parseDouble(outputStrs[i]));
-			}
+			for(int i=0; i<inputStrs.length; i++)
+				inputs.put(0, i, Double.parseDouble(inputStrs[i]));
+			for(int i=0; i<outputStrs.length; i++)
+				outputs.put(0, i, Double.parseDouble(outputStrs[i]));
 			TrainingTuple tt = new TrainingTuple(inputs, outputs);
 			tts.add(tt);
 		}

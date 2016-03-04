@@ -13,7 +13,7 @@ import training_algorithms.SBP;
 import training_algorithms.SBPParams;
 import training_data.TrainingData;
 import training_data.TrainingDataGenerator;
-import training_data.XORTrainingDataGenerator;
+import training_data.TrainingTuple;
 
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
+import javax.swing.JComboBox;
 
 public class CreateNetworkWindow extends JFrame {
 
@@ -30,6 +31,7 @@ public class CreateNetworkWindow extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -4409889890487667466L;
+	private JFrame thisFrame = this;
 	private JPanel contentPane;
 	private JTextField hiddenLayerSizesTF;
 	private JTextField inputLayerSizeTF;
@@ -45,6 +47,9 @@ public class CreateNetworkWindow extends JFrame {
 	private TrainingData trainingData = null;
 	private JLabel lblInvalidInputs;
 	private NeuralNetwork NN = null;
+	private JTextField ffTF;
+	private JComboBox<TrainingTuple> ttCB;
+	private JButton btnFeedForward;
 	
 	/**
 	 * Launch the application.
@@ -71,14 +76,14 @@ public class CreateNetworkWindow extends JFrame {
 	 */
 	public CreateNetworkWindow() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 678, 616);
+		setBounds(100, 100, 661, 677);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		hiddenLayerSizesTF = new JTextField();
-		hiddenLayerSizesTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		hiddenLayerSizesTF.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		hiddenLayerSizesTF.setBounds(230, 14, 228, 29);
 		contentPane.add(hiddenLayerSizesTF);
 		hiddenLayerSizesTF.setColumns(10);
@@ -99,31 +104,33 @@ public class CreateNetworkWindow extends JFrame {
 		
 		inputLayerSizeTF = new JTextField();
 		inputLayerSizeTF.setEditable(false);
-		inputLayerSizeTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		inputLayerSizeTF.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		inputLayerSizeTF.setColumns(10);
-		inputLayerSizeTF.setBounds(203, 54, 75, 29);
+		inputLayerSizeTF.setBounds(203, 54, 55, 29);
 		contentPane.add(inputLayerSizeTF);
 		
 		JLabel lblOutputLayerSize = new JLabel("Output Layer Size:");
 		lblOutputLayerSize.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		lblOutputLayerSize.setBounds(288, 54, 220, 29);
+		lblOutputLayerSize.setBounds(268, 54, 220, 29);
 		contentPane.add(lblOutputLayerSize);
 		
 		outputLayerSizeTF = new JTextField();
 		outputLayerSizeTF.setEditable(false);
-		outputLayerSizeTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		outputLayerSizeTF.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		outputLayerSizeTF.setColumns(10);
-		outputLayerSizeTF.setBounds(500, 52, 75, 29);
+		outputLayerSizeTF.setBounds(470, 52, 55, 29);
 		contentPane.add(outputLayerSizeTF);
 		
 		JLabel lblInputOutput = new JLabel("*input & output layer sizes are determined by the training data loaded");
-		lblInputOutput.setBounds(10, 86, 565, 14);
+		lblInputOutput.setBounds(10, 86, 548, 14);
 		contentPane.add(lblInputOutput);
 		
 		JButton btnLoadTrainingData = new JButton("Load Training Data");
 		btnLoadTrainingData.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				trainingData = TrainingDataGenerator.genFromFile();
+				btnFeedForward.setEnabled(false);
+				ttCB.removeAllItems();
 				if(trainingData == null) {
 					lblFileNotFound.setVisible(true);
 					inputLayerSizeTF.setText("");
@@ -134,6 +141,8 @@ public class CreateNetworkWindow extends JFrame {
 					lblFileNotFound.setVisible(false);
 				inputLayerSizeTF.setText(""+trainingData.getData().get(0).getInputs().columns);
 				outputLayerSizeTF.setText(""+trainingData.getData().get(0).getOutputs().columns);
+				for(TrainingTuple tt : trainingData.getData())
+					ttCB.addItem(tt);
 			}
 		});
 		btnLoadTrainingData.setFont(new Font("Tahoma", Font.PLAIN, 24));
@@ -166,25 +175,25 @@ public class CreateNetworkWindow extends JFrame {
 		contentPane.add(lblTrainingIterations);
 		
 		learningRateTF = new JTextField();
-		learningRateTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		learningRateTF.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		learningRateTF.setColumns(10);
 		learningRateTF.setBounds(240, 111, 244, 29);
 		contentPane.add(learningRateTF);
 		
 		momentumRateTF = new JTextField();
-		momentumRateTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		momentumRateTF.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		momentumRateTF.setColumns(10);
 		momentumRateTF.setBounds(240, 151, 244, 29);
 		contentPane.add(momentumRateTF);
 		
 		epochsTF = new JTextField();
-		epochsTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		epochsTF.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		epochsTF.setColumns(10);
 		epochsTF.setBounds(240, 196, 244, 29);
 		contentPane.add(epochsTF);
 		
 		trainingIterationsTF = new JTextField();
-		trainingIterationsTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		trainingIterationsTF.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		trainingIterationsTF.setColumns(10);
 		trainingIterationsTF.setBounds(240, 236, 244, 29);
 		contentPane.add(trainingIterationsTF);
@@ -199,7 +208,7 @@ public class CreateNetworkWindow extends JFrame {
 					//NN
 					int inputLayerSize = Integer.parseInt(inputLayerSizeTF.getText());
 					ArrayList<Integer> hiddenLayerSizes = new ArrayList<Integer>();
-					String[] hiddenLayerSizesStr = hiddenLayerSizesTF.getText().split(",");
+					String[] hiddenLayerSizesStr = hiddenLayerSizesTF.getText().split("[,]+");
 					for(String hiddenLayerSizeStr : hiddenLayerSizesStr)
 						hiddenLayerSizes.add(Integer.parseInt(hiddenLayerSizeStr));
 					int outputLayerSize = Integer.parseInt(outputLayerSizeTF.getText());
@@ -223,6 +232,7 @@ public class CreateNetworkWindow extends JFrame {
 					sbp.setTrainee(NN);
 					sbp.apply(trainingData);
 					trainingErrorTF.setText(sbp.getError()+"");
+					btnFeedForward.setEnabled(true);
 					
 					lblInvalidInputs.setText("");
 				} catch(NumberFormatException e) {
@@ -246,12 +256,19 @@ public class CreateNetworkWindow extends JFrame {
 		contentPane.add(lblErrorThreshold);
 		
 		errorThresholdTF = new JTextField();
-		errorThresholdTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		errorThresholdTF.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		errorThresholdTF.setColumns(10);
 		errorThresholdTF.setBounds(240, 281, 244, 29);
 		contentPane.add(errorThresholdTF);
 		
 		JButton btnBack = new JButton("back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				NNWindow window = new NNWindow();
+				thisFrame.dispose();
+				window.enable();
+			}
+		});
 		btnBack.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		btnBack.setBounds(469, 471, 89, 37);
 		contentPane.add(btnBack);
@@ -262,12 +279,13 @@ public class CreateNetworkWindow extends JFrame {
 		contentPane.add(lblTrainingError);
 		
 		trainingErrorTF = new JTextField();
-		trainingErrorTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		trainingErrorTF.setEditable(false);
+		trainingErrorTF.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		trainingErrorTF.setColumns(10);
 		trainingErrorTF.setBounds(175, 387, 309, 29);
 		contentPane.add(trainingErrorTF);
 		
-		JButton btnWriteNetworkToFile = new JButton("Write Network To .txt");
+		JButton btnWriteNetworkToFile = new JButton("Write Network to .txt");
 		btnWriteNetworkToFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if(NN != null)
@@ -281,16 +299,17 @@ public class CreateNetworkWindow extends JFrame {
 		JButton btnSerializeNetwork = new JButton("Serialize Network");
 		btnSerializeNetwork.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				NeuralNetworkIO.writeNetwork(NN);
+				if(NN != null)
+					NeuralNetworkIO.writeNetwork(NN);
 			}
 		});
 		btnSerializeNetwork.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		btnSerializeNetwork.setBounds(312, 427, 246, 37);
 		contentPane.add(btnSerializeNetwork);
 		
-		lblInvalidInputs = new JLabel("invalid inputs");
+		lblInvalidInputs = new JLabel("invalid parameters");
 		lblInvalidInputs.setForeground(Color.RED);
-		lblInvalidInputs.setBounds(288, 359, 183, 20);
+		lblInvalidInputs.setBounds(288, 359, 196, 20);
 		contentPane.add(lblInvalidInputs);
 		
 		JLabel lblwritingSerializing = new JLabel("*Writing & Serializing Networks will overwrite");
@@ -300,6 +319,34 @@ public class CreateNetworkWindow extends JFrame {
 		JLabel lblNetworktxtAndorNetworkser = new JLabel("Network.txt and/or Network.ser");
 		lblNetworktxtAndorNetworkser.setBounds(10, 488, 335, 20);
 		contentPane.add(lblNetworktxtAndorNetworkser);
+		
+		JLabel lblTrainingTuples = new JLabel("Training Tuples");
+		lblTrainingTuples.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		lblTrainingTuples.setBounds(10, 519, 183, 29);
+		contentPane.add(lblTrainingTuples);
+		
+		ttCB = new JComboBox<TrainingTuple>();
+		ttCB.setBounds(175, 519, 383, 29);
+		contentPane.add(ttCB);
+		
+		btnFeedForward = new JButton("Feed Forward");
+		btnFeedForward.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				TrainingTuple tt = (TrainingTuple)ttCB.getSelectedItem();
+				ffTF.setText(""+NN.feedForward(tt.getInputs()));
+			}
+		});
+		btnFeedForward.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		btnFeedForward.setBounds(10, 559, 191, 37);
+		contentPane.add(btnFeedForward);
+		btnFeedForward.setEnabled(false);
+		
+		ffTF = new JTextField();
+		ffTF.setEditable(false);
+		ffTF.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		ffTF.setBounds(211, 559, 347, 37);
+		contentPane.add(ffTF);
+		ffTF.setColumns(10);
 		
 		lblInvalidInput.setVisible(false);
 		lblFileNotFound.setVisible(false);

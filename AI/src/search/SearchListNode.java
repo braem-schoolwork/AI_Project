@@ -28,8 +28,10 @@ public class SearchListNode implements Comparable<SearchListNode>
 		else
 			return 0;
 	}
-	public boolean equals(SearchListNode sln) {
-		return this.searchableObj.equals(sln.getSearchableObj());
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof SearchListNode)) return false;
+		return this.searchableObj.equals(((SearchListNode)obj).getSearchableObj());
 	}
 	@Override
 	public int hashCode() {

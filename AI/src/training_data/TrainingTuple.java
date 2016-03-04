@@ -28,6 +28,8 @@ public class TrainingTuple
 	
 	@Override
 	public String toString() {
-		return inputs +"|"+ outputs;
+		String input = (""+inputs).replace("0", "").replace(".", "");
+		String output = (""+outputs).replace("0", "").replace(".", "");
+		return input +" | "+ output;
 	}
 }

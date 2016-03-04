@@ -11,6 +11,8 @@ import neural_network.NeuralNetworkIO;
 import neural_network.NeuralNetworkParams;
 import training_algorithms.SBP;
 import training_algorithms.SBPParams;
+import training_data.TrainingData;
+import training_data.TrainingTuple;
 import training_data.XORTrainingDataGenerator;
 
 import javax.swing.JTextField;
@@ -21,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import javax.swing.JComboBox;
 
 public class NNSBPXORWindow extends JFrame {
 
@@ -30,29 +33,27 @@ public class NNSBPXORWindow extends JFrame {
 	private static final long serialVersionUID = -3856668708286379758L;
 	private JFrame thisFrame = this;
 	private JPanel contentPane;
-	private JTextField AValTF;
-	private JTextField biasValTF;
 	private JTextField epochsTF;
 	private JTextField trainingIterationsTF;
 	private JTextField errorThresholdTF;
 	private JTextField learningRateTF;
 	private JTextField momentumRateTF;
 	private JTextField trainingErrorTF;
+	private JComboBox<TrainingTuple> tupleCB;
 	
 	//default NN params
 	private int defaultInputLayerSize = 2;
 	private int defaultHiddenLayerSize = 2;
 	private int defaultOutputLayerSize = 1;
-	private String defaultAvalStr = "1";
-	private String defaultBiasValStr = "2.1";
 	
 	//default SBP params
-	private String defaultEpochsStr = "500";
+	private String defaultEpochsStr = "50";
 	private String defaultTrainingIterationsStr = "3500";
 	private String defaultErrorThresholdStr = "0.00001";
-	private String defaultLearningRateStr = "0.3";
-	private String defaultMomentumRateStr = "0.3";
+	private String defaultLearningRateStr = "0.1";
+	private String defaultMomentumRateStr = "0.1";
 	private NeuralNetwork NN = null;
+	private JTextField ffTF;
 
 	/**
 	 * Launch the application.
@@ -75,8 +76,6 @@ public class NNSBPXORWindow extends JFrame {
 	}
 	
 	private void setDefaults() {
-		AValTF.setText(defaultAvalStr);
-		biasValTF.setText(defaultBiasValStr);
 		epochsTF.setText(defaultEpochsStr);
 		trainingIterationsTF.setText(defaultTrainingIterationsStr);
 		errorThresholdTF.setText(defaultErrorThresholdStr);
@@ -89,38 +88,11 @@ public class NNSBPXORWindow extends JFrame {
 	 */
 	public NNSBPXORWindow() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 721, 362);
+		setBounds(100, 100, 721, 554);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
-		JLabel lblNeuralNetworkParams = new JLabel("Neural Network Params");
-		lblNeuralNetworkParams.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		lblNeuralNetworkParams.setBounds(10, 11, 224, 25);
-		contentPane.add(lblNeuralNetworkParams);
-		
-		JLabel lblA = new JLabel("A Value:");
-		lblA.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		lblA.setBounds(10, 47, 83, 25);
-		contentPane.add(lblA);
-		
-		JLabel lblBiasValue = new JLabel("Bias Value:");
-		lblBiasValue.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		lblBiasValue.setBounds(10, 83, 150, 25);
-		contentPane.add(lblBiasValue);
-		
-		AValTF = new JTextField();
-		AValTF.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		AValTF.setColumns(10);
-		AValTF.setBounds(206, 47, 106, 25);
-		contentPane.add(AValTF);
-		
-		biasValTF = new JTextField();
-		biasValTF.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		biasValTF.setColumns(10);
-		biasValTF.setBounds(206, 83, 106, 25);
-		contentPane.add(biasValTF);
 		
 		JLabel lblStochasticBackPropagation = new JLabel("Stochastic Back Propagation Params");
 		lblStochasticBackPropagation.setFont(new Font("Tahoma", Font.PLAIN, 20));
@@ -196,15 +168,13 @@ public class NNSBPXORWindow extends JFrame {
 					ArrayList<Integer> hiddenLayerSizes = new ArrayList<Integer>();
 					hiddenLayerSizes.add(defaultHiddenLayerSize);
 					int outputLayerSize = defaultOutputLayerSize;
-					double AVal = Double.parseDouble(AValTF.getText());
-					double biasVal = Double.parseDouble(biasValTF.getText());
 					
 					int epochs = Integer.parseInt(epochsTF.getText());
 					int trainingIterations = Integer.parseInt(trainingIterationsTF.getText());
 					double errorThreshold = Double.parseDouble(errorThresholdTF.getText());
 					double learningRate = Double.parseDouble(learningRateTF.getText());
 					double momentumRate = Double.parseDouble(momentumRateTF.getText());
-					NeuralNetworkParams NNparams = new NeuralNetworkParams(AVal, biasVal, inputLayerSize, hiddenLayerSizes, outputLayerSize);
+					NeuralNetworkParams NNparams = new NeuralNetworkParams(1.0, inputLayerSize, hiddenLayerSizes, outputLayerSize);
 					NN = new NeuralNetwork(NNparams);
 					SBPParams sbpParams = new SBPParams(epochs, trainingIterations, errorThreshold, learningRate, momentumRate);
 					SBP sbp = new SBP(sbpParams);
@@ -219,7 +189,7 @@ public class NNSBPXORWindow extends JFrame {
 			}
 		});
 		btnRun.setFont(new Font("Tahoma", Font.PLAIN, 30));
-		btnRun.setBounds(10, 119, 97, 45);
+		btnRun.setBounds(222, 11, 97, 110);
 		contentPane.add(btnRun);
 		
 		JButton btnBack = new JButton("back");
@@ -231,7 +201,7 @@ public class NNSBPXORWindow extends JFrame {
 			}
 		});
 		btnBack.setFont(new Font("Tahoma", Font.PLAIN, 30));
-		btnBack.setBounds(556, 227, 106, 57);
+		btnBack.setBounds(10, 11, 97, 45);
 		contentPane.add(btnBack);
 		
 		JButton btnResetToDefaults = new JButton("Reset to Defaults");
@@ -241,7 +211,7 @@ public class NNSBPXORWindow extends JFrame {
 			}
 		});
 		btnResetToDefaults.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnResetToDefaults.setBounds(117, 119, 195, 45);
+		btnResetToDefaults.setBounds(10, 73, 195, 45);
 		contentPane.add(btnResetToDefaults);
 		
 		JLabel lblTrainingError = new JLabel("Training Error:");
@@ -250,6 +220,8 @@ public class NNSBPXORWindow extends JFrame {
 		contentPane.add(lblTrainingError);
 		
 		trainingErrorTF = new JTextField();
+		trainingErrorTF.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		trainingErrorTF.setEditable(false);
 		trainingErrorTF.setBounds(189, 227, 333, 27);
 		contentPane.add(trainingErrorTF);
 		trainingErrorTF.setColumns(10);
@@ -261,7 +233,7 @@ public class NNSBPXORWindow extends JFrame {
 					NeuralNetworkIO.writeNetworkToFile(NN);
 			}
 		});
-		btnWriteThisNetwork.setBounds(10, 175, 302, 23);
+		btnWriteThisNetwork.setBounds(10, 138, 302, 23);
 		contentPane.add(btnWriteThisNetwork);
 		
 		JButton btnWriteBestNetwork = new JButton("Write best network to .txt file");
@@ -270,8 +242,43 @@ public class NNSBPXORWindow extends JFrame {
 				NeuralNetworkIO.writeBestNetworkToFile();
 			}
 		});
-		btnWriteBestNetwork.setBounds(10, 198, 302, 23);
+		btnWriteBestNetwork.setBounds(10, 177, 302, 23);
 		contentPane.add(btnWriteBestNetwork);
+		
+		JLabel lblXorTuples = new JLabel("XOR Tuples");
+		lblXorTuples.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		lblXorTuples.setBounds(10, 293, 128, 25);
+		contentPane.add(lblXorTuples);
+		
+		tupleCB = new JComboBox<TrainingTuple>();
+		tupleCB.setBounds(173, 296, 201, 26);
+		contentPane.add(tupleCB);
+		TrainingData data = XORTrainingDataGenerator.gen();
+		for(TrainingTuple tt : data.getData())
+			tupleCB.addItem(tt);
+		
+		JButton btnFeedForward = new JButton("Feed Forward");
+		btnFeedForward.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				TrainingTuple tt = (TrainingTuple)tupleCB.getSelectedItem();
+				ffTF.setText(""+NN.feedForward(tt.getInputs()));
+			}
+		});
+		btnFeedForward.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		btnFeedForward.setBounds(433, 279, 229, 52);
+		contentPane.add(btnFeedForward);
+		
+		ffTF = new JTextField();
+		ffTF.setEditable(false);
+		ffTF.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		ffTF.setBounds(253, 334, 409, 31);
+		contentPane.add(ffTF);
+		ffTF.setColumns(10);
+		
+		JLabel lblFeedForwardResult = new JLabel("Feed Forward Result:");
+		lblFeedForwardResult.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		lblFeedForwardResult.setBounds(10, 334, 237, 31);
+		contentPane.add(lblFeedForwardResult);
 
 		setDefaults();
 	}

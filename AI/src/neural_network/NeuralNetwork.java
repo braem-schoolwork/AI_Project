@@ -31,22 +31,23 @@ public class NeuralNetwork implements SBPImpl, Serializable
 	private DoubleMatrix NETk;		//Nets stored in feedForward for SBP
 	private List<DoubleMatrix> NETjs;
 	private List<DoubleMatrix> ACTjs;
+	private double A = 1.716;
+	private double B = 0.667;
 	private NeuralNetworkParams params;
-	private boolean isTrained;
-	private double error;
+	private DoubleMatrix error;
 	
 	public NeuralNetwork() { //initialize for basic XOR NN
 		params = new NeuralNetworkParams();
-		isTrained = false;
-		error = Double.MAX_VALUE;
+		error = new DoubleMatrix(1, params.getOutputLayerSize());
+		error = error.fill(Double.MAX_VALUE);
 		NETjs = null;
 		ACTjs = null;
 	}
 	
 	public NeuralNetwork(NeuralNetworkParams params) {
 		this.params = params;
-		isTrained = false;
-		error = Double.MAX_VALUE;
+		error = new DoubleMatrix(1, params.getOutputLayerSize());
+		error = error.fill(Double.MAX_VALUE);
 		NETjs = null;
 		ACTjs = null;
 	}
@@ -70,7 +71,7 @@ public class NeuralNetwork implements SBPImpl, Serializable
 			if(i==0)
 				hNetMatrix = inputVector.mmul(Wji).add(Wjbias.get(i).mmul(bias));
 			else	//get previous layers ACT values then *weights. Then add the bias
-				hNetMatrix = hActMatrix.mmul(Wjs.get(i-1)) .add(Wjbias.get(i).mmul(bias));
+				hNetMatrix = ACTjs.get(i-1).mmul(Wjs.get(i-1)) .add(Wjbias.get(i).mmul(bias));
 			hActMatrix = applySigmoid(hNetMatrix);
 			NETjs.add(hNetMatrix);
 			ACTjs.add(hActMatrix);
@@ -93,15 +94,11 @@ public class NeuralNetwork implements SBPImpl, Serializable
 	/* sigmoid function application */
 	@Override
 	public DoubleMatrix applySigmoid(DoubleMatrix inc) {
-		double bias = params.getBias();
-		double A = params.getA();
-		return MatrixFunctions.tanh(inc.mmul(bias)).mmul(A);
+		return MatrixFunctions.tanh(inc.mmul(B)).mmul(A);
 	}
 	@Override
 	public DoubleMatrix applySigmoidDeriv(DoubleMatrix inc) {
-		double bias = params.getBias();
-		double A = params.getA();
-		return MatrixFunctions.pow( MatrixFunctions.tanh(inc.mmul(bias)),2 ).mmul(A*bias*-1).add(A*bias);
+		return MatrixFunctions.pow( MatrixFunctions.tanh(inc),2 ).mmul(-1).add(1);
 	}
 	
 	/* update application */
@@ -136,10 +133,10 @@ public class NeuralNetwork implements SBPImpl, Serializable
 	DoubleMatrix getWji() { return Wji; }
 	List<DoubleMatrix> getWjbias() { return Wjbias; }
 	DoubleMatrix getWkbias() { return Wkbias; }
-	public Double getError() { if(isTrained) return error; else return null; }
+	public DoubleMatrix getError() { return error; }
 	
 	//setters
-	public void setParams(NeuralNetworkParams params) { this.params = params; isTrained = false; }
+	public void setParams(NeuralNetworkParams params) { this.params = params; }
 	void setWji(DoubleMatrix Wji) { this.Wji = Wji; }
 	void setWjbias(List<DoubleMatrix> Wjbias) { this.Wjbias = Wjbias; }
 	void setWkj(DoubleMatrix Wkj) { this.Wkj = Wkj; }
@@ -162,35 +159,42 @@ public class NeuralNetwork implements SBPImpl, Serializable
 			DoubleMatrix hiddenLayerToBias = new DoubleMatrix(1, params.getHiddenLayerSizes().get(i));
 			for(int j=0; j<hiddenLayerToBias.rows; j++)
 				for(int k=0; k<hiddenLayerToBias.columns; k++)
-					hiddenLayerToBias.put(j, k, (rand.nextDouble()%2));
+					hiddenLayerToBias.put(j, k, (rand.nextDouble()%3)-1);
 			Wjbias.add(hiddenLayerToBias);
 		}
 		for(int i=1; i<hiddenLayerSizes.size(); i++) {
 			DoubleMatrix hiddenWeightsAtHi = new DoubleMatrix(hiddenLayerSizes.get(i-1), hiddenLayerSizes.get(i));
 			for(int j=0; j<hiddenWeightsAtHi.rows; j++) //fill the hidden matrix
 				for(int k=0; k<hiddenWeightsAtHi.columns; k++)
-					hiddenWeightsAtHi.put(j, k, (rand.nextDouble()%2));
+					hiddenWeightsAtHi.put(j, k, (rand.nextDouble()%3)-1);
 			Wjs.add(hiddenWeightsAtHi);
 		}
 		
 		//fill with initial edge weights
 		for(int i=0; i<Wji.rows; i++)
 			for(int j=0; j<Wji.columns; j++)
-				Wji.put(i, j, (rand.nextDouble()%2));
+				Wji.put(i, j, (rand.nextDouble()%3)-1);
 		for(int i=0; i<Wkj.rows; i++)
 			for(int j=0; j<Wkj.columns; j++)
-				Wkj.put(i, j, (rand.nextDouble()%2));
+				Wkj.put(i, j, (rand.nextDouble()%3)-1);
 		for(int i=0; i<Wkbias.rows; i++)
 			for(int j=0; j<Wkbias.columns; j++)
-				Wkbias.put(i, j, (rand.nextDouble()%2));
+				Wkbias.put(i, j, (rand.nextDouble()%3)-1);
 	}
 	
 	@Override
-	public void saveToDisk(double error) {
-		isTrained = true;
+	public void saveToDisk(DoubleMatrix error) {
 		this.error = error;
 		if(NeuralNetworkIO.isBestNetworkSoFar(error)) { //if best network so far, save it to disk
 			NeuralNetworkIO.writeNetwork(this);
 		}
+	}
+	
+	@Override
+	public void printAllEdges() {
+		System.out.println(Wji);
+		System.out.println(Wjbias);
+		System.out.println(Wkj);
+		System.out.println(Wkbias);
 	}
 }

@@ -5,12 +5,23 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import neural_network.NeuralNetwork;
+import neural_network.NeuralNetworkIO;
+import neural_network.NeuralNetworkParams;
+import training_algorithms.SBP;
+import training_algorithms.SBPParams;
+import training_data.TrainingData;
+import training_data.TrainingDataGenerator;
+import training_data.XORTrainingDataGenerator;
+
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 
 public class CreateNetworkWindow extends JFrame {
@@ -20,19 +31,21 @@ public class CreateNetworkWindow extends JFrame {
 	 */
 	private static final long serialVersionUID = -4409889890487667466L;
 	private JPanel contentPane;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
+	private JTextField hiddenLayerSizesTF;
+	private JTextField inputLayerSizeTF;
+	private JTextField outputLayerSizeTF;
 	private JTextField learningRateTF;
 	private JTextField momentumRateTF;
-	private JTextField weightDecayTF;
 	private JTextField epochsTF;
 	private JTextField trainingIterationsTF;
-	private JTextField biasValTF;
-	private JTextField AvalTF;
 	private JTextField errorThresholdTF;
 	private JTextField trainingErrorTF;
-
+	private JLabel lblInvalidInput;
+	private JLabel lblFileNotFound;
+	private TrainingData trainingData = null;
+	private JLabel lblInvalidInputs;
+	private NeuralNetwork NN = null;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -58,17 +71,17 @@ public class CreateNetworkWindow extends JFrame {
 	 */
 	public CreateNetworkWindow() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 703, 616);
+		setBounds(100, 100, 678, 616);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		textField = new JTextField();
-		textField.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		textField.setBounds(230, 14, 228, 29);
-		contentPane.add(textField);
-		textField.setColumns(10);
+		hiddenLayerSizesTF = new JTextField();
+		hiddenLayerSizesTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		hiddenLayerSizesTF.setBounds(230, 14, 228, 29);
+		contentPane.add(hiddenLayerSizesTF);
+		hiddenLayerSizesTF.setColumns(10);
 		
 		JLabel lblNewLabel = new JLabel("Hidden Layer Sizes:");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 24));
@@ -84,39 +97,50 @@ public class CreateNetworkWindow extends JFrame {
 		lblInputLayerSizes.setBounds(10, 54, 220, 29);
 		contentPane.add(lblInputLayerSizes);
 		
-		textField_1 = new JTextField();
-		textField_1.setEditable(false);
-		textField_1.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		textField_1.setColumns(10);
-		textField_1.setBounds(203, 54, 75, 29);
-		contentPane.add(textField_1);
+		inputLayerSizeTF = new JTextField();
+		inputLayerSizeTF.setEditable(false);
+		inputLayerSizeTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		inputLayerSizeTF.setColumns(10);
+		inputLayerSizeTF.setBounds(203, 54, 75, 29);
+		contentPane.add(inputLayerSizeTF);
 		
 		JLabel lblOutputLayerSize = new JLabel("Output Layer Size:");
 		lblOutputLayerSize.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		lblOutputLayerSize.setBounds(288, 54, 220, 29);
 		contentPane.add(lblOutputLayerSize);
 		
-		textField_2 = new JTextField();
-		textField_2.setEditable(false);
-		textField_2.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		textField_2.setColumns(10);
-		textField_2.setBounds(500, 52, 75, 29);
-		contentPane.add(textField_2);
+		outputLayerSizeTF = new JTextField();
+		outputLayerSizeTF.setEditable(false);
+		outputLayerSizeTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		outputLayerSizeTF.setColumns(10);
+		outputLayerSizeTF.setBounds(500, 52, 75, 29);
+		contentPane.add(outputLayerSizeTF);
 		
 		JLabel lblInputOutput = new JLabel("*input & output layer sizes are determined by the training data loaded");
-		lblInputOutput.setBounds(10, 86, 409, 14);
+		lblInputOutput.setBounds(10, 86, 565, 14);
 		contentPane.add(lblInputOutput);
 		
 		JButton btnLoadTrainingData = new JButton("Load Training Data");
 		btnLoadTrainingData.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				trainingData = TrainingDataGenerator.genFromFile();
+				if(trainingData == null) {
+					lblFileNotFound.setVisible(true);
+					inputLayerSizeTF.setText("");
+					outputLayerSizeTF.setText("");
+					return;
+				}
+				else
+					lblFileNotFound.setVisible(false);
+				inputLayerSizeTF.setText(""+trainingData.getData().get(0).getInputs().columns);
+				outputLayerSizeTF.setText(""+trainingData.getData().get(0).getOutputs().columns);
 			}
 		});
 		btnLoadTrainingData.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnLoadTrainingData.setBounds(10, 391, 246, 37);
+		btnLoadTrainingData.setBounds(10, 326, 246, 37);
 		contentPane.add(btnLoadTrainingData);
 		
-		JLabel lblInvalidInput = new JLabel("invalid input");
+		lblInvalidInput = new JLabel("invalid input");
 		lblInvalidInput.setForeground(Color.RED);
 		lblInvalidInput.setBounds(462, 14, 96, 14);
 		contentPane.add(lblInvalidInput);
@@ -131,19 +155,14 @@ public class CreateNetworkWindow extends JFrame {
 		lblMomentumRate.setBounds(10, 151, 191, 29);
 		contentPane.add(lblMomentumRate);
 		
-		JLabel lblWeightDecayRate = new JLabel("Weight Decay Rate:");
-		lblWeightDecayRate.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		lblWeightDecayRate.setBounds(10, 191, 220, 29);
-		contentPane.add(lblWeightDecayRate);
-		
 		JLabel lblEpochs = new JLabel("Epochs:");
 		lblEpochs.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		lblEpochs.setBounds(10, 231, 89, 29);
+		lblEpochs.setBounds(10, 196, 89, 29);
 		contentPane.add(lblEpochs);
 		
 		JLabel lblTrainingIterations = new JLabel("Training Iterations:");
 		lblTrainingIterations.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		lblTrainingIterations.setBounds(10, 271, 220, 29);
+		lblTrainingIterations.setBounds(10, 236, 220, 29);
 		contentPane.add(lblTrainingIterations);
 		
 		learningRateTF = new JTextField();
@@ -158,91 +177,132 @@ public class CreateNetworkWindow extends JFrame {
 		momentumRateTF.setBounds(240, 151, 244, 29);
 		contentPane.add(momentumRateTF);
 		
-		weightDecayTF = new JTextField();
-		weightDecayTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		weightDecayTF.setColumns(10);
-		weightDecayTF.setBounds(240, 191, 244, 29);
-		contentPane.add(weightDecayTF);
-		
 		epochsTF = new JTextField();
 		epochsTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		epochsTF.setColumns(10);
-		epochsTF.setBounds(240, 231, 244, 29);
+		epochsTF.setBounds(240, 196, 244, 29);
 		contentPane.add(epochsTF);
 		
 		trainingIterationsTF = new JTextField();
 		trainingIterationsTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		trainingIterationsTF.setColumns(10);
-		trainingIterationsTF.setBounds(240, 271, 244, 29);
+		trainingIterationsTF.setBounds(240, 236, 244, 29);
 		contentPane.add(trainingIterationsTF);
 		
 		JButton btnRun = new JButton("Train Network");
+		btnRun.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(trainingData == null) {
+					return;
+				}
+				try {
+					//NN
+					int inputLayerSize = Integer.parseInt(inputLayerSizeTF.getText());
+					ArrayList<Integer> hiddenLayerSizes = new ArrayList<Integer>();
+					String[] hiddenLayerSizesStr = hiddenLayerSizesTF.getText().split(",");
+					for(String hiddenLayerSizeStr : hiddenLayerSizesStr)
+						hiddenLayerSizes.add(Integer.parseInt(hiddenLayerSizeStr));
+					int outputLayerSize = Integer.parseInt(outputLayerSizeTF.getText());
+					
+					//SBP
+					int epochs = Integer.parseInt(epochsTF.getText());
+					int trainingIterations = Integer.parseInt(trainingIterationsTF.getText());
+					double errorThreshold = Double.parseDouble(errorThresholdTF.getText());
+					double learningRate = Double.parseDouble(learningRateTF.getText());
+					double momentumRate = Double.parseDouble(momentumRateTF.getText());
+					
+					//create new NN
+					NeuralNetworkParams NNparams = new NeuralNetworkParams(1.0, inputLayerSize, hiddenLayerSizes, outputLayerSize);
+					NN = new NeuralNetwork(NNparams);
+					
+					//create new SBP
+					SBPParams sbpParams = new SBPParams(epochs, trainingIterations, errorThreshold, learningRate, momentumRate);
+					SBP sbp = new SBP(sbpParams);
+					
+					//Train!
+					sbp.setTrainee(NN);
+					sbp.apply(trainingData);
+					trainingErrorTF.setText(sbp.getError()+"");
+					
+					lblInvalidInputs.setText("");
+				} catch(NumberFormatException e) {
+					lblInvalidInputs.setText("Invalid Parameters");
+					return;
+				}
+			}
+		});
 		btnRun.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnRun.setBounds(288, 391, 196, 37);
+		btnRun.setBounds(288, 326, 196, 37);
 		contentPane.add(btnRun);
 		
-		JLabel lblFileNotFound = new JLabel("File Not Found");
+		lblFileNotFound = new JLabel("File Not Found");
 		lblFileNotFound.setForeground(Color.RED);
-		lblFileNotFound.setBounds(10, 427, 96, 14);
+		lblFileNotFound.setBounds(10, 362, 191, 14);
 		contentPane.add(lblFileNotFound);
-		
-		JLabel lblAValue = new JLabel("A value:");
-		lblAValue.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		lblAValue.setBounds(10, 311, 89, 29);
-		contentPane.add(lblAValue);
-		
-		JLabel lblBiasValue = new JLabel("bias value:");
-		lblBiasValue.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		lblBiasValue.setBounds(238, 311, 122, 29);
-		contentPane.add(lblBiasValue);
-		
-		biasValTF = new JTextField();
-		biasValTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		biasValTF.setColumns(10);
-		biasValTF.setBounds(362, 311, 122, 29);
-		contentPane.add(biasValTF);
-		
-		AvalTF = new JTextField();
-		AvalTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		AvalTF.setColumns(10);
-		AvalTF.setBounds(109, 311, 121, 29);
-		contentPane.add(AvalTF);
 		
 		JLabel lblErrorThreshold = new JLabel("Error Threshold:");
 		lblErrorThreshold.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		lblErrorThreshold.setBounds(10, 351, 183, 29);
+		lblErrorThreshold.setBounds(10, 281, 183, 29);
 		contentPane.add(lblErrorThreshold);
 		
 		errorThresholdTF = new JTextField();
 		errorThresholdTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		errorThresholdTF.setColumns(10);
-		errorThresholdTF.setBounds(240, 351, 244, 29);
+		errorThresholdTF.setBounds(240, 281, 244, 29);
 		contentPane.add(errorThresholdTF);
 		
 		JButton btnBack = new JButton("back");
 		btnBack.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnBack.setBounds(560, 10, 89, 37);
+		btnBack.setBounds(469, 471, 89, 37);
 		contentPane.add(btnBack);
 		
 		JLabel lblTrainingError = new JLabel("Training Error:");
 		lblTrainingError.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		lblTrainingError.setBounds(10, 452, 163, 29);
+		lblTrainingError.setBounds(10, 387, 163, 29);
 		contentPane.add(lblTrainingError);
 		
 		trainingErrorTF = new JTextField();
 		trainingErrorTF.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		trainingErrorTF.setColumns(10);
-		trainingErrorTF.setBounds(175, 452, 309, 29);
+		trainingErrorTF.setBounds(175, 387, 309, 29);
 		contentPane.add(trainingErrorTF);
 		
-		JButton btnWriteNetworkTo = new JButton("Write Network To File");
-		btnWriteNetworkTo.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnWriteNetworkTo.setBounds(10, 492, 292, 37);
-		contentPane.add(btnWriteNetworkTo);
+		JButton btnWriteNetworkToFile = new JButton("Write Network To .txt");
+		btnWriteNetworkToFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(NN != null)
+					NeuralNetworkIO.writeNetworkToFile(NN);
+			}
+		});
+		btnWriteNetworkToFile.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		btnWriteNetworkToFile.setBounds(10, 427, 292, 37);
+		contentPane.add(btnWriteNetworkToFile);
 		
 		JButton btnSerializeNetwork = new JButton("Serialize Network");
+		btnSerializeNetwork.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				NeuralNetworkIO.writeNetwork(NN);
+			}
+		});
 		btnSerializeNetwork.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnSerializeNetwork.setBounds(312, 492, 246, 37);
+		btnSerializeNetwork.setBounds(312, 427, 246, 37);
 		contentPane.add(btnSerializeNetwork);
+		
+		lblInvalidInputs = new JLabel("invalid inputs");
+		lblInvalidInputs.setForeground(Color.RED);
+		lblInvalidInputs.setBounds(288, 359, 183, 20);
+		contentPane.add(lblInvalidInputs);
+		
+		JLabel lblwritingSerializing = new JLabel("*Writing & Serializing Networks will overwrite");
+		lblwritingSerializing.setBounds(10, 471, 448, 20);
+		contentPane.add(lblwritingSerializing);
+		
+		JLabel lblNetworktxtAndorNetworkser = new JLabel("Network.txt and/or Network.ser");
+		lblNetworktxtAndorNetworkser.setBounds(10, 488, 335, 20);
+		contentPane.add(lblNetworktxtAndorNetworkser);
+		
+		lblInvalidInput.setVisible(false);
+		lblFileNotFound.setVisible(false);
+		lblInvalidInputs.setVisible(false);
 	}
 }

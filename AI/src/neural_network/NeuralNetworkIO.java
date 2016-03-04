@@ -14,6 +14,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jblas.DoubleMatrix;
+
 /**
  * 
  * @author braem
@@ -34,10 +36,6 @@ public class NeuralNetworkIO
 		contents.add("Hidden Layers: "+NN.getParams().getHiddenLayerSizes().size()); //list of hidden layer sizes
 		contents.add("Hidden Layer Sizes: "+NN.getParams().getHiddenLayerSizes()); //list of hidden layer sizes
 		contents.add("Output Layer Size: "+NN.getOutputLayerSize());
-		contents.add("");
-		contents.add("-Sigmoid Function [f(x)=A*tanh(x*bias)] related values-");
-		contents.add("A value: "+NN.getParams().getA());
-		contents.add("bias value: "+NN.getParams().getBias());
 		contents.add("");
 		contents.add("-Weight Matrices-");
 		contents.add("Hidden Layer 0 to Input Layer edge weights matrix (Wji): "+NN.getWji());
@@ -88,14 +86,24 @@ public class NeuralNetworkIO
 		}
 	}
 	
-	static boolean isBestNetworkSoFar(double error) {
+	static boolean isBestNetworkSoFar(DoubleMatrix error) {
 		NeuralNetwork NN;
 		NN = readNetwork();
-		if(NN == null || NN.getError() > error) {
-			System.out.println(NEW_BEST_NETWORK_MSG);
-			return true;
+		if(NN != null) {
+			boolean isLower = true;
+			for(int i=0; i<error.rows; i++)
+				for(int j=0; j<error.columns; j++)
+					if(error.get(i,j) > NN.getError().get(i,j))
+						isLower = false;
+			if(isLower) {
+				System.out.println(NEW_BEST_NETWORK_MSG);
+				return true;
+			}
+			else
+				return false;
 		}
-		else return false;
+		else
+			return true;
 	}
 	
 	private static void writeToFile(List<String> lines, String filename) throws IOException {

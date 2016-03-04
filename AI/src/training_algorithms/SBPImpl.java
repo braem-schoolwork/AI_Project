@@ -12,7 +12,7 @@ public interface SBPImpl
 	public DoubleMatrix applySigmoidDeriv(DoubleMatrix inc);
 	
 	public void init();
-	public void saveToDisk(double error);
+	public void saveToDisk(DoubleMatrix error);
 
 	public DoubleMatrix getNETk();
 	public List<DoubleMatrix> getNETjs();
@@ -25,4 +25,6 @@ public interface SBPImpl
 	public void applyWjiUpdate(DoubleMatrix Wji);
 	public void applyWjbiasUpdate(List<DoubleMatrix> Wjbias);
 	public void applyWjsUpdate(List<DoubleMatrix> Wjs);
+	
+	public void printAllEdges();
 }

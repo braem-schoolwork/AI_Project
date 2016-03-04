@@ -17,11 +17,6 @@ public class NNTest {
 	}
 	
 	@Test
-	public void isBestNetworkTest() {
-		assertTrue(NeuralNetworkIO.isBestNetworkSoFar(0.0));
-	}
-	
-	@Test
 	public void test() {
 		NeuralNetwork NN = NeuralNetworkIO.readNetwork();
 		DoubleMatrix output = NN.feedForward(new DoubleMatrix(new double[][] {{1,1}}));

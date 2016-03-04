@@ -2,7 +2,6 @@ package neural_network;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 public class NeuralNetworkParams implements Serializable
 {
@@ -10,14 +9,12 @@ public class NeuralNetworkParams implements Serializable
 	 * 
 	 */
 	private static final long serialVersionUID = 2L;
-	private double A;				//Sigmoid function related
 	private double bias;
 	private int inputLayerSize;		//layer sizes
 	private ArrayList<Integer> hiddenLayerSizes;
 	private int outputLayerSize;
 	
 	public NeuralNetworkParams() {
-		setA(1);
 		setBias(2.1);
 		setInputLayerSize(2);
 		ArrayList<Integer> sizes = new ArrayList<Integer>();
@@ -26,21 +23,12 @@ public class NeuralNetworkParams implements Serializable
 		setOutputLayerSize(1);
 	}
 	
-	public NeuralNetworkParams(double A, double bias, int inputLayerSize,
+	public NeuralNetworkParams(double bias, int inputLayerSize,
 			ArrayList<Integer> hiddenLayerSizes, int outputLayerSize) {
-		this.setA(A);
 		this.setBias(bias);
 		this.setInputLayerSize(inputLayerSize);
 		this.setHiddenLayerSizes(hiddenLayerSizes);
 		this.setOutputLayerSize(outputLayerSize);
-	}
-
-	public double getA() {
-		return A;
-	}
-
-	public void setA(double a) {
-		A = a;
 	}
 
 	public double getBias() {
@@ -59,7 +47,7 @@ public class NeuralNetworkParams implements Serializable
 		this.inputLayerSize = inputLayerSize;
 	}
 
-	public List<Integer> getHiddenLayerSizes() {
+	public ArrayList<Integer> getHiddenLayerSizes() {
 		return hiddenLayerSizes;
 	}
 

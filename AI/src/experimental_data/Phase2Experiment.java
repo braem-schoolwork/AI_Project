@@ -65,7 +65,7 @@ public class Phase2Experiment implements Experiment
 				for(int k=0; k<applySBPamount; k++) {
 					SBP sbp = new SBP(sbpParams);
 					sbp.apply(trainingData);
-					errorAvg += sbp.getError();
+					errorAvg += sbp.getError().get(0,0);
 				}
 				errorAvg /= applySBPamount;
 				if(firstPass) firstRow += ","+j;
@@ -95,7 +95,7 @@ public class Phase2Experiment implements Experiment
 				for(int k=0; k<applySBPamount; k++) {
 					SBP sbp = new SBP(sbpParams);
 					sbp.apply(trainingData);
-					errorAvg += sbp.getError();
+					errorAvg += sbp.getError().get(0,0);
 				}
 				errorAvg /= applySBPamount;
 				if(firstPass) firstRow += ","+j;
@@ -125,7 +125,7 @@ public class Phase2Experiment implements Experiment
 				for(int k=0; k<applySBPamount; k++) {
 					SBP sbp = new SBP(sbpParams);
 					sbp.apply(trainingData);
-					errorAvg += sbp.getError();
+					errorAvg += sbp.getError().get(0,0);
 				}
 				errorAvg /= applySBPamount;
 				if(firstPass) firstRow += ","+j;

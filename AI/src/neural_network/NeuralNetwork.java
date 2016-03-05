@@ -71,7 +71,7 @@ public class NeuralNetwork implements SBPImpl, Serializable
 			if(i==0)
 				hNetMatrix = inputVector.mmul(Wji).add(Wjbias.get(i).mmul(bias));
 			else	//get previous layers ACT values then *weights. Then add the bias
-				hNetMatrix = ACTjs.get(i-1).mmul(Wjs.get(i-1)) .add(Wjbias.get(i).mmul(bias));
+				hNetMatrix = ACTjs.get(i-1).mmul(Wjs.get(i-1)).add(Wjbias.get(i).mmul(bias));
 			hActMatrix = applySigmoid(hNetMatrix);
 			NETjs.add(hNetMatrix);
 			ACTjs.add(hActMatrix);
@@ -94,11 +94,11 @@ public class NeuralNetwork implements SBPImpl, Serializable
 	/* sigmoid function application */
 	@Override
 	public DoubleMatrix applySigmoid(DoubleMatrix inc) {
-		return MatrixFunctions.tanh(inc.mmul(B)).mmul(A);
+		return MatrixFunctions.tanh(inc.mul(B)).mul(A);
 	}
 	@Override
 	public DoubleMatrix applySigmoidDeriv(DoubleMatrix inc) {
-		return MatrixFunctions.pow( MatrixFunctions.tanh(inc),2 ).mmul(-1).add(1);
+		return MatrixFunctions.pow( MatrixFunctions.tanh(inc),2 ).mul(-1).add(1);
 	}
 	
 	/* update application */
@@ -110,11 +110,13 @@ public class NeuralNetwork implements SBPImpl, Serializable
 	public void applyWjiUpdate (DoubleMatrix Wji) { this.Wji.addi(Wji); }
 	@Override
 	public void applyWjbiasUpdate (List<DoubleMatrix> Wjbias) {
-		for(int i=0; i<Wjbias.size(); i++) this.Wjbias.get(i).addi(Wjbias.get(i));
+		for(int i=0; i<Wjbias.size(); i++)
+			this.Wjbias.set(i, this.Wjbias.get(i).add(Wjbias.get(i)));
 	}
 	@Override
 	public void applyWjsUpdate (List<DoubleMatrix> Wjs) {
-		for(int i=0; i<Wjs.size(); i++) this.Wjs.get(i).addi(Wjs.get(i));
+		for(int i=0; i<Wjs.size(); i++)
+			this.Wjs.set(i, this.Wjs.get(i).add(Wjs.get(i)));
 	}
 
 	//getters
@@ -192,9 +194,10 @@ public class NeuralNetwork implements SBPImpl, Serializable
 	
 	@Override
 	public void printAllEdges() {
-		System.out.println(Wji);
-		System.out.println(Wjbias);
-		System.out.println(Wkj);
-		System.out.println(Wkbias);
+		System.out.println("Wji"+Wji);
+		System.out.println("Wjbias"+Wjbias);
+		System.out.println("Wkj"+Wkj);
+		System.out.println("Wkbias"+Wkbias);
+		System.out.println("Wjs"+Wjs);
 	}
 }

@@ -6,6 +6,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.jblas.DoubleMatrix;
+
 import neural_network.NeuralNetwork;
 import neural_network.NeuralNetworkIO;
 import neural_network.NeuralNetworkParams;
@@ -262,7 +264,8 @@ public class NNSBPXORWindow extends JFrame {
 		btnFeedForward.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				TrainingTuple tt = (TrainingTuple)tupleCB.getSelectedItem();
-				ffTF.setText(""+NN.feedForward(tt.getInputs()));
+				DoubleMatrix output = NN.feedForward(tt.getInputs());
+				ffTF.setText(""+output);
 			}
 		});
 		btnFeedForward.setFont(new Font("Tahoma", Font.PLAIN, 24));

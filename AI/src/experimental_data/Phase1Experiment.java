@@ -35,7 +35,7 @@ public class Phase1Experiment implements Experiment
 		fileName += fileExtension;
 		List<String> content = new ArrayList<String>();
 		for(int j=1; j<=8; j++) {
-			for(int k=1; k<=10; k++) {
+			for(int k=1; k<=25; k++) {
 				RubiksCube rubiksCube = new RubiksCube(cubeSize);
 				Perturber.perturb(j, rubiksCube);
 				search.search(rubiksCube, new RubiksCube(rubiksCube.getSize()));

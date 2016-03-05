@@ -694,6 +694,7 @@ public class RCNNWindow extends JFrame {
 				if(recommendedMove != null) {
 					recommendedMove.apply(cube);
 					ffTF.setText("");
+					repaintCube(cube);
 				}
 			}
 		});

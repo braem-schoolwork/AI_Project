@@ -167,7 +167,7 @@ public class SBP
 					deltaJ.put(0, j, deltaJ.get(0,j)*sum);
 				}
 				else {
-					for(int k=0; k<deltaJs.get(i).columns; k++) //TODO error here for diff sized hidden layers
+					for(int k=0; k<deltaJs.get(i+1).columns; k++)
 						sum += trainee.getWjs().get(i).get(j,k)*deltaJs.get(i+1).get(0,k);
 					deltaJ.put(0, j, deltaJ.get(0,j)*sum);
 				}
@@ -240,6 +240,10 @@ public class SBP
 			DoubleMatrix thisTupleError = MatrixFunctions.pow(expectedOutputVec.sub(actualOutputVec), 2);
 			thisTupleError.mmuli(0.5);
 			errorVec = errorVec.addRowVector(thisTupleError);
+			System.out.println(inputVec);
+			System.out.println(expectedOutputVec);
+			System.out.println(actualOutputVec);
+			System.out.println(thisTupleError);
 		}
 		return errorVec;
 	}

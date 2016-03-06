@@ -2,7 +2,6 @@ package neural_network;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import org.jblas.*;
@@ -25,12 +24,12 @@ public class NeuralNetwork implements SBPImpl, Serializable
 	private static final long serialVersionUID = 1L;
 	private DoubleMatrix Wji;		//Weight matrices
 	private DoubleMatrix Wkj;
-	private List<DoubleMatrix> Wjbias;
+	private ArrayList<DoubleMatrix> Wjbias;
 	private DoubleMatrix Wkbias;
-	private List<DoubleMatrix> Wjs;
+	private ArrayList<DoubleMatrix> Wjs;
 	private DoubleMatrix NETk;		//Nets stored in feedForward for SBP
-	private List<DoubleMatrix> NETjs;
-	private List<DoubleMatrix> ACTjs;
+	private ArrayList<DoubleMatrix> NETjs;
+	private ArrayList<DoubleMatrix> ACTjs;
 	private double A = 1.716;
 	private double B = 0.667;
 	private NeuralNetworkParams params;
@@ -63,28 +62,26 @@ public class NeuralNetwork implements SBPImpl, Serializable
 		
 		/* HIDDEN LAYER */
 		//Hidden Net Matrix = inputVector*Wji + Wjbias*bias
-		List<DoubleMatrix> NETjs = new ArrayList<DoubleMatrix>(); //NET values of each hidden layer
-		List<DoubleMatrix> ACTjs = new ArrayList<DoubleMatrix>(); //ACT values of each hidden layer
+		NETjs = new ArrayList<DoubleMatrix>(); //NET values of each hidden layer
+		ACTjs = new ArrayList<DoubleMatrix>(); //ACT values of each hidden layer
 		for(int i=0; i<params.getHiddenLayerSizes().size(); i++) {
 			DoubleMatrix hNetMatrix = new DoubleMatrix(1, params.getHiddenLayerSizes().get(i));
 			DoubleMatrix hActMatrix = new DoubleMatrix(hNetMatrix.rows, hNetMatrix.columns);
 			if(i==0)
-				hNetMatrix = inputVector.mmul(Wji).add(Wjbias.get(i).mmul(bias));
+				hNetMatrix = inputVector.mul(Wji) .add(Wjbias.get(i).mul(bias));
 			else	//get previous layers ACT values then *weights. Then add the bias
-				hNetMatrix = ACTjs.get(i-1).mmul(Wjs.get(i-1)).add(Wjbias.get(i).mmul(bias));
+				hNetMatrix = ACTjs.get(i-1).mul(Wjs.get(i-1)) .add(Wjbias.get(i).mul(bias));
 			hActMatrix = applySigmoid(hNetMatrix);
 			NETjs.add(hNetMatrix);
 			ACTjs.add(hActMatrix);
 		}
-		this.NETjs = NETjs;
-		this.ACTjs = ACTjs;
 		
 		/* OUTPUT LAYER */
 		//Output Net Matrix = hiddenActMatrix*Wkj + Wkbias*bias
 		DoubleMatrix outputNetMatrix = ACTjs.get(ACTjs.size()-1).mmul(Wkj).add(Wkbias.mmul(bias));
 		NETk = outputNetMatrix;
 		
-		//Actual Output Matrix = tanh(outputNetMatrix*bias)*A
+		//Actual Output Matrix = tanh(outputNetMatrix*B)*A
 		DoubleMatrix outputActMatrix = applySigmoid(outputNetMatrix);
 		
 		//return actual output matrix
@@ -109,12 +106,12 @@ public class NeuralNetwork implements SBPImpl, Serializable
 	@Override
 	public void applyWjiUpdate (DoubleMatrix Wji) { this.Wji.addi(Wji); }
 	@Override
-	public void applyWjbiasUpdate (List<DoubleMatrix> Wjbias) {
+	public void applyWjbiasUpdate (ArrayList<DoubleMatrix> Wjbias) {
 		for(int i=0; i<Wjbias.size(); i++)
 			this.Wjbias.set(i, this.Wjbias.get(i).add(Wjbias.get(i)));
 	}
 	@Override
-	public void applyWjsUpdate (List<DoubleMatrix> Wjs) {
+	public void applyWjsUpdate (ArrayList<DoubleMatrix> Wjs) {
 		for(int i=0; i<Wjs.size(); i++)
 			this.Wjs.set(i, this.Wjs.get(i).add(Wjs.get(i)));
 	}
@@ -125,32 +122,32 @@ public class NeuralNetwork implements SBPImpl, Serializable
 	@Override
 	public DoubleMatrix getNETk() { return NETk; }
 	@Override
-	public List<DoubleMatrix> getNETjs() { return NETjs; }
+	public ArrayList<DoubleMatrix> getNETjs() { return NETjs; }
 	@Override
 	public DoubleMatrix getWkj() { return Wkj; }
 	@Override
-	public List<DoubleMatrix> getACTjs() { return ACTjs; }
+	public ArrayList<DoubleMatrix> getACTjs() { return ACTjs; }
 	@Override
-	public List<DoubleMatrix> getWjs() { return Wjs; }
+	public ArrayList<DoubleMatrix> getWjs() { return Wjs; }
 	DoubleMatrix getWji() { return Wji; }
-	List<DoubleMatrix> getWjbias() { return Wjbias; }
+	ArrayList<DoubleMatrix> getWjbias() { return Wjbias; }
 	DoubleMatrix getWkbias() { return Wkbias; }
 	public DoubleMatrix getError() { return error; }
 	
 	//setters
 	public void setParams(NeuralNetworkParams params) { this.params = params; }
 	void setWji(DoubleMatrix Wji) { this.Wji = Wji; }
-	void setWjbias(List<DoubleMatrix> Wjbias) { this.Wjbias = Wjbias; }
+	void setWjbias(ArrayList<DoubleMatrix> Wjbias) { this.Wjbias = Wjbias; }
 	void setWkj(DoubleMatrix Wkj) { this.Wkj = Wkj; }
 	void setWkbias(DoubleMatrix Wkbias) { this.Wkbias = Wkbias; }
-	void setWjs(List<DoubleMatrix> Wjs) { this.Wjs = Wjs; }
+	void setWjs(ArrayList<DoubleMatrix> Wjs) { this.Wjs = Wjs; }
 
 	/* Initialize this network */
 	@Override
 	public void init() {
 		Random rand = new Random();
 		
-		List<Integer> hiddenLayerSizes = params.getHiddenLayerSizes();
+		ArrayList<Integer> hiddenLayerSizes = params.getHiddenLayerSizes();
 		Wji = new DoubleMatrix(params.getInputLayerSize(), hiddenLayerSizes.get(0));
 		Wkj = new DoubleMatrix(hiddenLayerSizes.get(hiddenLayerSizes.size()-1), params.getOutputLayerSize());
 		Wjbias = new ArrayList<DoubleMatrix>();

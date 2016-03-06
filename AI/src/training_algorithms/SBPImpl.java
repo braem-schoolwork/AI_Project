@@ -1,6 +1,6 @@
 package training_algorithms;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import org.jblas.DoubleMatrix;
 
@@ -15,16 +15,16 @@ public interface SBPImpl
 	public void saveToDisk(DoubleMatrix error);
 
 	public DoubleMatrix getNETk();
-	public List<DoubleMatrix> getNETjs();
-	public List<DoubleMatrix> getACTjs();
+	public ArrayList<DoubleMatrix> getNETjs();
+	public ArrayList<DoubleMatrix> getACTjs();
 	public DoubleMatrix getWkj();
-	public List<DoubleMatrix> getWjs();
+	public ArrayList<DoubleMatrix> getWjs();
 	
 	public void applyWkjUpdate(DoubleMatrix Wkj);
 	public void applyWkbiasUpdate(DoubleMatrix Wkbias);
 	public void applyWjiUpdate(DoubleMatrix Wji);
-	public void applyWjbiasUpdate(List<DoubleMatrix> Wjbias);
-	public void applyWjsUpdate(List<DoubleMatrix> Wjs);
+	public void applyWjbiasUpdate(ArrayList<DoubleMatrix> Wjbias);
+	public void applyWjsUpdate(ArrayList<DoubleMatrix> Wjs);
 	
 	public void printAllEdges();
 }

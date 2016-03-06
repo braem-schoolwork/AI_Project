@@ -354,5 +354,12 @@ public class CreateNetworkWindow extends JFrame {
 		lblInvalidInput.setVisible(false);
 		lblFileNotFound.setVisible(false);
 		lblInvalidInputs.setVisible(false);
+		
+		hiddenLayerSizesTF.setText("24,24");
+		learningRateTF.setText("0.0123");
+		momentumRateTF.setText("0.03");
+		epochsTF.setText("5");
+		trainingIterationsTF.setText("30000");
+		errorThresholdTF.setText("342222");
 	}
 }

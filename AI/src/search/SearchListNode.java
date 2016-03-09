@@ -1,9 +1,25 @@
 package search;
 
+/**
+ * Node used by a Search that keeps track of parent values, the current
+ * searchable object, and it's current g-value (distance from start)
+ * 
+ * @author braemen
+ * @version 1.0
+ */
 public class SearchListNode implements Comparable<SearchListNode>
 {
+	/**
+	 * Parent Node
+	 */
 	private SearchListNode parent;
+	/**
+	 * current searchable object
+	 */
 	private Searchable searchableObj;
+	/**
+	 * current objects g-value (distance from start)
+	 */
 	private int gVal;
 	
 	public SearchListNode(SearchListNode parent, Searchable searchableObj, int gVal) {

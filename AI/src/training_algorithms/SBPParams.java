@@ -1,5 +1,11 @@
 package training_algorithms;
 
+/**
+ * Parameter object for SBP
+ * 
+ * @author braemen
+ * @version 1.0
+ */
 public class SBPParams
 {
 	private int epochs;

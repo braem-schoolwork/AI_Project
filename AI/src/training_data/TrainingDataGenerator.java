@@ -11,11 +11,22 @@ import java.util.List;
 
 import org.jblas.DoubleMatrix;
 
+/**
+ * A general training data generator
+ * 
+ * @author braemen
+ * @version 1.0
+ */
 public class TrainingDataGenerator {
 	
 	private final static Charset ENCODING = StandardCharsets.UTF_8;
 	private static final String FILE_NAME = System.getProperty("user.dir")+"\\training_data.csv";
 	
+	/**
+	 * Generates Training Data from a file
+	 * 
+	 * @return training data from training_data.csv
+	 */
 	public static TrainingData genFromFile() {
 		List<String> fileContents;
 		try {

@@ -1,17 +1,25 @@
 package search;
 
 /**
+ * Interface an object needs to implement in order to be searchable
  * 
  * @author braem
- *
- * A Searchable object must be able to generate its own
- * child nodes, be equatable, keep track of its parent,
- * and keep track of the number of its moves taken from the start node
- *
+ * @version 1.0
  */
-
 public interface Searchable {
+	
+	/**
+	 * Generation of all children of the object
+	 * 
+	 * @return list of all children
+	 */
 	public Searchable[] genChildren();
+	
+	/**
+	 * Problem-specific heuristic value
+	 * 
+	 * @return guess on how far from goal state
+	 */
 	public float h();
 	
 	@Override

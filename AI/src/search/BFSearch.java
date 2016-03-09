@@ -6,16 +6,13 @@ import java.util.List;
 import java.util.Queue;
 
 import data_structures.HashSet;
+
 /**
+ * Performs a Breadth-First Search on an object implementing Searchable 
  * 
  * @author braem
- *
- * Breadth-First Search
- * 
- * 
- *
+ * @version 1.0
  */
-
 public class BFSearch implements Search
 {
 	private ArrayList<Searchable> path;
@@ -95,7 +92,12 @@ public class BFSearch implements Search
 		return null; //search failed
 	}//end search
 	
-	//backtrace the path of the A* Search
+	/**
+	 * back-tracks from the end node to the start node, creating a path of nodes
+	 * 
+	 * @param startNode		starting node to back trace to
+	 * @param endNode		ending node to start the back trace
+	 */
 	private void backTrace(SearchListNode startNode, SearchListNode endNode) {
 		List<SearchListNode> nodes = new ArrayList<SearchListNode>();
 		nodes.add(endNode);

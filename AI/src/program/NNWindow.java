@@ -10,6 +10,12 @@ import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+/**
+ * Window to pick from different neural network training options
+ * 
+ * @author braemen
+ * @version 1.0
+ */
 public class NNWindow extends JFrame {
 
 	/**

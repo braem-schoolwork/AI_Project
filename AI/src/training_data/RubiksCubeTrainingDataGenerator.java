@@ -11,8 +11,21 @@ import rubiks.Move;
 import rubiks.MoveParams;
 import rubiks.RubiksCube;
 
+/**
+ * Generator for rubik's cube related training data
+ * 
+ * @author braemen
+ * @version 1.0
+ */
 public class RubiksCubeTrainingDataGenerator
 {
+	/**
+	 * Generates file training data from rubik's cubes and moves
+	 * 
+	 * @param cubes			List of rubik's cubes
+	 * @param moves			List of moves corresponding to each rubik's cube
+	 * @return				File contents
+	 */
 	public static List<String> genFileTrainingData(List<RubiksCube> cubes, List<Move> moves) {
 		List<String> content = new ArrayList<String>();
 		for(int i=0; i<cubes.size(); i++) {
@@ -21,6 +34,12 @@ public class RubiksCubeTrainingDataGenerator
 		return content;
 	}
 	
+	/**
+	 * Generates a TrainingData object from a files contents
+	 * 
+	 * @param trainingDataStrs			incoming file contents
+	 * @return							TrainingData from trainingDataStrs
+	 */
 	public static TrainingData fileContentsToTrainingData(List<String> trainingDataStrs) {
 		List<TrainingTuple> tuples = new ArrayList<TrainingTuple>();
 		for(String tupleStr : trainingDataStrs) {
@@ -48,10 +67,12 @@ public class RubiksCubeTrainingDataGenerator
 		return new TrainingData(tuples);
 	}
 	
-	public static RubiksCube trainingDataToRubiksCube(TrainingData data) {
-		return null;
-	}
-	
+	/**
+	 * Generates a move given a training data output vector
+	 * 
+	 * @param outputVector			vector of outputs from neural network
+	 * @return						Move corresponding to the outputVector
+	 */
 	public static Move outputVectorToMove(DoubleMatrix outputVector) {
 		int sliceNum = -1;
 		Axis axis = null;
@@ -82,6 +103,12 @@ public class RubiksCubeTrainingDataGenerator
 		return move;
 	}
 	
+	/**
+	 * Creates an input vector from a rubik's cube to be fed into a neural network
+	 * 
+	 * @param rubiksCube		incoming rubik's cube
+	 * @return					vector to input into NN
+	 */
 	public static DoubleMatrix rubiksCubeToInputVector(RubiksCube rubiksCube) {
 		//color*colorsOnFace*faces
 		// 6*9*6
@@ -95,6 +122,7 @@ public class RubiksCubeTrainingDataGenerator
 		return inputVec;
 	}
 	
+	/* helper function */
 	private static String genCubeTrainingData(RubiksCube rubiksCube) {
 		byte[][][] cube = rubiksCube.getCube();
 		String rtnStr = "";
@@ -114,6 +142,7 @@ public class RubiksCubeTrainingDataGenerator
 		return rtnStr;
 	}
 	
+	/* helper function */
 	private static String genMoveTrainingData(Move move) {
 		MoveParams params = move.getMoveParams();
 		String rtnStr = "";
@@ -140,6 +169,7 @@ public class RubiksCubeTrainingDataGenerator
 		return rtnStr;
 	}
 	
+	/* helper function */
 	private static String colorToBits(byte color) {
 		switch(color) {
 		case 'G':

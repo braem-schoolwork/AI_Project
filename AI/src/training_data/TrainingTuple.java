@@ -2,6 +2,12 @@ package training_data;
 
 import org.jblas.DoubleMatrix;
 
+/**
+ * Container for a training tuple
+ * 
+ * @author braemen
+ * @version 1.0
+ */
 public class TrainingTuple
 {
 	DoubleMatrix inputs;

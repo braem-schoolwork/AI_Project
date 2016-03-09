@@ -3,6 +3,12 @@ package neural_network;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * Parameter object for a Neural Network
+ * 
+ * @author braemen
+ * @version 1.0
+ */
 public class NeuralNetworkParams implements Serializable
 {
 	/**

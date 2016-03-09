@@ -2,6 +2,12 @@ package training_data;
 
 import java.util.List;
 
+/**
+ * Container to hold all of a training data set
+ * 
+ * @author braemen
+ * @version 1.0
+ */
 public class TrainingData
 {
 	List<TrainingTuple> data;

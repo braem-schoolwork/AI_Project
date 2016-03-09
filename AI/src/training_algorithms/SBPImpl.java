@@ -4,6 +4,12 @@ import java.util.ArrayList;
 
 import org.jblas.DoubleMatrix;
 
+/**
+ * Interface needed to be implemented in order for SBP to train
+ * 
+ * @author braemen
+ * @version 1.0
+ */
 public interface SBPImpl
 {
 	public DoubleMatrix feedForward(DoubleMatrix inputVector);

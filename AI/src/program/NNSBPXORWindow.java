@@ -27,6 +27,12 @@ import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.JComboBox;
 
+/**
+ * Window to train a neural network on the XOR problem
+ * 
+ * @author braemen
+ * @version
+ */
 public class NNSBPXORWindow extends JFrame {
 
 	/**

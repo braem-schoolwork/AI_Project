@@ -36,6 +36,13 @@ import training_data.TrainingData;
 import training_data.TrainingDataGenerator;
 import javax.swing.JCheckBox;
 
+/**
+ * Window to generate training data, train a neural network on a rubik's cube,
+ * and then apply the network's feed forward to solve a rubik's cube.
+ * 
+ * @author braemen
+ * @version 1.0
+ */
 public class RCNNWindow extends JFrame {
 
 	/**

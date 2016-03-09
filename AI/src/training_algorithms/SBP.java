@@ -8,11 +8,11 @@ import training_data.TrainingData;
 import training_data.TrainingTuple;
 
 /**
+ * Stochastic Back Propagation Algorithm to train a trainee that implements 
+ * SBPImpl using a SBPParams parameter object
  * 
  * @author braem
- *
- * Stochastic Back Propagation Algorithm
- * 
+ * @version 1.0
  */
 public class SBP
 {
@@ -44,7 +44,11 @@ public class SBP
 	public SBPImpl getTrainee() { return trainee; }
 	public DoubleMatrix getError() { return error; }
 	
-	//SBP method
+	/**
+	 * applies the stochastic back propagation using params
+	 * 
+	 * @param trainingData the training data set used to train the trainee
+	 */
 	public void apply(TrainingData trainingData) {
 		for(int epoch=0; epoch<params.getEpochs(); epoch++) { //epoch loop
 
@@ -61,14 +65,6 @@ public class SBP
 				
 				/* Get actual output from feed forward */
 				DoubleMatrix actualOutputVector = trainee.feedForward(inputVector);
-				if(firstPass) {
-					System.out.println("Chosen Tuple: "+chosenTuple.getInputs());
-					System.out.println("Expected output: "+expectedOutputVector);
-					System.out.println("Actual output: "+actualOutputVector);
-				}
-				//System.out.println("Chosen Tuple: "+chosenTuple.getInputs());
-				//System.out.println("Expected output: "+expectedOutputVector);
-				//System.out.println("Actual output: "+actualOutputVector);
 				
 				/* Calculate Updates */
 				DoubleMatrix deltaK = calcDeltaK(expectedOutputVector, actualOutputVector);
@@ -242,10 +238,6 @@ public class SBP
 			DoubleMatrix thisTupleError = MatrixFunctions.pow(expectedOutputVec.sub(actualOutputVec), 2);
 			thisTupleError.mmuli(0.5);
 			errorVec = errorVec.addRowVector(thisTupleError);
-			/*System.out.println(inputVec);
-			System.out.println(expectedOutputVec);
-			System.out.println(actualOutputVec);
-			System.out.println(thisTupleError);*/
 		}
 		return errorVec;
 	}

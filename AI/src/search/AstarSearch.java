@@ -7,26 +7,11 @@ import data_structures.HashSet;
 import data_structures.PriorityQueue;
 
 /**
+ * Performs an A* Search on an object implementing Searchable 
  * 
  * @author braem
- *
- * A* Search
- * PriorityQueue for the openList (ordered by f value & fast insert/deletion)
- * HashSet for the closedList (fast insert & lookup)
- *
- * 
- * NOTES: The PriorityQueue used is Sun MicroSystems' PriorityQueue, but with an added
- * internal HashMap of which keeps track of the relationship between an Object and its
- * index in the queue. The reason for this is to make java.util's PriorityQueue also have
- * O(1) time complexity when looking up an object/removing that object by equality. This does
- * mean the space used by the openList is doubled, but in this case sacrificing space for speed is useful.
- * 
- * The HashSet is Sun MicroSystems HashSet, but with an added method
- * for extracting the reference via remove, instead of just returning
- * a boolean.
- *
+ * @version 1.0
  */
-
 public class AstarSearch implements Search {
 	
 	private ArrayList<Searchable> path;
@@ -36,7 +21,6 @@ public class AstarSearch implements Search {
 		path = new ArrayList<Searchable>();
 	}
 	
-	//returns path taken from search
 	@Override
 	public ArrayList<Searchable> getPath() {
 		if(searched)
@@ -104,8 +88,12 @@ public class AstarSearch implements Search {
 		
 	} //A*
 	
-	
-	//backtrace the path of the A* Search
+	/**
+	 * back-tracks from the end node to the start node, creating a path of nodes
+	 * 
+	 * @param startNode		starting node to back trace to
+	 * @param endNode		ending node to start the back trace
+	 */
 	private void backTrace(SearchListNode startNode, SearchListNode endNode) {
 		List<SearchListNode> nodes = new ArrayList<SearchListNode>();
 		nodes.add(endNode);

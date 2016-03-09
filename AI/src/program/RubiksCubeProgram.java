@@ -1,11 +1,10 @@
 package program;
 
 /**
+ * Start of GUI for Rubik's Cube
  * 
  * @author braem
- *
- * Start of GUI for Rubik's Cube
- *
+ * @version 1.0
  */
 
 public class RubiksCubeProgram

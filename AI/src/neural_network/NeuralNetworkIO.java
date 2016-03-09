@@ -17,9 +17,11 @@ import java.util.List;
 import org.jblas.DoubleMatrix;
 
 /**
+ * Handles all the IO for the neural network
+ * Serializes networks to files
  * 
  * @author braem
- *
+ * @version 1.0
  */
 
 public class NeuralNetworkIO
@@ -29,6 +31,11 @@ public class NeuralNetworkIO
 	private final static String SER_FILE_NAME = "Network.ser";
 	private final static String NEW_BEST_NETWORK_MSG = "New Best Neural Network Found!";
 	
+	/**
+	 * Writes a neural network to a .txt file. Meant for human reading
+	 * @param NN incoming neural network
+	 * @return <\code> true if success <\code> false if failed
+	 */
 	public static boolean writeNetworkToFile(NeuralNetwork NN) {
 		List<String> contents = new ArrayList<String>();
 		contents.add("-Layer Sizes-");
@@ -53,12 +60,20 @@ public class NeuralNetworkIO
 			return false;
 		}
 	}
+	
+	/**
+	 * assumes the incoming network is the best network so far & overwrites
+	 */
 	public static void writeBestNetworkToFile() {
 		NeuralNetwork NN = readNetwork();
 		if(NN != null)
 			writeNetworkToFile(NN);
 	}
 	
+	/**
+	 * Reads a network from a serialized class file
+	 * @return
+	 */
 	public static NeuralNetwork readNetwork() {
 		NeuralNetwork result = null;
 		try {
@@ -73,6 +88,11 @@ public class NeuralNetworkIO
 		}
 		return result;
 	}
+	
+	/**
+	 * serializes a network to .ser file
+	 * @param NN incoming neural network
+	 */
 	public static void writeNetwork(NeuralNetwork NN) {
 		try {
 			FileOutputStream fos = new FileOutputStream(SER_FILE_NAME);
@@ -86,6 +106,7 @@ public class NeuralNetworkIO
 		}
 	}
 	
+	//check if this is the best network so far
 	static boolean isBestNetworkSoFar(DoubleMatrix error) {
 		NeuralNetwork NN;
 		NN = readNetwork();

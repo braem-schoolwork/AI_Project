@@ -31,7 +31,7 @@ import javax.swing.JComboBox;
  * Window to train a neural network on the XOR problem
  * 
  * @author braemen
- * @version
+ * @version 1.0
  */
 public class NNSBPXORWindow extends JFrame {
 

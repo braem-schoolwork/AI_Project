@@ -116,7 +116,7 @@ public class SBP
 			for(int j=0; j<deltaWj.rows; j++)
 				for(int k=0; k<deltaWj.columns; k++)
 					deltaWj.put(j, k, learningRate*deltaJ.get(0, k)*ACTj.get(0, j));
-			deltaWjs.add(0, deltaWj);
+			deltaWjs.add(deltaWj);
 		}
 		return deltaWjs;
 	}

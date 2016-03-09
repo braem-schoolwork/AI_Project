@@ -1,16 +1,6 @@
 package program;
 
-/**
- * 
- * @author braem
- * 
- * Window to create a new Rubik's Cube by size
- * 
- */
-
-
 import java.awt.EventQueue;
-
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -22,6 +12,12 @@ import java.awt.event.ActionEvent;
 import java.awt.Color;
 import rubiks.*;
 
+/**
+ * Window to specify the cube size for the cube manipulation window
+ * 
+ * @author braem
+ * @version 1.0
+ */
 public class CreateCubeWindow {
 
 	private RubiksCube rubiksCube;

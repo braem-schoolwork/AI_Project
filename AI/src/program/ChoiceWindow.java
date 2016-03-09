@@ -11,14 +11,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 /**
+ * Window to decide on the different main components of this software
  * 
  * @author braem
- *
- * Window to choose whether you want to run the experiments or
- * manually manipulate a Rubik's Cube
- *
+ * @version 1.0
  */
-
 
 public class ChoiceWindow extends JFrame {
 

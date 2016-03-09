@@ -7,7 +7,6 @@ import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -77,7 +76,6 @@ public class RCNNWindow extends JFrame {
 	private JTextField perturbDepthTextField;
 	private JButton btnPerturb;
 	private JLabel lblInvalidDepth;
-	List<Move> recommendedMoves;
 	
 	private JTextField hiddenLayerSizesTF;
 	private JTextField inputLayerSizeTF;
@@ -400,7 +398,7 @@ public class RCNNWindow extends JFrame {
 		btnPerturb.setBounds(630, 296, 184, 46);
 		contentPane.add(btnPerturb);
 		
-		JButton btnSwitchPerspective = new JButton("Swtich");
+		JButton btnSwitchPerspective = new JButton("Switch");
 		btnSwitchPerspective.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				repaintCube(cube);

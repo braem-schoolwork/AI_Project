@@ -141,12 +141,12 @@ public class NeuralNetwork implements SBPImpl, Serializable
 	@Override
 	public void applyWjbiasUpdate (ArrayList<DoubleMatrix> Wjbias) {
 		for(int i=0; i<Wjbias.size(); i++)
-			this.Wjbias.set(i, this.Wjbias.get(i).add(Wjbias.get(i)));
+			this.Wjbias.get(i).addi(Wjbias.get(i));
 	}
 	@Override
 	public void applyWjsUpdate (ArrayList<DoubleMatrix> Wjs) {
 		for(int i=0; i<Wjs.size(); i++)
-			this.Wjs.set(i, this.Wjs.get(i).add(Wjs.get(i)));
+			this.Wjs.get(i).addi(Wjs.get(i));
 	}
 
 	//getters
@@ -191,7 +191,7 @@ public class NeuralNetwork implements SBPImpl, Serializable
 		
 		//initialize the weight matrices/vectors
 		Wji = new DoubleMatrix(inputLayerSize, hiddenLayerSizes.get(0));
-		Wkj = new DoubleMatrix(hiddenLayerSizes.get(numHiddenLayers-1), outputLayerSize);
+		Wkj = new DoubleMatrix(hiddenLayerSizes.get(hiddenLayerSizes.size()-1), outputLayerSize);
 		Wjbias = new ArrayList<DoubleMatrix>();
 		Wkbias = new DoubleMatrix(1, outputLayerSize); //row vector
 		Wjs = new ArrayList<DoubleMatrix>(); //will be empty if num hidden layers = 1

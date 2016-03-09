@@ -1,5 +1,7 @@
 package neural_network;
 
+import java.io.Serializable;
+
 import org.jblas.DoubleMatrix;
 import org.jblas.MatrixFunctions;
 
@@ -10,8 +12,12 @@ import org.jblas.MatrixFunctions;
  * @author braem
  * @version 1.0
  */
-public class Sigmoid
+public class Sigmoid implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8983909274877109626L;
 	private SigmoidParams params;
 	
 	public Sigmoid(SigmoidParams params) {

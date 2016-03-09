@@ -27,6 +27,13 @@ import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
 
+/**
+ * Window to create a general neural network, load some training data,
+ * play with the parameters, and test the network using feed forward.
+ * 
+ * @author braem
+ * @version 1.0
+ */
 public class CreateNetworkWindow extends JFrame {
 
 	/**

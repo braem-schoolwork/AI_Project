@@ -15,14 +15,11 @@ import java.util.List;
 import rubiks.*;
 
 /**
+ * Runs Experiment from Phase 1
  * 
  * @author braem
- *
- * Runs given Experiment
- * 
- * 
+ * @version 1.0
  */
-
 public class Phase1Experiment implements Experiment
 {
 	private final static Charset ENCODING = StandardCharsets.UTF_8;

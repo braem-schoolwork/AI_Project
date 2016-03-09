@@ -2,6 +2,12 @@ package neural_network;
 
 import java.io.Serializable;
 
+/**
+ * Parameters for the Sigmoid Function
+ * 
+ * @author braem
+ * @version 1.0
+ */
 public class SigmoidParams implements Serializable
 {
 	/**

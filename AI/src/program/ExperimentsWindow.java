@@ -1,13 +1,5 @@
 package program;
 
-/**
- * 
- * @author braem
- * 
- * Window to run different Experiments & write them to different file formats
- * 
- */
-
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -23,6 +15,12 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+/**
+ * Window to run different experiments from the phases
+ * 
+ * @author braem
+ * @version 1.0
+ */
 public class ExperimentsWindow extends JFrame {
 
 	/**

@@ -17,6 +17,12 @@ import training_algorithms.SBPParams;
 import training_data.TrainingData;
 import training_data.TrainingTuple;
 
+/**
+ * Runs experiment from phase 2
+ * 
+ * @author braem
+ * @version 1.0
+ */
 public class Phase2Experiment implements Experiment
 {
 	private final static Charset ENCODING = StandardCharsets.UTF_8;

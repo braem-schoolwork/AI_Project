@@ -43,6 +43,13 @@ import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.DefaultComboBoxModel;
 
+/**
+ * Window to manually manipulate a rubik's cube, perturb it, and run A* or
+ * Breadth-First Searches to find the path to the solved state
+ * 
+ * @author braem
+ * @version
+ */
 public class CubeManipulationWindow extends JFrame {
 
 	/**
@@ -525,7 +532,7 @@ public class CubeManipulationWindow extends JFrame {
 		AstarSearchTimeTextField.setBounds(654, 374, 160, 46);
 		contentPane.add(AstarSearchTimeTextField);
 		
-		JButton btnSwitchPerspective = new JButton("Swtich");
+		JButton btnSwitchPerspective = new JButton("Switch");
 		btnSwitchPerspective.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				repaintCube(cube);

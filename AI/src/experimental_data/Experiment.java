@@ -8,5 +8,11 @@ package experimental_data;
  */
 public interface Experiment
 {
-	public void runExperiment(String fileExtension);
+	/**
+	 * Runs the experiment
+	 * 
+	 * @param fileExtension			extension for file. IE .txt, .csv, etc
+	 * @param size					size of experiment to run. Proportional to speed of run
+	 */
+	public void runExperiment(String fileExtension, ExperimentSize size);
 }

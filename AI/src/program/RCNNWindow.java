@@ -20,6 +20,7 @@ import javax.swing.border.EmptyBorder;
 import org.jblas.DoubleMatrix;
 
 import experimental_data.Experiment;
+import experimental_data.ExperimentSize;
 import experimental_data.Phase1Experiment;
 import neural_network.NeuralNetwork;
 import neural_network.NeuralNetworkIO;
@@ -651,7 +652,8 @@ public class RCNNWindow extends JFrame {
 		btnGenerateRubiksCube.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Experiment exp = new Phase1Experiment();
-				exp.runExperiment(".csv");
+				//TODO get experimentsize from user
+				exp.runExperiment(".csv", ExperimentSize.LARGE);
 				chckbxGeneratedTrainingData.setSelected(true);
 			}
 		});

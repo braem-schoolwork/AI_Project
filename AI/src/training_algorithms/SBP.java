@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import org.jblas.*;
 
+import matrix_wrapper.FunctionWrapper;
 import training_data.TrainingData;
 import training_data.TrainingTuple;
 
@@ -27,12 +28,17 @@ public class SBP
 	private static DoubleMatrix deltaWjiPrev;
 	private static ArrayList<DoubleMatrix> deltaWjbiasPrev;
 	private static ArrayList<DoubleMatrix> deltaWjsPrev;
+	private static DoubleMatrix bestErrorSoFar;
 	
 	public SBP() {
 		params = new SBPParams();
 	}
 	public SBP(SBPParams params) {
 		this.params = params;
+	}
+	public SBP(SBPParams params, SBPImpl trainee) {
+		this.params = params;
+		this.trainee = trainee;
 	}
 	
 	//setters
@@ -42,7 +48,12 @@ public class SBP
 	//getters
 	public SBPParams getParams() { return params; }
 	public SBPImpl getTrainee() { return trainee; }
-	public DoubleMatrix getError() { return error; }
+	public DoubleMatrix getError() { 
+		if(error == null)
+			return bestErrorSoFar;
+		else
+			return error;
+	}
 	
 	/**
 	 * applies the stochastic back propagation using params
@@ -50,6 +61,7 @@ public class SBP
 	 * @param trainingData the training data set used to train the trainee
 	 */
 	public void apply(TrainingData trainingData) {
+		boolean firstEpoch = true;
 		for(int epoch=0; epoch<params.getEpochs(); epoch++) { //epoch loop
 
 			/* initialize trainee */
@@ -97,11 +109,19 @@ public class SBP
 			DoubleMatrix error = calculateError(trainingData);
 
 			/* save best network so far to disk */
-			if(isBelowThreshold(error)) { //if below threshold
+			if(!firstEpoch) {
+				double maxVal = FunctionWrapper.getMaxValueInRowVec(error);
+				if(FunctionWrapper.isContentsBelowValue(error, maxVal))
+					bestErrorSoFar = error;
+			}
+			else
+				bestErrorSoFar = error;
+			if(FunctionWrapper.isContentsBelowValue(error, params.getErrorThreshold())) { //if below threshold
 				this.error = error;
 				trainee.saveToDisk(error);
 				return;
 			}
+			firstEpoch = false;
 		}
 	}
 	
@@ -240,15 +260,5 @@ public class SBP
 			errorVec = errorVec.addRowVector(thisTupleError);
 		}
 		return errorVec;
-	}
-	
-	private boolean isBelowThreshold(DoubleMatrix error) {
-		boolean belowThresh = true;
-		for(int i=0; i<error.rows; i++) 
-			for(int j=0; j<error.columns; j++) 
-				if(error.get(i,j) > params.getErrorThreshold()) {
-					belowThresh = false;
-				}
-		return belowThresh;
 	}
 }

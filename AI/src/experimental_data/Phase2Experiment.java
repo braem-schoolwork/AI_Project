@@ -1,11 +1,5 @@
 package experimental_data;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,17 +12,16 @@ import training_data.TrainingData;
 import training_data.TrainingTuple;
 
 /**
- * Runs experiment from phase 2
+ * Runs experiment from Phase 2
  * 
- * @author braem
+ * @author braemen
  * @version 1.0
  */
 public class Phase2Experiment implements Experiment
 {
-	private final static Charset ENCODING = StandardCharsets.UTF_8;
-	private static String LRMR_FILE_NAME = System.getProperty("user.dir")+"\\LRMR";
-	private static String LRTI_FILE_NAME = System.getProperty("user.dir")+"\\LRTI";
-	private static String MRTI_FILE_NAME = System.getProperty("user.dir")+"\\MRTI";
+	private static String fileNameLRMR = System.getProperty("user.dir")+"\\LRMR";
+	private static String fileNameLRTI = System.getProperty("user.dir")+"\\LRTI";
+	private static String fileNameMRTI = System.getProperty("user.dir")+"\\MRTI";
 	private static TrainingData trainingData;
 	
 	private static double startingLearningRate = 0.05;
@@ -47,85 +40,71 @@ public class Phase2Experiment implements Experiment
 	private static int defaultTrainingIter = 3500;
 	
 	@Override
-	public void runExperiment(String fileExtension) {
-		LRMR_FILE_NAME += fileExtension;
-		LRTI_FILE_NAME += fileExtension;
-		MRTI_FILE_NAME += fileExtension;
-		runExperimentMRTI();
-		runExperimentLRTI();
-		runExperimentLRMR();
+	public void runExperiment(String fileExtension, ExperimentSize size) {
+		setParams(size);
+		fileNameLRMR += fileExtension;
+		fileNameLRTI += fileExtension;
+		fileNameMRTI += fileExtension;
+		runGeneralExp(startingMomentumRate, momentumRateIncrease, endingMomentumRate,
+				startingTrainingIter, trainingIterIncrease, endingTrainingIter, "MR|TI", fileNameMRTI);
+		runGeneralExp(startingLearningRate, learningRateIncrease, endingLearningRate,
+				startingTrainingIter, trainingIterIncrease, endingTrainingIter, "LR|TI", fileNameLRTI);
+		runGeneralExp(startingLearningRate, learningRateIncrease, endingLearningRate,
+				startingMomentumRate, momentumRateIncrease, endingMomentumRate, "LR|MR", fileNameLRMR);
 	}
 	
-	private static void runExperimentMRTI() {
-		setupTuples();
-		List<String> contents = new ArrayList<String>();
-		String firstRow = "MR|TI";
-		boolean firstPass = true;
-		for(double i=startingMomentumRate; i<=endingMomentumRate; i+=momentumRateIncrease) {
-			String row = i+"";
-			SBPParams sbpParams = new SBPParams();
-			sbpParams.setMomentumRate(i);
-			for(int j=startingTrainingIter; j<=endingTrainingIter; j+=trainingIterIncrease) {
-				sbpParams.setTrainingIterations(j);
-				double errorAvg = 0.0;
-				for(int k=0; k<applySBPamount; k++) {
-					SBP sbp = new SBP(sbpParams);
-					sbp.apply(trainingData);
-					errorAvg += sbp.getError().get(0,0);
-				}
-				errorAvg /= applySBPamount;
-				if(firstPass) firstRow += ","+j;
-				row += ","+errorAvg;
-			}
-			contents.add(row);
-			firstPass = false;
+	private static void setParams(ExperimentSize size) {
+		switch(size) {
+		case SMALL:
+			startingLearningRate = 0.1;
+			endingLearningRate = 0.5;
+			learningRateIncrease = 0.1;
+			startingMomentumRate = 0.1;
+			endingMomentumRate = 0.5;
+			momentumRateIncrease = 0.1;
+			startingTrainingIter = 1000;
+			endingTrainingIter = 10000;
+			trainingIterIncrease = 1000;
+			applySBPamount = 100;
+			break;
+		case MEDIUM:
+			startingLearningRate = 0.1;
+			endingLearningRate = 0.9;
+			learningRateIncrease = 0.1;
+			startingMomentumRate = 0.1;
+			endingMomentumRate = 0.9;
+			momentumRateIncrease = 0.1;
+			startingTrainingIter = 1000;
+			endingTrainingIter = 10000;
+			trainingIterIncrease = 1000;
+			applySBPamount = 100;
+			break;
+		case LARGE:
+			startingLearningRate = 0.05;
+			endingLearningRate = 0.95;
+			learningRateIncrease = 0.05;
+			startingMomentumRate = 0.05;
+			endingMomentumRate = 0.95;
+			momentumRateIncrease = 0.05;
+			startingTrainingIter = 500;
+			endingTrainingIter = 10000;
+			trainingIterIncrease = 500;
+			applySBPamount = 100;
+			break;
 		}
-		contents.add(0, firstRow);
-		try {
-			writeToFile(contents, MRTI_FILE_NAME);
-		} catch (IOException e) { }
 	}
 	
-	private static void runExperimentLRTI() {
-		setupTuples();
-		List<String> contents = new ArrayList<String>();
-		String firstRow = "LR|TI";
-		boolean firstPass = true;
-		for(double i=startingLearningRate; i<=endingLearningRate; i+=learningRateIncrease) {
-			String row = i+"";
-			SBPParams sbpParams = new SBPParams();
-			sbpParams.setLearningRate(i);
-			for(int j=startingTrainingIter; j<=endingTrainingIter; j+=trainingIterIncrease) {
-				sbpParams.setTrainingIterations(j);
-				double errorAvg = 0.0;
-				for(int k=0; k<applySBPamount; k++) {
-					SBP sbp = new SBP(sbpParams);
-					sbp.apply(trainingData);
-					errorAvg += sbp.getError().get(0,0);
-				}
-				errorAvg /= applySBPamount;
-				if(firstPass) firstRow += ","+j;
-				row += ","+errorAvg;
-			}
-			contents.add(row);
-			firstPass = false;
-		}
-		contents.add(0, firstRow);
-		try {
-			writeToFile(contents, LRTI_FILE_NAME);
-		} catch (IOException e) { }
-	}
-	
-	private static void runExperimentLRMR() {
+	private static void runGeneralExp(double outerStart, double outerIncrease, double outerEnd,
+			double innerStart, double innerIncrease, double innerEnd, String axisStr, String fileName) {
 		setupTuples();
 		List<String> contents = new ArrayList<String>();
 		String firstRow = "LR|MR";
 		boolean firstPass = true;
-		for(double i=startingLearningRate; i<=endingLearningRate; i+=learningRateIncrease) {
+		for(double i=outerStart; i<=outerEnd; i+=outerIncrease) {
 			String row = i+"";
 			SBPParams sbpParams = new SBPParams();
 			sbpParams.setLearningRate(i);
-			for(double j=startingMomentumRate; j<=endingMomentumRate; j+=momentumRateIncrease) {
+			for(double j=innerStart; j<=innerEnd; j+=innerIncrease) {
 				sbpParams.setMomentumRate(j);
 				double errorAvg = 0.0;
 				for(int k=0; k<applySBPamount; k++) {
@@ -141,14 +120,7 @@ public class Phase2Experiment implements Experiment
 			firstPass = false;
 		}
 		contents.add(0, firstRow);
-		try {
-			writeToFile(contents, LRMR_FILE_NAME);
-		} catch (IOException e) { }
-	}
-	
-	private static void writeToFile(List<String> lines, String filename) throws IOException {
-		Path path = Paths.get(filename);
-		Files.write(path, lines, ENCODING);
+		ExperimentIO.writeToFile(contents, fileName);
 	}
 	
 	private static void setupTuples() {

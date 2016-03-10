@@ -14,6 +14,7 @@ import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
 
 /**
  * Window to run different experiments from the phases
@@ -29,7 +30,8 @@ public class ExperimentsWindow extends JFrame {
 	private static final long serialVersionUID = 6452197459200260004L;
 	private JFrame thisFrame = this;
 	private JPanel contentPane;
-
+	private JComboBox<ExperimentSize> sizeCB;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -56,7 +58,7 @@ public class ExperimentsWindow extends JFrame {
 	public ExperimentsWindow() {
 		setTitle("Run Experiments");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 459, 186);
+		setBounds(100, 100, 676, 316);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -81,7 +83,8 @@ public class ExperimentsWindow extends JFrame {
 		btnRunExperiment.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Experiment exp = (Experiment)ExperimentSelectComboBox.getSelectedItem();
-				exp.runExperiment((String)fileExtensionComboBox.getSelectedItem());
+				exp.runExperiment((String)fileExtensionComboBox.getSelectedItem(),
+						(ExperimentSize)sizeCB.getSelectedItem());
 			}
 		});
 		btnRunExperiment.setFont(new Font("Tahoma", Font.PLAIN, 25));
@@ -99,5 +102,17 @@ public class ExperimentsWindow extends JFrame {
 		btnBack.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		btnBack.setBounds(334, 11, 92, 43);
 		contentPane.add(btnBack);
+		
+		sizeCB = new JComboBox<ExperimentSize>();
+		sizeCB.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		sizeCB.setBounds(204, 144, 222, 43);
+		contentPane.add(sizeCB);
+		for(ExperimentSize s : ExperimentSize.values())
+			sizeCB.addItem(s);
+		
+		JLabel lblExperimentSize = new JLabel("Experiment Size:");
+		lblExperimentSize.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		lblExperimentSize.setBounds(10, 144, 202, 43);
+		contentPane.add(lblExperimentSize);
 	}
 }

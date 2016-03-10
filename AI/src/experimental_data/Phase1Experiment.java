@@ -3,14 +3,7 @@ package experimental_data;
 import search.*;
 import training_data.RubiksCubeTrainingDataGenerator;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 
 import rubiks.*;
 
@@ -22,27 +15,29 @@ import rubiks.*;
  */
 public class Phase1Experiment implements Experiment
 {
-	private final static Charset ENCODING = StandardCharsets.UTF_8;
 	private static Search search = new AstarSearch();
 	private static int cubeSize = 3;
 	private static String fileName = System.getProperty("user.dir")+"\\training_data";
+	private static int rcSizeLim = 8;
+	private static int runTimesLim = 5;
 	
 	@Override
-	public void runExperiment(String fileExtension) {
+	public void runExperiment(String fileExtension, ExperimentSize size) {
+		setupParams(size);
 		fileName += fileExtension;
-		List<String> content = new ArrayList<String>();
-		for(int j=1; j<=8; j++) {
-			for(int k=1; k<=25; k++) {
+		ArrayList<String> content = new ArrayList<String>();
+		for(int j=1; j<=rcSizeLim; j++) {
+			for(int k=1; k<=runTimesLim; k++) {
 				RubiksCube rubiksCube = new RubiksCube(cubeSize);
 				Perturber.perturb(j, rubiksCube);
 				search.search(rubiksCube, new RubiksCube(rubiksCube.getSize()));
-				List<Searchable> searchableObjs = search.getPath();
-				List<RubiksCube> cubes = new ArrayList<RubiksCube>();
+				ArrayList<Searchable> searchableObjs = search.getPath();
+				ArrayList<RubiksCube> cubes = new ArrayList<RubiksCube>();
 				for(Searchable obj : searchableObjs) {
 					RubiksCube cube = (RubiksCube)obj;
 					cubes.add(cube);
 				}
-				List<Move> moves = new ArrayList<Move>();
+				ArrayList<Move> moves = new ArrayList<Move>();
 				for(RubiksCube obj : cubes)
 					moves.add( obj.getLastMoveApplied() );
 				moves.remove(0);
@@ -50,17 +45,24 @@ public class Phase1Experiment implements Experiment
 				content.addAll(RubiksCubeTrainingDataGenerator.genFileTrainingData(cubes, moves));
 			}
 		}
-		try {
-			writeToFile(content, fileName);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		ExperimentIO.writeToFile(content, fileName);
 	}
 	
-	private static void writeToFile(List<String> lines, String filename) throws IOException {
-		Path path = Paths.get(filename);
-		Files.write(path, lines, ENCODING);
+	private static void setupParams(ExperimentSize size) {
+		switch(size) {
+		case SMALL:
+			rcSizeLim = 6;
+			runTimesLim = 4;
+			break;
+		case MEDIUM:
+			rcSizeLim = 7;
+			runTimesLim = 4;
+			break;
+		case LARGE:
+			rcSizeLim = 8;
+			runTimesLim = 5;
+			break;
+		}
 	}
 	
 	@Override

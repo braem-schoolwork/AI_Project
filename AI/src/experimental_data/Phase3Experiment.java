@@ -1,11 +1,11 @@
 package experimental_data;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 
 import org.jblas.DoubleMatrix;
 
+import matrix_wrapper.FunctionWrapper;
 import neural_network.NeuralNetwork;
 import neural_network.NeuralNetworkParams;
 import training_algorithms.SBP;
@@ -41,6 +41,8 @@ public class Phase3Experiment implements Experiment
 	private static int endingTrainingIter;
 	private static int trainingIterIncrease;
 	
+	private static final int AMOUNT_OF_PARAMS = 5;
+	
 	private ArrayList<NNSBPParam> NNSBPparams = new ArrayList<NNSBPParam>();
 	private ArrayList<NNSBPParam> bestNNSBPparams = new ArrayList<NNSBPParam>();
 	
@@ -54,7 +56,6 @@ public class Phase3Experiment implements Experiment
 		}
 		setupParams(size, td);
 		runExp(td);
-		//TODO find the best params
 	}
 	
 	private void runExp(TrainingData td) {
@@ -75,15 +76,79 @@ public class Phase3Experiment implements Experiment
 							DoubleMatrix error = sbp.getError();
 							NNSBPparams.add(new NNSBPParam(error, NNparams, sbpParams));
 						}
+		for(int i=0; i<AMOUNT_OF_PARAMS; i++)
+			bestNNSBPparams.add(new NNSBPParam());
+		for(int i=0; i<NNSBPparams.size(); i++) {
+			NNSBPParam current = NNSBPparams.get(i);
+			if(FunctionWrapper.lessThanRowVec(current.error, bestNNSBPparams.get(AMOUNT_OF_PARAMS-1).error))
+				bestNNSBPparams.set(AMOUNT_OF_PARAMS-1, current);
+			Collections.sort(NNSBPparams);
+		}
+	}
+	
+	/**
+	 * @return Best NeuralNetwork parameters from experiment
+	 */
+	public ArrayList<NeuralNetworkParams> getBestNNParams() {
+		ArrayList<NeuralNetworkParams> p = new ArrayList<NeuralNetworkParams>();
+		for(NNSBPParam s : bestNNSBPparams)
+			p.add(s.NNparams);
+		return p;
+	}
+	/**
+	 * @return Best SBP parameters from experiment
+	 */
+	public ArrayList<SBPParams> getBestSBPParams() {
+		ArrayList<SBPParams> p = new ArrayList<SBPParams>();
+		for(NNSBPParam s : bestNNSBPparams)
+			p.add(s.sbpParams);
+		return p;
+	}
+	/**
+	 * @return Best errors from experiment
+	 */
+	public ArrayList<DoubleMatrix> getBestErrors() {
+		ArrayList<DoubleMatrix> p = new ArrayList<DoubleMatrix>();
+		for(NNSBPParam s : bestNNSBPparams)
+			p.add(s.error);
+		return p;
 	}
 	
 	private static void setupParams(ExperimentSize size, TrainingData td) {
 		switch(size) {
 		case SMALL:
-			
+			startingHiddenLayerSize = 10;
+			endingHiddenLayerSize = 65;
+			hiddenLayerSizeIncrease = 5;
+			startingEpochs = 10;
+			endingEpochs = 100;
+			epochsIncrease = 10;
+			startingLearningRate = 0.01;
+			endingLearningRate = 0.3;
+			learningRateIncrease = 0.01;
+			startingMomentumRate = 0.0;
+			endingMomentumRate = 0.95;
+			momentumRateIncrease = 0.05;
+			startingTrainingIter = td.getData().size();
+			endingTrainingIter = td.getData().size()*1000;
+			trainingIterIncrease = td.getData().size()/10;
 			break;
 		case MEDIUM:
-			
+			startingHiddenLayerSize = 10;
+			endingHiddenLayerSize = 65;
+			hiddenLayerSizeIncrease = 5;
+			startingEpochs = 10;
+			endingEpochs = 100;
+			epochsIncrease = 10;
+			startingLearningRate = 0.01;
+			endingLearningRate = 0.3;
+			learningRateIncrease = 0.01;
+			startingMomentumRate = 0.0;
+			endingMomentumRate = 0.95;
+			momentumRateIncrease = 0.05;
+			startingTrainingIter = td.getData().size();
+			endingTrainingIter = td.getData().size()*1000;
+			trainingIterIncrease = td.getData().size()/10;
 			break;
 		case LARGE:
 			startingHiddenLayerSize = 10;
@@ -105,14 +170,30 @@ public class Phase3Experiment implements Experiment
 		}
 	}
 	
-	class NNSBPParam {
+	class NNSBPParam implements Comparable<NNSBPParam> {
 		DoubleMatrix error;
 		NeuralNetworkParams NNparams;
 		SBPParams sbpParams;
+		public NNSBPParam() {
+			error = new DoubleMatrix(1,2);
+			error.fill(Double.MAX_VALUE);
+			NNparams = null;
+			sbpParams = null;
+		}
 		public NNSBPParam(DoubleMatrix error, NeuralNetworkParams NNparams, SBPParams sbpParams) {
 			this.error = error;
 			this.NNparams = NNparams;
 			this.sbpParams = sbpParams;
+		}
+		@Override
+		public int compareTo(NNSBPParam arg0) {
+			if(FunctionWrapper.lessThanRowVec(this.error, arg0.error)) return -10;
+			else if(FunctionWrapper.lessThanRowVec(arg0.error, this.error)) return 10;
+			else return 0;
+		}
+		@Override
+		public String toString() {
+			return ""+error;
 		}
 	}
 }

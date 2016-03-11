@@ -75,6 +75,7 @@ public class ExperimentsWindow extends JFrame {
 		ExperimentSelectComboBox.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		ExperimentSelectComboBox.addItem(new Phase1Experiment());
 		ExperimentSelectComboBox.addItem(new Phase2Experiment());
+		ExperimentSelectComboBox.addItem(new Phase3Experiment());
 		ExperimentSelectComboBox.setSelectedIndex(0);
 		ExperimentSelectComboBox.setBounds(10, 11, 202, 43);
 		contentPane.add(ExperimentSelectComboBox);

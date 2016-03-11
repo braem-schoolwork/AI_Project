@@ -56,6 +56,9 @@ public class Phase3Experiment implements Experiment
 		}
 		setupParams(size, td);
 		runExp(td);
+		ExperimentIO.serializeNNparams(getBestNNParams());
+		ExperimentIO.serializeSBPparams(getBestSBPParams());
+		ExperimentIO.serializeErrors(getBestErrors());
 	}
 	
 	private void runExp(TrainingData td) {
@@ -154,20 +157,29 @@ public class Phase3Experiment implements Experiment
 			startingHiddenLayerSize = 10;
 			endingHiddenLayerSize = 65;
 			hiddenLayerSizeIncrease = 5;
+			
 			startingEpochs = 10;
 			endingEpochs = 100;
 			epochsIncrease = 10;
+			
 			startingLearningRate = 0.01;
 			endingLearningRate = 0.3;
 			learningRateIncrease = 0.01;
+			
 			startingMomentumRate = 0.0;
 			endingMomentumRate = 0.95;
 			momentumRateIncrease = 0.05;
+			
 			startingTrainingIter = td.getData().size();
 			endingTrainingIter = td.getData().size()*1000;
 			trainingIterIncrease = td.getData().size()/10;
 			break;
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return "Phase3";
 	}
 	
 	class NNSBPParam implements Comparable<NNSBPParam> {

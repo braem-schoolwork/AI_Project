@@ -1,13 +1,19 @@
 package training_algorithms;
 
+import java.io.Serializable;
+
 /**
  * Parameter object for SBP
  * 
  * @author braemen
  * @version 1.0
  */
-public class SBPParams
+public class SBPParams implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5792887989828622404L;
 	private int epochs;
 	private int trainingIterations;
 	private double errorThreshold;

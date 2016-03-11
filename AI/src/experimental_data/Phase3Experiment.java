@@ -31,10 +31,10 @@ public class Phase3Experiment implements Experiment
 	
 	private static double startingLearningRate = 0.01;
 	private static double endingLearningRate = 0.3;
-	private static double learningRateIncrease = 0.01;
+	private static double learningRateIncrease = 0.05;
 	
 	private static double startingMomentumRate = 0.0;
-	private static double endingMomentumRate = 0.95;
+	private static double endingMomentumRate = 0.30;
 	private static double momentumRateIncrease = 0.05;
 	
 	private static int startingTrainingIter;
@@ -62,7 +62,7 @@ public class Phase3Experiment implements Experiment
 	}
 	
 	private void runExp(TrainingData td) {
-		for(int hls=startingHiddenLayerSize; hls<endingHiddenLayerSize; hls+=hiddenLayerSizeIncrease)
+		for(int hls=startingHiddenLayerSize; hls<endingHiddenLayerSize; hls+=hiddenLayerSizeIncrease) {
 			for(double lr=startingLearningRate; lr<endingLearningRate; lr+=learningRateIncrease)
 				for(double mr=startingMomentumRate; mr<endingMomentumRate; mr+=momentumRateIncrease)
 					for(int e=startingEpochs; e<endingEpochs; e+=epochsIncrease)
@@ -79,6 +79,8 @@ public class Phase3Experiment implements Experiment
 							DoubleMatrix error = sbp.getError();
 							NNSBPparams.add(new NNSBPParam(error, NNparams, sbpParams));
 						}
+			System.out.println(hls);
+		}
 		for(int i=0; i<AMOUNT_OF_PARAMS; i++)
 			bestNNSBPparams.add(new NNSBPParam());
 		for(int i=0; i<NNSBPparams.size(); i++) {
@@ -94,7 +96,7 @@ public class Phase3Experiment implements Experiment
 	 */
 	public ArrayList<NeuralNetworkParams> getBestNNParams() {
 		ArrayList<NeuralNetworkParams> p = new ArrayList<NeuralNetworkParams>();
-		for(NNSBPParam s : bestNNSBPparams)
+		for(NNSBPParam s : NNSBPparams)
 			p.add(s.NNparams);
 		return p;
 	}
@@ -103,7 +105,7 @@ public class Phase3Experiment implements Experiment
 	 */
 	public ArrayList<SBPParams> getBestSBPParams() {
 		ArrayList<SBPParams> p = new ArrayList<SBPParams>();
-		for(NNSBPParam s : bestNNSBPparams)
+		for(NNSBPParam s : NNSBPparams)
 			p.add(s.sbpParams);
 		return p;
 	}
@@ -112,7 +114,7 @@ public class Phase3Experiment implements Experiment
 	 */
 	public ArrayList<DoubleMatrix> getBestErrors() {
 		ArrayList<DoubleMatrix> p = new ArrayList<DoubleMatrix>();
-		for(NNSBPParam s : bestNNSBPparams)
+		for(NNSBPParam s : NNSBPparams)
 			p.add(s.error);
 		return p;
 	}

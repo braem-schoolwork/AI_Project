@@ -139,7 +139,7 @@ public class Phase3Experiment implements Experiment
 			trainingIterIncrease = td.getData().size()/10;
 			break;
 		case MEDIUM:
-			startingHiddenLayerSize = 10;
+			startingHiddenLayerSize = 15;
 			endingHiddenLayerSize = 65;
 			hiddenLayerSizeIncrease = 5;
 			startingEpochs = 10;
@@ -147,16 +147,16 @@ public class Phase3Experiment implements Experiment
 			epochsIncrease = 10;
 			startingLearningRate = 0.01;
 			endingLearningRate = 0.3;
-			learningRateIncrease = 0.01;
+			learningRateIncrease = 0.05;
 			startingMomentumRate = 0.0;
-			endingMomentumRate = 0.95;
+			endingMomentumRate = 0.3;
 			momentumRateIncrease = 0.05;
 			startingTrainingIter = td.getData().size();
 			endingTrainingIter = td.getData().size()*1000;
 			trainingIterIncrease = td.getData().size()/10;
 			break;
 		case LARGE:
-			startingHiddenLayerSize = 10;
+			startingHiddenLayerSize = 15;
 			endingHiddenLayerSize = 65;
 			hiddenLayerSizeIncrease = 5;
 			
@@ -166,10 +166,10 @@ public class Phase3Experiment implements Experiment
 			
 			startingLearningRate = 0.01;
 			endingLearningRate = 0.3;
-			learningRateIncrease = 0.01;
+			learningRateIncrease = 0.05;
 			
 			startingMomentumRate = 0.0;
-			endingMomentumRate = 0.95;
+			endingMomentumRate = 0.3;
 			momentumRateIncrease = 0.05;
 			
 			startingTrainingIter = td.getData().size();

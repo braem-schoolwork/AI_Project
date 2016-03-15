@@ -28,9 +28,9 @@ import training_algorithms.SBPParams;
 public class ExperimentIO
 {
 	private final static Charset ENCODING = StandardCharsets.UTF_8;
-	private final static String NNPARAMS_FILENAME = "BestNNparams.csv";
-	private final static String SBPPARAMS_FILENAME = "BestSBPparams.csv";
-	private final static String ERRORS_FILENAME = "BestErrors.csv";
+	private final static String NNPARAMS_SERNAME = "BestNNparams.ser";
+	private final static String SBPPARAMS_SERNAME = "BestSBPparams.ser";
+	private final static String ERRORS_SERNAME = "BestErrors.ser";
 	static boolean writeToFile(List<String> lines, String filename) {
 		Path path = Paths.get(filename);
 		try {
@@ -42,7 +42,7 @@ public class ExperimentIO
 	}
 	static void serializeNNparams(ArrayList<NeuralNetworkParams> NNparams) {
 		try {
-			FileOutputStream fos = new FileOutputStream(NNPARAMS_FILENAME);
+			FileOutputStream fos = new FileOutputStream(NNPARAMS_SERNAME);
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(NNparams);
 			oos.close();
@@ -54,7 +54,7 @@ public class ExperimentIO
 	}
 	static void serializeSBPparams(ArrayList<SBPParams> sbpParams) {
 		try {
-			FileOutputStream fos = new FileOutputStream(SBPPARAMS_FILENAME);
+			FileOutputStream fos = new FileOutputStream(SBPPARAMS_SERNAME);
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(sbpParams);
 			oos.close();
@@ -66,7 +66,7 @@ public class ExperimentIO
 	}
 	static void serializeErrors(ArrayList<DoubleMatrix> errors) {
 		try {
-			FileOutputStream fos = new FileOutputStream(ERRORS_FILENAME);
+			FileOutputStream fos = new FileOutputStream(ERRORS_SERNAME);
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(errors);
 			oos.close();
@@ -81,7 +81,7 @@ public class ExperimentIO
 	static ArrayList<NeuralNetworkParams> readNNparams() {
 		ArrayList<NeuralNetworkParams> result = new ArrayList<NeuralNetworkParams>();
 		try {
-			FileInputStream fis = new FileInputStream(NNPARAMS_FILENAME);
+			FileInputStream fis = new FileInputStream(NNPARAMS_SERNAME);
 			ObjectInputStream ois = new ObjectInputStream(fis);
 			result = (ArrayList<NeuralNetworkParams>) ois.readObject();
 			ois.close();
@@ -97,7 +97,7 @@ public class ExperimentIO
 	static ArrayList<SBPParams> readSBPparams() {
 		ArrayList<SBPParams> result = new ArrayList<SBPParams>();
 		try {
-			FileInputStream fis = new FileInputStream(SBPPARAMS_FILENAME);
+			FileInputStream fis = new FileInputStream(SBPPARAMS_SERNAME);
 			ObjectInputStream ois = new ObjectInputStream(fis);
 			result = (ArrayList<SBPParams>) ois.readObject();
 			ois.close();
@@ -113,7 +113,7 @@ public class ExperimentIO
 	static ArrayList<DoubleMatrix> readErrors() {
 		ArrayList<DoubleMatrix> result = new ArrayList<DoubleMatrix>();
 		try {
-			FileInputStream fis = new FileInputStream(ERRORS_FILENAME);
+			FileInputStream fis = new FileInputStream(ERRORS_SERNAME);
 			ObjectInputStream ois = new ObjectInputStream(fis);
 			result = (ArrayList<DoubleMatrix>) ois.readObject();
 			ois.close();

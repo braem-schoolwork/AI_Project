@@ -25,17 +25,17 @@ public class Phase3Experiment implements Experiment
 	private static int endingHiddenLayerSize = 65;
 	private static int hiddenLayerSizeIncrease = 5;
 	
-	private static int startingEpochs = 10;
+	private static int startingEpochs = 20;
 	private static int endingEpochs = 100;
-	private static int epochsIncrease = 10;
+	private static int epochsIncrease = 20;
 	
-	private static double startingLearningRate = 0.01;
+	private static double startingLearningRate = 0.05;
 	private static double endingLearningRate = 0.3;
-	private static double learningRateIncrease = 0.05;
+	private static double learningRateIncrease = 0.1;
 	
 	private static double startingMomentumRate = 0.0;
 	private static double endingMomentumRate = 0.30;
-	private static double momentumRateIncrease = 0.05;
+	private static double momentumRateIncrease = 0.1;
 	
 	private static int startingTrainingIter;
 	private static int endingTrainingIter;
@@ -62,11 +62,11 @@ public class Phase3Experiment implements Experiment
 	}
 	
 	private void runExp(TrainingData td) {
-		for(int hls=startingHiddenLayerSize; hls<endingHiddenLayerSize; hls+=hiddenLayerSizeIncrease) {
-			for(double lr=startingLearningRate; lr<endingLearningRate; lr+=learningRateIncrease)
-				for(double mr=startingMomentumRate; mr<endingMomentumRate; mr+=momentumRateIncrease)
-					for(int e=startingEpochs; e<endingEpochs; e+=epochsIncrease)
-						for(int ti=startingTrainingIter; ti<endingTrainingIter; ti+=trainingIterIncrease) {
+		for(int hls=startingHiddenLayerSize; hls<=endingHiddenLayerSize; hls+=hiddenLayerSizeIncrease) {
+			for(double lr=startingLearningRate; lr<=endingLearningRate; lr+=learningRateIncrease)
+				for(double mr=startingMomentumRate; mr<=endingMomentumRate; mr+=momentumRateIncrease)
+					for(int e=startingEpochs; e<=endingEpochs; e+=epochsIncrease)
+						for(int ti=startingTrainingIter; ti<=endingTrainingIter; ti+=trainingIterIncrease) {
 							ArrayList<Integer> hiddenLayerSizes = new ArrayList<Integer>();
 							hiddenLayerSizes.add(hls);
 							NeuralNetworkParams NNparams = new NeuralNetworkParams(1.0, 
@@ -78,8 +78,12 @@ public class Phase3Experiment implements Experiment
 							sbp.apply(td);
 							DoubleMatrix error = sbp.getError();
 							NNSBPparams.add(new NNSBPParam(error, NNparams, sbpParams));
+							System.out.println("hls"+hls);
+							System.out.println("lr"+lr);
+							System.out.println("mr"+mr);
+							System.out.println("e"+e);
+							System.out.println("ti"+ti);
 						}
-			System.out.println(hls);
 		}
 		for(int i=0; i<AMOUNT_OF_PARAMS; i++)
 			bestNNSBPparams.add(new NNSBPParam());
@@ -136,7 +140,7 @@ public class Phase3Experiment implements Experiment
 			momentumRateIncrease = 0.05;
 			startingTrainingIter = td.getData().size();
 			endingTrainingIter = td.getData().size()*1000;
-			trainingIterIncrease = td.getData().size()/10;
+			trainingIterIncrease = 50000;
 			break;
 		case MEDIUM:
 			startingHiddenLayerSize = 15;
@@ -160,21 +164,21 @@ public class Phase3Experiment implements Experiment
 			endingHiddenLayerSize = 65;
 			hiddenLayerSizeIncrease = 5;
 			
-			startingEpochs = 10;
-			endingEpochs = 100;
+			startingEpochs = 20;
+			endingEpochs = 50;
 			epochsIncrease = 10;
 			
-			startingLearningRate = 0.01;
+			startingLearningRate = 0.05;
 			endingLearningRate = 0.3;
-			learningRateIncrease = 0.05;
+			learningRateIncrease = 0.1;
 			
 			startingMomentumRate = 0.0;
 			endingMomentumRate = 0.3;
-			momentumRateIncrease = 0.05;
+			momentumRateIncrease = 0.1;
 			
 			startingTrainingIter = td.getData().size();
-			endingTrainingIter = td.getData().size()*1000;
-			trainingIterIncrease = td.getData().size()/10;
+			endingTrainingIter = td.getData().size()*100;
+			trainingIterIncrease = 100000;
 			break;
 		}
 	}

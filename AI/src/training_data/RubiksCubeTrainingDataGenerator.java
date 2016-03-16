@@ -1,6 +1,7 @@
 package training_data;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.jblas.DoubleMatrix;
@@ -28,9 +29,13 @@ public class RubiksCubeTrainingDataGenerator
 	 */
 	public static List<String> genFileTrainingData(List<RubiksCube> cubes, List<Move> moves) {
 		List<String> content = new ArrayList<String>();
+		HashSet<String> contentSet = new HashSet<String>();
 		for(int i=0; i<cubes.size(); i++) {
 			content.add(genCubeTrainingData(cubes.get(i)) +"|"+ genMoveTrainingData(moves.get(i)));
 		}
+		contentSet.addAll(content);
+		content.clear();
+		content.addAll(contentSet);
 		return content;
 	}
 	

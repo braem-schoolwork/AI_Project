@@ -6,6 +6,7 @@ import java.util.List;
 import org.jblas.DoubleMatrix;
 
 import neural_network.NeuralNetwork;
+import neural_network.NeuralNetworkParams;
 import training_algorithms.SBP;
 import training_algorithms.SBPParams;
 import training_data.TrainingData;
@@ -95,10 +96,10 @@ public class Phase2Experiment implements Experiment
 	}
 	
 	private static void runGeneralExp(double outerStart, double outerIncrease, double outerEnd,
-			double innerStart, double innerIncrease, double innerEnd, String axisStr, String fileName) {
+			double innerStart, double innerIncrease, double innerEnd, String descStr, String fileName) {
 		setupTuples();
 		List<String> contents = new ArrayList<String>();
-		String firstRow = "LR|MR";
+		String firstRow = descStr;
 		boolean firstPass = true;
 		for(double i=outerStart; i<=outerEnd; i+=outerIncrease) {
 			String row = i+"";
@@ -108,7 +109,9 @@ public class Phase2Experiment implements Experiment
 				sbpParams.setMomentumRate(j);
 				double errorAvg = 0.0;
 				for(int k=0; k<applySBPamount; k++) {
+					NeuralNetwork NN = new NeuralNetwork(new NeuralNetworkParams());
 					SBP sbp = new SBP(sbpParams);
+					sbp.setTrainee(NN);
 					sbp.apply(trainingData);
 					errorAvg += sbp.getError().get(0,0);
 				}

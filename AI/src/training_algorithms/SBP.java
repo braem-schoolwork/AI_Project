@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import org.jblas.*;
 
-import matrix_wrapper.FunctionWrapper;
+import matrix_wrapper.MatrixFunctionWrapper;
 import training_data.TrainingData;
 import training_data.TrainingTuple;
 
@@ -110,13 +110,13 @@ public class SBP
 
 			/* save best network so far to disk */
 			if(!firstEpoch) {
-				double maxVal = FunctionWrapper.getMaxValueInRowVec(error);
-				if(FunctionWrapper.isContentsBelowValue(error, maxVal))
+				double maxVal = MatrixFunctionWrapper.getMaxValueInRowVec(error);
+				if(MatrixFunctionWrapper.isContentsBelowValue(error, maxVal))
 					bestErrorSoFar = error;
 			}
 			else
 				bestErrorSoFar = error;
-			if(FunctionWrapper.isContentsBelowValue(error, params.getErrorThreshold())) { //if below threshold
+			if(MatrixFunctionWrapper.isContentsBelowValue(error, params.getErrorThreshold())) { //if below threshold
 				this.error = error;
 				trainee.saveToDisk(error);
 				return;

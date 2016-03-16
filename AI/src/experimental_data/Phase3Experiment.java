@@ -5,7 +5,7 @@ import java.util.Collections;
 
 import org.jblas.DoubleMatrix;
 
-import matrix_wrapper.FunctionWrapper;
+import matrix_wrapper.MatrixFunctionWrapper;
 import neural_network.NeuralNetwork;
 import neural_network.NeuralNetworkParams;
 import training_algorithms.SBP;
@@ -56,13 +56,17 @@ public class Phase3Experiment implements Experiment
 		}
 		setupParams(size, td);
 		runExp(td);
-		ExperimentIO.serializeNNparams(getBestNNParams());
-		ExperimentIO.serializeSBPparams(getBestSBPParams());
-		ExperimentIO.serializeErrors(getBestErrors());
+		computeBestParams();
+		if(size == ExperimentSize.SMALL) {
+			
+		}
+		ExperimentIO.serializeNNparams(getNNParams());
+		ExperimentIO.serializeSBPparams(getSBPParams());
+		ExperimentIO.serializeErrors(getErrors());
 	}
 	
 	private void runExp(TrainingData td) {
-		for(int hls=startingHiddenLayerSize; hls<=endingHiddenLayerSize; hls+=hiddenLayerSizeIncrease) {
+		for(int hls=startingHiddenLayerSize; hls<=endingHiddenLayerSize; hls+=hiddenLayerSizeIncrease)
 			for(double lr=startingLearningRate; lr<=endingLearningRate; lr+=learningRateIncrease)
 				for(double mr=startingMomentumRate; mr<=endingMomentumRate; mr+=momentumRateIncrease)
 					for(int e=startingEpochs; e<=endingEpochs; e+=epochsIncrease)
@@ -84,12 +88,14 @@ public class Phase3Experiment implements Experiment
 							System.out.println("e"+e);
 							System.out.println("ti"+ti);
 						}
-		}
+	}
+	
+	void computeBestParams() {
 		for(int i=0; i<AMOUNT_OF_PARAMS; i++)
 			bestNNSBPparams.add(new NNSBPParam());
 		for(int i=0; i<NNSBPparams.size(); i++) {
 			NNSBPParam current = NNSBPparams.get(i);
-			if(FunctionWrapper.lessThanRowVec(current.error, bestNNSBPparams.get(AMOUNT_OF_PARAMS-1).error))
+			if(MatrixFunctionWrapper.lessThanRowVec(current.error, bestNNSBPparams.get(AMOUNT_OF_PARAMS-1).error))
 				bestNNSBPparams.set(AMOUNT_OF_PARAMS-1, current);
 			Collections.sort(NNSBPparams);
 		}
@@ -98,7 +104,7 @@ public class Phase3Experiment implements Experiment
 	/**
 	 * @return Best NeuralNetwork parameters from experiment
 	 */
-	public ArrayList<NeuralNetworkParams> getBestNNParams() {
+	public ArrayList<NeuralNetworkParams> getNNParams() {
 		ArrayList<NeuralNetworkParams> p = new ArrayList<NeuralNetworkParams>();
 		for(NNSBPParam s : NNSBPparams)
 			p.add(s.NNparams);
@@ -107,7 +113,7 @@ public class Phase3Experiment implements Experiment
 	/**
 	 * @return Best SBP parameters from experiment
 	 */
-	public ArrayList<SBPParams> getBestSBPParams() {
+	public ArrayList<SBPParams> getSBPParams() {
 		ArrayList<SBPParams> p = new ArrayList<SBPParams>();
 		for(NNSBPParam s : NNSBPparams)
 			p.add(s.sbpParams);
@@ -116,7 +122,7 @@ public class Phase3Experiment implements Experiment
 	/**
 	 * @return Best errors from experiment
 	 */
-	public ArrayList<DoubleMatrix> getBestErrors() {
+	public ArrayList<DoubleMatrix> getErrors() {
 		ArrayList<DoubleMatrix> p = new ArrayList<DoubleMatrix>();
 		for(NNSBPParam s : NNSBPparams)
 			p.add(s.error);
@@ -126,21 +132,21 @@ public class Phase3Experiment implements Experiment
 	private static void setupParams(ExperimentSize size, TrainingData td) {
 		switch(size) {
 		case SMALL:
-			startingHiddenLayerSize = 10;
-			endingHiddenLayerSize = 65;
+			startingHiddenLayerSize = 36;
+			endingHiddenLayerSize = 36;
 			hiddenLayerSizeIncrease = 5;
-			startingEpochs = 10;
-			endingEpochs = 100;
-			epochsIncrease = 10;
+			startingEpochs = 20;
+			endingEpochs = 60;
+			epochsIncrease = 20;
 			startingLearningRate = 0.01;
-			endingLearningRate = 0.3;
+			endingLearningRate = 0.01;
 			learningRateIncrease = 0.01;
-			startingMomentumRate = 0.0;
-			endingMomentumRate = 0.95;
+			startingMomentumRate = 0.01;
+			endingMomentumRate = 0.01;
 			momentumRateIncrease = 0.05;
 			startingTrainingIter = td.getData().size();
-			endingTrainingIter = td.getData().size()*1000;
-			trainingIterIncrease = 50000;
+			endingTrainingIter = td.getData().size()*100;
+			trainingIterIncrease = td.getData().size()*10;
 			break;
 		case MEDIUM:
 			startingHiddenLayerSize = 15;
@@ -157,7 +163,7 @@ public class Phase3Experiment implements Experiment
 			momentumRateIncrease = 0.05;
 			startingTrainingIter = td.getData().size();
 			endingTrainingIter = td.getData().size()*1000;
-			trainingIterIncrease = td.getData().size()/10;
+			trainingIterIncrease = td.getData().size()*10;
 			break;
 		case LARGE:
 			startingHiddenLayerSize = 15;
@@ -205,8 +211,8 @@ public class Phase3Experiment implements Experiment
 		}
 		@Override
 		public int compareTo(NNSBPParam arg0) {
-			if(FunctionWrapper.lessThanRowVec(this.error, arg0.error)) return -10;
-			else if(FunctionWrapper.lessThanRowVec(arg0.error, this.error)) return 10;
+			if(MatrixFunctionWrapper.lessThanRowVec(this.error, arg0.error)) return -10;
+			else if(MatrixFunctionWrapper.lessThanRowVec(arg0.error, this.error)) return 10;
 			else return 0;
 		}
 		@Override

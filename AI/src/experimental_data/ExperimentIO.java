@@ -78,7 +78,7 @@ public class ExperimentIO
 	}
 	
 	@SuppressWarnings("unchecked")
-	static ArrayList<NeuralNetworkParams> readNNparams() {
+	public static ArrayList<NeuralNetworkParams> readNNparams() {
 		ArrayList<NeuralNetworkParams> result = new ArrayList<NeuralNetworkParams>();
 		try {
 			FileInputStream fis = new FileInputStream(NNPARAMS_SERNAME);
@@ -94,7 +94,7 @@ public class ExperimentIO
 	}
 	
 	@SuppressWarnings("unchecked")
-	static ArrayList<SBPParams> readSBPparams() {
+	public static ArrayList<SBPParams> readSBPparams() {
 		ArrayList<SBPParams> result = new ArrayList<SBPParams>();
 		try {
 			FileInputStream fis = new FileInputStream(SBPPARAMS_SERNAME);
@@ -110,7 +110,7 @@ public class ExperimentIO
 	}
 	
 	@SuppressWarnings("unchecked")
-	static ArrayList<DoubleMatrix> readErrors() {
+	public static ArrayList<DoubleMatrix> readErrors() {
 		ArrayList<DoubleMatrix> result = new ArrayList<DoubleMatrix>();
 		try {
 			FileInputStream fis = new FileInputStream(ERRORS_SERNAME);

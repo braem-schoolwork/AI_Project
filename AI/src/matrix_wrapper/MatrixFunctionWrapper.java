@@ -2,7 +2,7 @@ package matrix_wrapper;
 
 import org.jblas.DoubleMatrix;
 
-public class FunctionWrapper {
+public class MatrixFunctionWrapper {
 	public static boolean isContentsBelowValue(DoubleMatrix m, double threshold) {
 		if(m == null) return true;
 		boolean belowThresh = true;

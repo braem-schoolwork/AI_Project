@@ -24,4 +24,14 @@ public class MatrixFunctionWrapper {
 		if(m1 == null || m2 == null) return true;
 		return isContentsBelowValue(m1, getMaxValueInRowVec(m2));
 	}
+	public static double avgValues(DoubleMatrix m) {
+		double allValues = 0;
+		double amountOfVals = 0;
+		for(int i=0; i<m.rows; i++)
+			for(int j=0; j<m.columns; j++) {
+				allValues += m.get(i,j);
+				amountOfVals+=1.0;
+			}
+		return allValues/amountOfVals;
+	}
 }

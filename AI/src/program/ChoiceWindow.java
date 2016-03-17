@@ -51,7 +51,7 @@ public class ChoiceWindow extends JFrame {
 	 */
 	public ChoiceWindow() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 523, 317);
+		setBounds(100, 100, 534, 424);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -92,6 +92,17 @@ public class ChoiceWindow extends JFrame {
 		btnCreateNn.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		btnCreateNn.setBounds(35, 175, 410, 71);
 		contentPane.add(btnCreateNn);
+		
+		JButton btnRunJunitTests = new JButton("Run JUnit Tests");
+		btnRunJunitTests.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				RunJUnitTestsWindow window = new RunJUnitTestsWindow();
+				thisFrame.dispose();
+				window.enable();
+			}
+		});
+		btnRunJunitTests.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		btnRunJunitTests.setBounds(103, 262, 264, 71);
+		contentPane.add(btnRunJunitTests);
 	}
-
 }

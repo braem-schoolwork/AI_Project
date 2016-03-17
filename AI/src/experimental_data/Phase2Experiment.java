@@ -104,9 +104,15 @@ public class Phase2Experiment implements Experiment
 		for(double i=outerStart; i<=outerEnd; i+=outerIncrease) {
 			String row = i+"";
 			SBPParams sbpParams = new SBPParams();
-			sbpParams.setLearningRate(i);
+			if(descStr.equals("MR|TI"))
+				sbpParams.setMomentumRate(i);
+			else
+				sbpParams.setLearningRate(i);
 			for(double j=innerStart; j<=innerEnd; j+=innerIncrease) {
-				sbpParams.setMomentumRate(j);
+				if(descStr.equals("LR|MR"))
+					sbpParams.setMomentumRate(j);
+				else
+					sbpParams.setTrainingIterations((int)j);
 				double errorAvg = 0.0;
 				for(int k=0; k<applySBPamount; k++) {
 					NeuralNetwork NN = new NeuralNetwork(new NeuralNetworkParams());

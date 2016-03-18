@@ -164,6 +164,12 @@ public class Phase3Experiment implements Experiment
 		contents.add(0, firstRow);
 		contents.add("With Epochs = "+epochs);
 		contents.add("With Training Iterations = "+TIs);
+		if(descStr.equals("HLS|LR"))
+			contents.add("With MomentumRate = "+defaultMR);
+		else if(descStr.equals("HLS|MR"))
+			contents.add("With Learning Rate = "+defaultLR);
+		else if(descStr.equals("LR|MR"))
+			contents.add("With HLS = "+defaultHiddenLayerSizes);
 		ExperimentIO.writeToFile(contents, fileName);
 	}
 	
@@ -235,6 +241,23 @@ public class Phase3Experiment implements Experiment
 	private static void setupParams(ExperimentSize size, TrainingData td) {
 		switch(size) {
 		case SMALL:
+			startingHiddenLayerSize = 20;
+			endingHiddenLayerSize = 40;
+			hiddenLayerSizeIncrease = 20;
+			startingEpochs = 10;
+			endingEpochs = 30;
+			epochsIncrease = 10;
+			startingLearningRate = 0.01;
+			endingLearningRate = 0.03;
+			learningRateIncrease = 0.01;
+			startingMomentumRate = 0.01;
+			endingMomentumRate = 0.03;
+			momentumRateIncrease = 0.01;
+			startingTrainingIter = td.getData().size();
+			endingTrainingIter = td.getData().size()*1000;
+			trainingIterIncrease = td.getData().size()*100;
+			break;
+		case MEDIUM:
 			startingHiddenLayerSize = 10;
 			endingHiddenLayerSize = 40;
 			hiddenLayerSizeIncrease = 10;
@@ -251,43 +274,22 @@ public class Phase3Experiment implements Experiment
 			endingTrainingIter = td.getData().size()*1000;
 			trainingIterIncrease = td.getData().size()*100;
 			break;
-		case MEDIUM:
-			startingHiddenLayerSize = 15;
-			endingHiddenLayerSize = 65;
-			hiddenLayerSizeIncrease = 5;
+		case LARGE:
+			startingHiddenLayerSize = 20;
+			endingHiddenLayerSize = 60;
+			hiddenLayerSizeIncrease = 10;
 			startingEpochs = 10;
-			endingEpochs = 100;
+			endingEpochs = 60;
 			epochsIncrease = 10;
 			startingLearningRate = 0.01;
-			endingLearningRate = 0.3;
-			learningRateIncrease = 0.05;
-			startingMomentumRate = 0.0;
-			endingMomentumRate = 0.3;
-			momentumRateIncrease = 0.05;
+			endingLearningRate = 0.1;
+			learningRateIncrease = 0.01;
+			startingMomentumRate = 0.01;
+			endingMomentumRate = 0.1;
+			momentumRateIncrease = 0.01;
 			startingTrainingIter = td.getData().size();
 			endingTrainingIter = td.getData().size()*1000;
-			trainingIterIncrease = td.getData().size()*10;
-			break;
-		case LARGE:
-			startingHiddenLayerSize = 15;
-			endingHiddenLayerSize = 65;
-			hiddenLayerSizeIncrease = 5;
-			
-			startingEpochs = 20;
-			endingEpochs = 50;
-			epochsIncrease = 10;
-			
-			startingLearningRate = 0.05;
-			endingLearningRate = 0.3;
-			learningRateIncrease = 0.1;
-			
-			startingMomentumRate = 0.0;
-			endingMomentumRate = 0.3;
-			momentumRateIncrease = 0.1;
-			
-			startingTrainingIter = td.getData().size();
-			endingTrainingIter = td.getData().size()*100;
-			trainingIterIncrease = 100000;
+			trainingIterIncrease = td.getData().size()*100;
 			break;
 		}
 	}
@@ -332,43 +334,6 @@ public class Phase3Experiment implements Experiment
 		@Override
 		public String toString() {
 			return ""+error;
-		}
-	}
-	
-	class ExpThread implements Runnable {
-		private Thread t = null;
-		private int index;
-		private String fileExtension;
-		private TrainingData td;
-		private int whichExp;
-		
-		ExpThread(TrainingData td, int threadNum, String fileExtension, int whichExp) {
-			this.index = threadNum;
-			this.fileExtension = fileExtension;
-			this.td = td;
-			this.whichExp = whichExp;
-		}
-		@Override
-		public void run() {
-			if(whichExp == 0)
-				runGeneralExp(td, startingHiddenLayerSize, endingHiddenLayerSize, hiddenLayerSizeIncrease,
-						startingLearningRate, endingLearningRate, learningRateIncrease, "HLS|LR", fileNameHLSLR+index+fileExtension,
-						bestNNSBPparams.get(index).sbpParams.getEpochs(), bestNNSBPparams.get(index).sbpParams.getTrainingIterations());
-			if(whichExp == 1)
-				runGeneralExp(td, startingHiddenLayerSize, endingHiddenLayerSize, hiddenLayerSizeIncrease,
-						startingMomentumRate, endingMomentumRate, momentumRateIncrease, "HLS|MR", fileNameHLSMR+index+fileExtension,
-						bestNNSBPparams.get(index).sbpParams.getEpochs(), bestNNSBPparams.get(index).sbpParams.getTrainingIterations());
-			if(whichExp == 2) {
-				runGeneralExp(td, startingLearningRate, endingLearningRate, learningRateIncrease,
-						startingMomentumRate, endingMomentumRate, momentumRateIncrease, "LR|MR", fileNameLRMR+index+fileExtension,
-						bestNNSBPparams.get(index).sbpParams.getEpochs(), bestNNSBPparams.get(index).sbpParams.getTrainingIterations());
-			}
-		}
-		public void start() {
-			if(t == null) {
-				t = new Thread(this);
-				t.start();
-			}
 		}
 	}
 }

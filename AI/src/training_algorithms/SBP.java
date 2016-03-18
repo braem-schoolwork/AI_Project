@@ -259,6 +259,9 @@ public class SBP
 			thisTupleError.mmuli(0.5);
 			errorVec = errorVec.addRowVector(thisTupleError);
 		}
+		for(int i=0; i<errorVec.columns; i++) {
+			errorVec.put(0,i,errorVec.get(0,i)/trainingData.getData().size());
+		}
 		return errorVec;
 	}
 }

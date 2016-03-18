@@ -67,7 +67,7 @@ public class Phase3Experiment implements Experiment
 		TrainingData td = TrainingDataGenerator.genFromFile();
 		if(td == null) {
 			Phase1Experiment exp = new Phase1Experiment();
-			exp.runExperiment(".csv", size);
+			exp.runExperiment(".csv", ExperimentSize.SMALL);
 			td = TrainingDataGenerator.genFromFile();
 		}
 		setupParams(size, td);

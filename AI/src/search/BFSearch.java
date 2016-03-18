@@ -48,7 +48,7 @@ public class BFSearch implements Search
 			closedList.add(current); //explored this
 			
 			//check if current state is a goal state
-			if(current.equals(goalState)) {
+			if(current.getSearchableObj().equals(goalState)) {
 				backTrace(startingListNode, current); //backtrace steps taken
 				searched = true; //done search
 				return current.getSearchableObj();

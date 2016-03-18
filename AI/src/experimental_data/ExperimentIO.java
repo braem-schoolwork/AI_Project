@@ -31,7 +31,12 @@ public class ExperimentIO
 	private final static String NNPARAMS_SERNAME = "BestNNparams.ser";
 	private final static String SBPPARAMS_SERNAME = "BestSBPparams.ser";
 	private final static String ERRORS_SERNAME = "BestErrors.ser";
+	
 	static boolean writeToFile(List<String> lines, String filename) {
+		for(int i=0; i<lines.size(); i++) 
+			for(int j=0; j<lines.size(); j++)
+				if(lines.get(i).equals(lines.get(j)))
+					lines.remove(i);
 		Path path = Paths.get(filename);
 		try {
 			Files.write(path, lines, ENCODING);

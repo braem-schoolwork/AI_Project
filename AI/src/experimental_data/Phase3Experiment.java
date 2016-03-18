@@ -1,9 +1,9 @@
 package experimental_data;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.concurrent.Semaphore;
 
 import org.jblas.DoubleMatrix;
 
@@ -48,11 +48,13 @@ public class Phase3Experiment implements Experiment
 	private static int endingTrainingIter;
 	private static int trainingIterIncrease;
 	
+	private static double errorThreshold = 0;
 	private static double defaultLR = 0.01;
 	private static double defaultMR = 0.01;
 	private static int defaultHiddenLayerSizes = 36;
-	private static int defaultEpochs;
-	private static int defaultTIs;
+	private static int bestFoundEpochs;
+	private static int bestFoundTIs;
+	volatile boolean finished = true;
 	
 	private static final int AMOUNT_OF_PARAMS = 5;
 	
@@ -62,27 +64,29 @@ public class Phase3Experiment implements Experiment
 	@Override
 	public void runExperiment(String fileExtension, ExperimentSize size) {
 		fileNameETI += fileExtension;
-		fileNameHLSLR += fileExtension;
-		fileNameHLSMR += fileExtension;
-		fileNameLRMR += fileExtension;
 		TrainingData td = TrainingDataGenerator.genFromFile();
 		if(td == null) {
 			Phase1Experiment exp = new Phase1Experiment();
-			exp.runExperiment(".csv", ExperimentSize.LARGE);
+			exp.runExperiment(".csv", size);
 			td = TrainingDataGenerator.genFromFile();
 		}
 		setupParams(size, td);
-		runExpSBPParams(td, "E|TI", fileNameETI);
+		findBestEpochTIs(td, "E|TI", fileNameETI);
 		computeBestSBPParams();
-		for(NNSBPParam p : bestNNSBPparams) {
-			runExpNNParams(td, p.sbpParams.getEpochs(), p.sbpParams.getTrainingIterations());
+		for(int i=0; i<bestNNSBPparams.size(); i++) {
+			runGeneralExp(td, startingHiddenLayerSize, endingHiddenLayerSize, hiddenLayerSizeIncrease,
+					startingLearningRate, endingLearningRate, learningRateIncrease, "HLS|LR", fileNameHLSLR+i+fileExtension,
+					bestNNSBPparams.get(i).sbpParams.getEpochs(), bestNNSBPparams.get(i).sbpParams.getTrainingIterations());
+			runGeneralExp(td, startingHiddenLayerSize, endingHiddenLayerSize, hiddenLayerSizeIncrease,
+					startingMomentumRate, endingMomentumRate, momentumRateIncrease, "HLS|MR", fileNameHLSMR+i+fileExtension,
+					bestNNSBPparams.get(i).sbpParams.getEpochs(), bestNNSBPparams.get(i).sbpParams.getTrainingIterations());
+			runGeneralExp(td, startingLearningRate, endingLearningRate, learningRateIncrease,
+					startingMomentumRate, endingMomentumRate, momentumRateIncrease, "LR|MR", fileNameLRMR+i+fileExtension,
+					bestNNSBPparams.get(i).sbpParams.getEpochs(), bestNNSBPparams.get(i).sbpParams.getTrainingIterations());
 		}
-		ExperimentIO.serializeNNparams(getNNParams());
-		ExperimentIO.serializeSBPparams(getSBPParams());
-		ExperimentIO.serializeErrors(getErrors());
 	}
 	
-	private void runExpSBPParams(TrainingData td, String descStr, String fileName) {
+	private void findBestEpochTIs(TrainingData td, String descStr, String fileName) {
 		NNSBPparams.clear();
 		List<String> contents = new ArrayList<String>();
 		String firstRow = descStr;
@@ -97,7 +101,7 @@ public class Phase3Experiment implements Experiment
 						td.getData().get(0).getInputs().columns, hiddenLayerSizes, 
 						td.getData().get(0).getOutputs().columns);
 				NeuralNetwork NN = new NeuralNetwork(NNparams);
-				SBPParams sbpParams = new SBPParams(e, ti, 0.1, defaultLR, defaultMR);
+				SBPParams sbpParams = new SBPParams(e, ti, errorThreshold, defaultLR, defaultMR);
 				SBP sbp = new SBP(sbpParams, NN);
 				sbp.apply(td);
 				DoubleMatrix error = sbp.getError();
@@ -111,54 +115,56 @@ public class Phase3Experiment implements Experiment
 			firstPass = false;
 		}
 		contents.add(0, firstRow);
-		contents.add("With HLS = "+defaultHiddenLayerSizes+","+defaultHiddenLayerSizes);
+		contents.add("With HLS = "+defaultHiddenLayerSizes);
 		contents.add("LR = "+defaultLR);
 		contents.add("MR = "+defaultMR);
 		ExperimentIO.writeToFile(contents, fileName);
 	}
-	private void runExpNNParams(TrainingData td, int epochs, int trainingIters) {
-		NNSBPparams.clear();
-		for(int hls=startingHiddenLayerSize; hls<=endingHiddenLayerSize; hls+=hiddenLayerSizeIncrease) {
-			for(double lr=startingLearningRate; lr<=endingLearningRate; lr+=learningRateIncrease) {
-				for(double mr=startingMomentumRate; mr<=endingMomentumRate; mr+=momentumRateIncrease) {
-					ArrayList<Integer> hiddenLayerSizes = new ArrayList<Integer>();
-					hiddenLayerSizes.add(hls);
-					NeuralNetworkParams NNparams = new NeuralNetworkParams(1.0, 
-							td.getData().get(0).getInputs().columns, hiddenLayerSizes, 
-							td.getData().get(0).getOutputs().columns);
-					NeuralNetwork NN = new NeuralNetwork(NNparams);
-					SBPParams sbpParams = new SBPParams(epochs, trainingIters, 0.1, lr, mr);
-					SBP sbp = new SBP(sbpParams, NN);
-					sbp.apply(td);
-					DoubleMatrix error = sbp.getError();
-					NNSBPparams.add(new NNSBPParam(error, NNparams, sbpParams));
-					System.out.println("hls"+hls);
-					System.out.println("lr"+lr);
-					System.out.println("mr"+mr);
-				}
-			}
-		}
-	}
 	
-	//
-	private void runExp(TrainingData td) {
-		for(int hls=startingHiddenLayerSize; hls<=endingHiddenLayerSize; hls+=hiddenLayerSizeIncrease)
-			for(double lr=startingLearningRate; lr<=endingLearningRate; lr+=learningRateIncrease)
-				for(double mr=startingMomentumRate; mr<=endingMomentumRate; mr+=momentumRateIncrease)
-					for(int e=startingEpochs; e<=endingEpochs; e+=epochsIncrease)
-						for(int ti=startingTrainingIter; ti<=endingTrainingIter; ti+=trainingIterIncrease) {
-							ArrayList<Integer> hiddenLayerSizes = new ArrayList<Integer>();
-							hiddenLayerSizes.add(hls);
-							NeuralNetworkParams NNparams = new NeuralNetworkParams(1.0, 
-									td.getData().get(0).getInputs().columns, hiddenLayerSizes, 
-									td.getData().get(0).getOutputs().columns);
-							NeuralNetwork NN = new NeuralNetwork(NNparams);
-							SBPParams sbpParams = new SBPParams(e, ti, 0.1, lr, mr);
-							SBP sbp = new SBP(sbpParams, NN);
-							sbp.apply(td);
-							DoubleMatrix error = sbp.getError();
-							NNSBPparams.add(new NNSBPParam(error, NNparams, sbpParams));
-						}
+	private static void runGeneralExp(TrainingData trainingData, double outerStart, double outerEnd, double outerIncrease,
+			double innerStart, double innerEnd, double innerIncrease, String descStr, String fileName, int epochs, int TIs) {
+		List<String> contents = new ArrayList<String>();
+		String firstRow = descStr;
+		boolean firstPass = true;
+		for(double i=outerStart; i<=outerEnd; i+=outerIncrease) {
+			String row = i+"";
+			SBPParams sbpParams = new SBPParams(epochs, TIs, errorThreshold, defaultLR, defaultMR);
+			NeuralNetworkParams NNparams;
+			if(descStr.equals("LR|MR")) { //set learning rate
+				sbpParams.setLearningRate(i);
+				ArrayList<Integer> hLSs = new ArrayList<Integer>();
+				hLSs.add(defaultHiddenLayerSizes);
+				hLSs.add(defaultHiddenLayerSizes);
+				NNparams = new NeuralNetworkParams(1.0, trainingData.getData().get(0).getInputs().columns, hLSs, 
+							trainingData.getData().get(0).getOutputs().columns);
+			}
+			else { //set hidden layer sizes
+				ArrayList<Integer> hLSs = new ArrayList<Integer>();
+				hLSs.add((int)i);
+				hLSs.add((int)i);
+				NNparams = new NeuralNetworkParams(1.0, trainingData.getData().get(0).getInputs().columns, hLSs, 
+						trainingData.getData().get(0).getOutputs().columns);
+			}
+			for(double j=innerStart; j<=innerEnd; j+=innerIncrease) {
+				if(descStr.equals("HLS|LR"))
+					sbpParams.setLearningRate(j);
+				else
+					sbpParams.setMomentumRate(j);
+				NeuralNetwork NN = new NeuralNetwork(NNparams);
+				SBP sbp = new SBP(sbpParams);
+				sbp.setTrainee(NN);
+				sbp.apply(trainingData);
+				if(firstPass) firstRow += ","+j;
+				row += ","+MatrixFunctionWrapper.avgValues(sbp.getError());
+				System.out.println(i+" "+j);
+			}
+			contents.add(row);
+			firstPass = false;
+		}
+		contents.add(0, firstRow);
+		contents.add("With Epochs = "+epochs);
+		contents.add("With Training Iterations = "+TIs);
+		ExperimentIO.writeToFile(contents, fileName);
 	}
 	
 	/**
@@ -201,8 +207,8 @@ public class Phase3Experiment implements Experiment
 			bestTIs[i] = bestTI;
 		}
 		//set default epochs/TIs based on findings
-		defaultEpochs = getPopularElement(bestEpochs);
-		defaultTIs = getPopularElement(bestTIs);
+		bestFoundEpochs = getPopularElement(bestEpochs);
+		bestFoundTIs = getPopularElement(bestTIs);
 	}
 	
 	private int getPopularElement(int[] a) {
@@ -229,21 +235,21 @@ public class Phase3Experiment implements Experiment
 	private static void setupParams(ExperimentSize size, TrainingData td) {
 		switch(size) {
 		case SMALL:
-			startingHiddenLayerSize = 36;
-			endingHiddenLayerSize = 36;
-			hiddenLayerSizeIncrease = 5;
-			startingEpochs = 20;
-			endingEpochs = 60;
-			epochsIncrease = 20;
+			startingHiddenLayerSize = 10;
+			endingHiddenLayerSize = 40;
+			hiddenLayerSizeIncrease = 10;
+			startingEpochs = 10;
+			endingEpochs = 50;
+			epochsIncrease = 10;
 			startingLearningRate = 0.01;
-			endingLearningRate = 0.01;
+			endingLearningRate = 0.05;
 			learningRateIncrease = 0.01;
 			startingMomentumRate = 0.01;
-			endingMomentumRate = 0.01;
-			momentumRateIncrease = 0.05;
+			endingMomentumRate = 0.05;
+			momentumRateIncrease = 0.01;
 			startingTrainingIter = td.getData().size();
-			endingTrainingIter = td.getData().size()*100;
-			trainingIterIncrease = td.getData().size()*10;
+			endingTrainingIter = td.getData().size()*1000;
+			trainingIterIncrease = td.getData().size()*100;
 			break;
 		case MEDIUM:
 			startingHiddenLayerSize = 15;
@@ -326,6 +332,43 @@ public class Phase3Experiment implements Experiment
 		@Override
 		public String toString() {
 			return ""+error;
+		}
+	}
+	
+	class ExpThread implements Runnable {
+		private Thread t = null;
+		private int index;
+		private String fileExtension;
+		private TrainingData td;
+		private int whichExp;
+		
+		ExpThread(TrainingData td, int threadNum, String fileExtension, int whichExp) {
+			this.index = threadNum;
+			this.fileExtension = fileExtension;
+			this.td = td;
+			this.whichExp = whichExp;
+		}
+		@Override
+		public void run() {
+			if(whichExp == 0)
+				runGeneralExp(td, startingHiddenLayerSize, endingHiddenLayerSize, hiddenLayerSizeIncrease,
+						startingLearningRate, endingLearningRate, learningRateIncrease, "HLS|LR", fileNameHLSLR+index+fileExtension,
+						bestNNSBPparams.get(index).sbpParams.getEpochs(), bestNNSBPparams.get(index).sbpParams.getTrainingIterations());
+			if(whichExp == 1)
+				runGeneralExp(td, startingHiddenLayerSize, endingHiddenLayerSize, hiddenLayerSizeIncrease,
+						startingMomentumRate, endingMomentumRate, momentumRateIncrease, "HLS|MR", fileNameHLSMR+index+fileExtension,
+						bestNNSBPparams.get(index).sbpParams.getEpochs(), bestNNSBPparams.get(index).sbpParams.getTrainingIterations());
+			if(whichExp == 2) {
+				runGeneralExp(td, startingLearningRate, endingLearningRate, learningRateIncrease,
+						startingMomentumRate, endingMomentumRate, momentumRateIncrease, "LR|MR", fileNameLRMR+index+fileExtension,
+						bestNNSBPparams.get(index).sbpParams.getEpochs(), bestNNSBPparams.get(index).sbpParams.getTrainingIterations());
+			}
+		}
+		public void start() {
+			if(t == null) {
+				t = new Thread(this);
+				t.start();
+			}
 		}
 	}
 }

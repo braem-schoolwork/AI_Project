@@ -7,8 +7,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 
-import experimental_data.ExperimentTest;
 import neural_network.NNTest;
 import rubiks.MoveTest;
 import rubiks.RubiksCubeTest;
@@ -55,13 +55,26 @@ public class RunJUnitTestsWindow extends JFrame {
 		this.setVisible(true);
 	}
 
+	private void printTestResults(Result r) {
+		if(r.getFailureCount() == 0)
+			System.out.println("Tests Passed");
+		else
+			System.out.println("Tests Failed");
+	}
+	private void printTestResults(Result r1, Result r2) {
+		if(r1.getFailureCount() == 0 && r2.getFailureCount() == 0)
+			System.out.println("Tests Passed");
+		else
+			System.out.println("Tests Failed");
+	}
+	
 	/**
 	 * Create the frame.
 	 */
 	public RunJUnitTestsWindow() {
 		setTitle("Run JUnit Tests");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 359, 549);
+		setBounds(100, 100, 687, 349);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -71,7 +84,7 @@ public class RunJUnitTestsWindow extends JFrame {
 		JButton btnRunSbpTests = new JButton("Run SBP Tests");
 		btnRunSbpTests.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				junit.run(SBPTest.class);
+				printTestResults(junit.run(SBPTest.class));
 			}
 		});
 		btnRunSbpTests.setFont(new Font("Tahoma", Font.PLAIN, 24));
@@ -81,44 +94,32 @@ public class RunJUnitTestsWindow extends JFrame {
 		JButton btnRunNnTests = new JButton("Run NN Tests");
 		btnRunNnTests.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				junit.run(NNTest.class);
+				printTestResults(junit.run(NNTest.class));
 			}
 		});
 		btnRunNnTests.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnRunNnTests.setBounds(15, 94, 295, 62);
+		btnRunNnTests.setBounds(315, 16, 295, 62);
 		contentPane.add(btnRunNnTests);
 		
 		JButton btnRunRubiksTests = new JButton("Run Rubik's Tests");
 		btnRunRubiksTests.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				junit.run(RubiksCubeTest.class);
-				junit.run(MoveTest.class);
+				printTestResults(junit.run(RubiksCubeTest.class), junit.run(MoveTest.class));
 			}
 		});
 		btnRunRubiksTests.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnRunRubiksTests.setBounds(15, 172, 295, 62);
+		btnRunRubiksTests.setBounds(15, 86, 295, 62);
 		contentPane.add(btnRunRubiksTests);
 		
 		JButton btnRunSearchTests = new JButton("Run Search Tests");
 		btnRunSearchTests.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				junit.run(AstarSearchTest.class);
-				junit.run(BFSearchTest.class);
+				printTestResults(junit.run(AstarSearchTest.class), junit.run(BFSearchTest.class));
 			}
 		});
 		btnRunSearchTests.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnRunSearchTests.setBounds(15, 250, 295, 62);
+		btnRunSearchTests.setBounds(315, 86, 295, 62);
 		contentPane.add(btnRunSearchTests);
-		
-		JButton btnRunExperimentTests = new JButton("Run Experiment Tests");
-		btnRunExperimentTests.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				junit.run(ExperimentTest.class);
-			}
-		});
-		btnRunExperimentTests.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnRunExperimentTests.setBounds(15, 328, 295, 62);
-		contentPane.add(btnRunExperimentTests);
 		
 		JButton btnBack = new JButton("back");
 		btnBack.addActionListener(new ActionListener() {
@@ -129,7 +130,7 @@ public class RunJUnitTestsWindow extends JFrame {
 			}
 		});
 		btnBack.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnBack.setBounds(15, 406, 295, 62);
+		btnBack.setBounds(156, 154, 295, 62);
 		contentPane.add(btnBack);
 	}
 }

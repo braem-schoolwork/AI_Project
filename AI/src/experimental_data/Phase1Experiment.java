@@ -46,21 +46,22 @@ public class Phase1Experiment implements Experiment
 			}
 		}
 		ExperimentIO.writeToFile(content, fileName);
+		fileName = fileName.substring(0, fileName.length()-4);
 	}
 	
 	private static void setupParams(ExperimentSize size) {
 		switch(size) {
 		case SMALL:
 			rcSizeLim = 6;
-			runTimesLim = 4;
+			runTimesLim = 5;
 			break;
 		case MEDIUM:
-			rcSizeLim = 7;
-			runTimesLim = 4;
+			rcSizeLim = 8;
+			runTimesLim = 5;
 			break;
 		case LARGE:
 			rcSizeLim = 8;
-			runTimesLim = 5;
+			runTimesLim = 25;
 			break;
 		}
 	}

@@ -235,19 +235,15 @@ public class NeuralNetwork implements SBPImpl, Serializable
 	}
 	
 	@Override
+	public void setError(DoubleMatrix error) {
+		this.error = error;
+	}
+	
+	@Override
 	public void saveToDisk(DoubleMatrix error) {
 		this.error = error;
 		if(NeuralNetworkIO.isBestNetworkSoFar(error)) { //if best network so far, save it to disk
 			NeuralNetworkIO.writeNetwork(this);
 		}
-	}
-	
-	@Override
-	public void printAllEdges() {
-		System.out.println("Wji"+Wji);
-		System.out.println("Wjbias"+Wjbias);
-		System.out.println("Wkj"+Wkj);
-		System.out.println("Wkbias"+Wkbias);
-		System.out.println("Wjs"+Wjs);
 	}
 }

@@ -32,5 +32,5 @@ public interface SBPImpl
 	public void applyWjbiasUpdate(ArrayList<DoubleMatrix> Wjbias);
 	public void applyWjsUpdate(ArrayList<DoubleMatrix> Wjs);
 	
-	public void printAllEdges();
+	public void setError(DoubleMatrix error);
 }

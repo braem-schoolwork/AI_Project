@@ -111,8 +111,10 @@ public class SBP
 			/* save best network so far to disk */
 			if(!firstEpoch) {
 				double maxVal = MatrixFunctionWrapper.getMaxValueInRowVec(error);
-				if(MatrixFunctionWrapper.isContentsBelowValue(error, maxVal))
+				if(MatrixFunctionWrapper.isContentsBelowValue(error, maxVal)) {
 					bestErrorSoFar = error;
+					trainee.setError(error);
+				}
 			}
 			else
 				bestErrorSoFar = error;

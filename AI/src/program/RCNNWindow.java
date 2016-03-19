@@ -634,6 +634,7 @@ public class RCNNWindow extends JFrame {
 				DoubleMatrix outputVector = NN.feedForward(inputVector);
 				recommendedMove = RubiksCubeTrainingDataGenerator.outputVectorToMove(outputVector);
 				ffTF.setText(""+recommendedMove);
+				btnApplyRecommendedMove.setEnabled(true);
 			}
 		});
 		btnFeedForward.setFont(new Font("Tahoma", Font.PLAIN, 25));
@@ -702,11 +703,13 @@ public class RCNNWindow extends JFrame {
 					recommendedMove.apply(cube);
 					ffTF.setText("");
 					repaintCube(cube);
+					btnApplyRecommendedMove.setEnabled(false);
 				}
 			}
 		});
 		btnApplyRecommendedMove.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		btnApplyRecommendedMove.setBounds(348, 512, 461, 53);
+		btnApplyRecommendedMove.setBounds(348, 523, 461, 53);
+		btnApplyRecommendedMove.setEnabled(false);
 		contentPane.add(btnApplyRecommendedMove);
 		
 		chckbxGeneratedTrainingData = new JCheckBox("Generated Training Data");

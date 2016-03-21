@@ -1,11 +1,10 @@
 package rubiks;
 
 /**
+ * Exception that handles bad rubik's cube sizes
  * 
  * @author braem
- *
- * Disallows illegal sizes for a RubiksCube object
- *
+ * @version 1.0
  */
 
 public class IllegalSizeException extends RuntimeException

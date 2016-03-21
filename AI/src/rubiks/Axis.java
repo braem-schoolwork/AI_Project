@@ -1,11 +1,10 @@
 package rubiks;
 
 /**
+ * Enum for a rubik's cube movement axis
  * 
  * @author braem
- *
- * simple enum for Axis. May get rid of if performance is really an issue
- * 
+ * @version 1.0
  */
 
 public enum Axis {

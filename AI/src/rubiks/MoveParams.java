@@ -1,5 +1,12 @@
 package rubiks;
 
+/**
+ * Parameter object for Move containing information about
+ * the slice number, axis, and direction of move
+ * 
+ * @author braemen
+ * @version 1.0
+ */
 public class MoveParams
 {
 	private int sliceNum;

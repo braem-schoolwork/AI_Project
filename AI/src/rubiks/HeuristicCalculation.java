@@ -3,36 +3,24 @@ package rubiks;
 import java.util.Arrays;
 
 /**
+ * static class to calculate a rubik's cube heuristic that 
+ * uses 3D Manhattan Distance
  * 
  * @author braem
- *
- * Heuristic Summary:
- * 
- * 1. Find the location of each corner piece in the cube
- * 2. Find the 3D Manhattan Distance between each corner and where it should be on the cube
- * 3. Add up all these distances
- * 4. Divide the answer by 8
- * 
- * 5. Find the location of each edge piece in the cube
- * 6. Find the 3D Manhattan Distance between each edge and where it should be on the cube
- * 7. Add up all these distances
- * 8. Divide the answer by 8
- * 
- * 9. Take the highest of the two 3D Manhattan Distances and return it as the Heuristic Approximation
- * 
- * 
- * NOTES: The value 8 was not originally intended to have any meaning, it was just the value
- * that put the Manhattan Distances in sensible range.
- * On second wind, the magic value 8 may come about because each rotation rotates at most
- * 4 corners and exactly 4 edges.
- * 
+ * @version 1.0
  */
 
-public class HeuristicCalculation
+class HeuristicCalculation
 {
 	
 	private static float magicDivideByNumber = 8;
 	
+	/**
+	 * Calculates the heuristic value 
+	1*
+	 * @param rubiksCube		incoming rubik's cube
+	 * @return					heuristic value of incoming rubik's cube
+	 */
 	static float calculate(RubiksCube rubiksCube) {
 		
 		byte cube[][][] = rubiksCube.getCube();

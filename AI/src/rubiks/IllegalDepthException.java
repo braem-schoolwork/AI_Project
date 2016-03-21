@@ -1,11 +1,10 @@
 package rubiks;
 
 /**
+ * Exception to handle an invalid perturbation value
  * 
  * @author braem
- *
- * Keeps the RubiksCube perturb function sensible
- *
+ * @version 1.0
  */
 
 public class IllegalDepthException extends RuntimeException {

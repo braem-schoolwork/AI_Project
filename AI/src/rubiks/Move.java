@@ -1,26 +1,12 @@
 package rubiks;
 
 /**
+ * Represents a move on a rubik's cube
  * 
  * @author braem
- *
- * Represents a move on a RubiksCube
- * 
- * Similar to a Function in which has an apply method.
- * The details of the individual blocks (or cubies) is hidden
- * 
- * Abstracts moves and allows for easy generation of them.
- * 
- * CW and CCW directions
- * X, Y, Z axis
- * 0..S-1 slices per axis of rotation
- * 
- * A move can be intuitively thought of as a triple, 
- * (sliceNum, Axis, Direction)
- * 
+ * @version 1.0
  */
 
-//TODO implement move params
 public class Move
 {	
 	private MoveParams params;
@@ -43,9 +29,11 @@ public class Move
 		return params;
 	}
 	
-	/*
-	 * APPLY Method
-	 * applies this move to a cube parameter
+
+	/**
+	 * Applies the move according to this class' MoveParams object
+	 * 
+	 * @param cube		Rubik's cube to perform the move on
 	 */
 	public void apply(RubiksCube cube) {
 		int sliceNum = params.getSliceNum();

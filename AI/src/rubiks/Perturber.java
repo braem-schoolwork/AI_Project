@@ -2,13 +2,20 @@ package rubiks;
 
 import java.util.Random;
 
+/**
+ * Static class that holds the perturb function
+ * 
+ * @author braemen
+ * @version 1.0
+ */
 public class Perturber
 {
-	/* 
-	 * Method to apply a number of random moves to the cube
+	/**
+	 * Takes a cube and applies k moves to it. Steps are taken
+	 * to preserve the integrity of a set of moves
 	 * 
-	 * try to preserve the integrity of perturbation by making sure moves
-	 * dont roll back to a previous state
+	 * @param depth		how many moves to be applied
+	 * @param cube		rubik's cube to be perturbed
 	 */
 	public static void perturb(int depth, RubiksCube cube) {
 		Move[] moveSet = cube.getMoveSet();

@@ -5,23 +5,10 @@ import java.util.Arrays;
 import search.Searchable;
 
 /**
+ * Represents a physical rubik's cube
  * 
  * @author braem
- *
- * Class that represents an actual, physical rubik's cube
- * 
- * The Cube represented by a [6][size][size] character array
- * The Move Set for the cube is generated when the cube is made
- * 
- * Cannot make a Rubik's Cube unless you specify the size.
- * 
- * As for searching, The Rubik's Cube also keeps track of its parent,
- * the move applied to the parent to get this current cube, and the 
- * A* search g value.
- * 
- * 
- * NOTE: Specifying your own face colors will break the A* search heuristic
- * 
+ * @version 1.0
  */
 
 public class RubiksCube implements Searchable
@@ -65,20 +52,25 @@ public class RubiksCube implements Searchable
 		this.moveSet = rubiksCube.moveSet;
 	}
 	
-	//getters
+	/**
+	 * @return	every legal move that could be applied to this RubiksCube
+	 */
 	public Move[] getMoveSet() {
 		return moveSet;
 	}
+	/**
+	 * @return	this RubiksCube as a byte array
+	 */
 	public byte[][][] getCube() {
 		return cube;
 	}
+	/**
+	 * @return	the size of this RubiksCube
+	 */
 	public int getSize() {
 		return size;
 	}
 	
-	/*
-	 * Generate children implementation from Searchable
-	 */
 	@Override
 	public Searchable[] genChildren() {
 		RubiksCube[] allChildren = new RubiksCube[moveSet.length];
@@ -133,8 +125,9 @@ public class RubiksCube implements Searchable
 		return cubeStr;
 	}
 	
-	/*
-	 * method to determine if the cube is in a solved state
+	/**
+	 * @return	<code>true</code> if this RubiksCube is solved
+	 * 			<code>false</code> if this RubiksCube is not solved
 	 */
 	public boolean isSolved() {
 		for(int i=0; i<3; i++) { //only need to traverse 3 faces

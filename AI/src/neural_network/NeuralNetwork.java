@@ -162,9 +162,9 @@ public class NeuralNetwork implements SBPImpl, Serializable
 	public ArrayList<DoubleMatrix> getACTjs() { return ACTjs; }
 	@Override
 	public ArrayList<DoubleMatrix> getWjs() { return Wjs; }
-	DoubleMatrix getWji() { return Wji; }
-	ArrayList<DoubleMatrix> getWjbias() { return Wjbias; }
-	DoubleMatrix getWkbias() { return Wkbias; }
+	public DoubleMatrix getWji() { return Wji; }
+	public ArrayList<DoubleMatrix> getWjbias() { return Wjbias; }
+	public DoubleMatrix getWkbias() { return Wkbias; }
 	public DoubleMatrix getError() { return error; }
 	
 	//setters

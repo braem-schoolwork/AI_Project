@@ -51,8 +51,6 @@ public class Phase3Experiment implements Experiment
 	private static double defaultLR = 0.01;
 	private static double defaultMR = 0.01;
 	private static int defaultHiddenLayerSizes = 36;
-	private static int bestFoundEpochs;
-	private static int bestFoundTIs;
 	volatile boolean finished = true;
 	
 	private static final int AMOUNT_OF_PARAMS = 5;
@@ -211,30 +209,6 @@ public class Phase3Experiment implements Experiment
 			bestEpochs[i] = bestEpoch;
 			bestTIs[i] = bestTI;
 		}
-		//set default epochs/TIs based on findings
-		bestFoundEpochs = getPopularElement(bestEpochs);
-		bestFoundTIs = getPopularElement(bestTIs);
-	}
-	
-	private int getPopularElement(int[] a) {
-		int count = 1, tempCount;
-		int popular = a[0];
-		int temp = 0;
-		for(int i = 0; i < (a.length - 1); i++) {
-			temp = a[i];
-			tempCount = 0;
-		    for(int j = 1; j < a.length; j++)
-		    {
-		    	if (temp == a[j])
-		    	tempCount++;
-		    }
-		    if(tempCount > count)
-		    {
-		    	popular = temp;
-		    	count = tempCount;
-		    }
-		}
-		return popular;
 	}
 	
 	private static void setupParams(ExperimentSize size, TrainingData td) {

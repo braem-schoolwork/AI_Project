@@ -24,5 +24,12 @@ public class GeneticAlgorithm
 	 */
 	public void apply(Genome genome) {
 		
+		//generation loop
+		for(int currentGen=0; currentGen<params.getNumGenerations(); currentGen++) {
+			//population loop
+			for(int i=0; i<params.getPopulationSize(); i++) {
+				
+			}
+		}
 	}
 }

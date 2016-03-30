@@ -8,5 +8,5 @@ package genetic_algorithm;
  */
 public enum FitnessMethod
 {
-	BEST_OF_10, AVERAGE_OF_10, SIMULATED_ANNEALING;
+	BEST_OF_10, AVERAGE_OF_10, SIMULATED_ANNEALING, NN_HEURISTIC;
 }

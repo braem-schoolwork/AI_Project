@@ -12,13 +12,20 @@ import neural_network.NeuralNetwork;
  */
 public class Genome
 {
-	ArrayList<Double> genes;
+	private ArrayList<Double> genes;
 	
 	public Genome() {
 		 genes = new ArrayList<Double>();
 	}
 	public Genome(ArrayList<Double> genes) {
 		this.setGenes(genes);
+	}
+	public Genome(Genome genome) {
+		ArrayList<Double> genes = new ArrayList<Double>();
+		for(Double d : this.genes) {
+			genes.add(d);
+		}
+		this.genes = genes;
 	}
 	
 	//getters/setters
@@ -69,8 +76,9 @@ public class Genome
 	 * @param outputLayerSize
 	 * @return
 	 */
-	public static NeuralNetwork toNN(Genome genome, int inputLayerSize,
+	public NeuralNetwork toNN(Genome genome, int inputLayerSize,
 			ArrayList<Double> hiddenLayerSizes, int outputLayerSize) {
 		
 	}
+
 }

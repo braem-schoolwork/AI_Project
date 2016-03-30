@@ -22,6 +22,11 @@ public class RandomNumberGenerator
 		return left+(right-left) * r.nextDouble();
 	}
 	
+	public static int genBetweenInterval(int left, int right) {
+		Random r = new Random();
+		return left+(right-left) * r.nextInt();
+	}
+	
 	/**
 	 * Generates a random value
 	 * 

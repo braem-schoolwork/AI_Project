@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import org.jblas.*;
 
+import genetic_algorithm.GenomeImpl;
 import random_gen.RandomNumberGenerator;
 import training_algorithms.SBPImpl;
 
@@ -15,7 +16,7 @@ import training_algorithms.SBPImpl;
  * @version 1.0
  */
 
-public class NeuralNetwork implements SBPImpl, Serializable
+public class NeuralNetwork implements SBPImpl, GenomeImpl, Serializable
 {
 	/**
 	 * 
@@ -245,5 +246,14 @@ public class NeuralNetwork implements SBPImpl, Serializable
 		if(NeuralNetworkIO.isBestNetworkSoFar(error)) { //if best network so far, save it to disk
 			NeuralNetworkIO.writeNetwork(this);
 		}
+	}
+
+	@Override
+	public GenomeImpl[] genOthers(int size) {
+		NeuralNetwork[] randomNetworks = new NeuralNetwork[size];
+		for(int i=0; i<randomNetworks.length; i++) {
+			randomNetworks[i] = new NeuralNetwork(this.getParams());
+		}
+		return randomNetworks;
 	}
 }

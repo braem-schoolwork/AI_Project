@@ -17,14 +17,14 @@ public class RandomNumberGenerator
 	 * @param right			right side of interval (max value)
 	 * @return 				a random number between left and right
 	 */
-	public static double genBetweenInterval(double left, double right) {
+	public static double genDoubleBetweenInterval(double left, double right) {
 		Random r = new Random();
 		return left+(right-left) * r.nextDouble();
 	}
 	
-	public static int genBetweenInterval(int left, int right) {
+	public static int genIntBetweenInterval(int left, int right) {
 		Random r = new Random();
-		return left+(right-left) * r.nextInt();
+		return r.nextInt((right-left)+1) + left;
 	}
 	
 	/**

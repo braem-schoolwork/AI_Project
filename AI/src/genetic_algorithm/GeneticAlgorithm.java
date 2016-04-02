@@ -28,14 +28,14 @@ public class GeneticAlgorithm
 	 * 
 	 * @param genome
 	 */
-	public void apply(GenomeImpl subject) {
+	public void apply(GenomeImpl subject, FitnessTester fitnessTester) {
 		Genome[] population = new Genome[params.getPopulationSize()];
 		/* populate */
 		populate(population, subject);
 		/* Generation Loop */
 		for(int currentGen=0; currentGen<params.getNumGenerations(); currentGen++) {
 			/* fitness testing */
-			double[] fitnessScores = FitnessTester.scoreFitness(population, params.getFitnessMethod(), subject);
+			double[] fitnessScores = fitnessTester.scoreFitness(population, params.getFitnessMethod());
 			/* elite selection */
 			Genome[] elites = eliteSelection(population, fitnessScores);
 			/* mutation */
@@ -48,8 +48,9 @@ public class GeneticAlgorithm
 	}
 	
 	private void populate(Genome[] population, GenomeImpl subject) { //TODO
+		GenomeImpl[] others = subject.genOthers(params.getPopulationSize());
 		for(int i=0; i<population.length; i++) {
-			subject.genOthers(params.getPopulationSize());
+			population[i] = Genome.convertTo(others[i]);
 		}
 	}
 	
@@ -73,7 +74,7 @@ public class GeneticAlgorithm
 				fG.setProbility(probability);
 			}
 			//generate random number between 0 and 1
-			double randomNum = RandomNumberGenerator.genBetweenInterval(0, 1);
+			double randomNum = RandomNumberGenerator.genIntBetweenInterval(0, 1);
 			//find the genome with the probability closest to the random number & add it to list
 			for(int i=0; i<fitnessGenomes.size(); i++) {
 				float lower = fitnessGenomes.get(i).getProbabilityOfSelection();
@@ -97,11 +98,11 @@ public class GeneticAlgorithm
 		//apply mutations
 		for(int i=0; i<mutations.length; i++) {
 			//get a random elite & copy it
-			int randomEliteIndex = RandomNumberGenerator.genBetweenInterval(0, elites.length); //TODO may break
+			int randomEliteIndex = RandomNumberGenerator.genIntBetweenInterval(0, elites.length); //TODO may break
 			Genome randomElite = new Genome(elites[randomEliteIndex]);
 			//apply random mutations
 			for(int j=0; j<randomElite.getGenes().size(); j++) {
-				double randomMutation = RandomNumberGenerator.genBetweenInterval(-0.01, 0.01);
+				double randomMutation = RandomNumberGenerator.genDoubleBetweenInterval(-0.01, 0.01);
 				randomElite.getGenes().set(j, randomElite.getGenes().get(j)+randomMutation);
 			}
 			mutations[i] = randomElite;

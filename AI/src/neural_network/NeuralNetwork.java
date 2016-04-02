@@ -170,11 +170,11 @@ public class NeuralNetwork implements SBPImpl, GenomeImpl, Serializable
 	
 	//setters
 	public void setParams(NeuralNetworkParams params) { this.params = params; }
-	void setWji(DoubleMatrix Wji) { this.Wji = Wji; }
-	void setWjbias(ArrayList<DoubleMatrix> Wjbias) { this.Wjbias = Wjbias; }
-	void setWkj(DoubleMatrix Wkj) { this.Wkj = Wkj; }
-	void setWkbias(DoubleMatrix Wkbias) { this.Wkbias = Wkbias; }
-	void setWjs(ArrayList<DoubleMatrix> Wjs) { this.Wjs = Wjs; }
+	public void setWji(DoubleMatrix Wji) { this.Wji = Wji; }
+	public void setWjbias(ArrayList<DoubleMatrix> Wjbias) { this.Wjbias = Wjbias; }
+	public void setWkj(DoubleMatrix Wkj) { this.Wkj = Wkj; }
+	public void setWkbias(DoubleMatrix Wkbias) { this.Wkbias = Wkbias; }
+	public void setWjs(ArrayList<DoubleMatrix> Wjs) { this.Wjs = Wjs; }
 
 	/**
 	 * Initializes this neural network by creating the weight matrices with
@@ -200,7 +200,7 @@ public class NeuralNetwork implements SBPImpl, GenomeImpl, Serializable
 			DoubleMatrix hiddenLayerToBias = new DoubleMatrix(1, hiddenLayerSizes.get(i));
 			for(int j=0; j<hiddenLayerToBias.rows; j++)
 				for(int k=0; k<hiddenLayerToBias.columns; k++)
-					hiddenLayerToBias.put(j, k, RandomNumberGenerator.genBetweenInterval(-1, 1));
+					hiddenLayerToBias.put(j, k, RandomNumberGenerator.genDoubleBetweenInterval(-1, 1));
 			Wjbias.add(hiddenLayerToBias);
 		}
 		for(int i=1; i<numHiddenLayers; i++) { //fill Wjs
@@ -212,7 +212,7 @@ public class NeuralNetwork implements SBPImpl, GenomeImpl, Serializable
 			DoubleMatrix hiddenWeightsAtHi = new DoubleMatrix(rows, columns);
 			for(int j=0; j<hiddenWeightsAtHi.rows; j++) //fill the hidden matrix
 				for(int k=0; k<hiddenWeightsAtHi.columns; k++)
-					hiddenWeightsAtHi.put(j, k, RandomNumberGenerator.genBetweenInterval(leftCap, rightCap));
+					hiddenWeightsAtHi.put(j, k, RandomNumberGenerator.genDoubleBetweenInterval(leftCap, rightCap));
 			Wjs.add(hiddenWeightsAtHi);
 		}
 		
@@ -226,13 +226,13 @@ public class NeuralNetwork implements SBPImpl, GenomeImpl, Serializable
 		//fill with initial edge weights
 		for(int i=0; i<Wji.rows; i++)
 			for(int j=0; j<Wji.columns; j++)
-				Wji.put(i, j, RandomNumberGenerator.genBetweenInterval(WjiLeftCap, WjiRightCap));
+				Wji.put(i, j, RandomNumberGenerator.genDoubleBetweenInterval(WjiLeftCap, WjiRightCap));
 		for(int i=0; i<Wkj.rows; i++)
 			for(int j=0; j<Wkj.columns; j++)
-				Wkj.put(i, j, RandomNumberGenerator.genBetweenInterval(WkjLeftCap, WkjRightCap));
+				Wkj.put(i, j, RandomNumberGenerator.genDoubleBetweenInterval(WkjLeftCap, WkjRightCap));
 		for(int i=0; i<Wkbias.rows; i++)
 			for(int j=0; j<Wkbias.columns; j++)
-				Wkbias.put(i, j, RandomNumberGenerator.genBetweenInterval(-1, 1));
+				Wkbias.put(i, j, RandomNumberGenerator.genDoubleBetweenInterval(-1, 1));
 	}
 	
 	@Override
@@ -252,8 +252,15 @@ public class NeuralNetwork implements SBPImpl, GenomeImpl, Serializable
 	public GenomeImpl[] genOthers(int size) {
 		NeuralNetwork[] randomNetworks = new NeuralNetwork[size];
 		for(int i=0; i<randomNetworks.length; i++) {
-			randomNetworks[i] = new NeuralNetwork(this.getParams());
+			NeuralNetwork newNN = new NeuralNetwork(this.getParams());
+			newNN.init();
+			randomNetworks[i] = newNN;
 		}
 		return randomNetworks;
+	}
+	
+	@Override
+	public String toString() {
+		return Wji+"\n"+Wjs+"\n"+Wkj+"\n"+Wjbias+"\n"+Wkbias;
 	}
 }

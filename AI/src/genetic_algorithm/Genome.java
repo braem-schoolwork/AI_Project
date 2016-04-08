@@ -25,7 +25,7 @@ public class Genome
 	}
 	public Genome(Genome genome) {
 		ArrayList<Double> genes = new ArrayList<Double>();
-		for(Double d : this.genes) {
+		for(Double d : genome.genes) {
 			genes.add(d);
 		}
 		this.genes = genes;

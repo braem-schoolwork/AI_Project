@@ -20,10 +20,10 @@ public class GeneticAlgorithmParams
 	
 	public GeneticAlgorithmParams() {
 		this.setPercentCrossOver(0.0f);
-		this.setPercentMutation(40.0f);
-		this.setPercentElite(60.0f);
-		this.setNumGenerations(20);
-		this.setPopulationSize(40);
+		this.setPercentMutation(80f);
+		this.setPercentElite(20f);
+		this.setNumGenerations(100);
+		this.setPopulationSize(100);
 		this.setFitnessTheshold(0.2);
 		this.setEliteFavoritismCoeff(0.667f);
 		this.setAnnealingFactor(0.8f);

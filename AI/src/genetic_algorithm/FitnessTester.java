@@ -8,4 +8,5 @@ package genetic_algorithm;
 public interface FitnessTester
 {
 	double[] scoreFitness(Genome[] population, FitnessMethod method);
+	Genome getBestGenome(Genome[] genomes);
 }

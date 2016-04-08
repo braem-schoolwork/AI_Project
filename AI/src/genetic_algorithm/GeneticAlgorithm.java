@@ -1,6 +1,7 @@
 package genetic_algorithm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import random_gen.RandomNumberGenerator;
@@ -8,7 +9,6 @@ import random_gen.RandomNumberGenerator;
 public class GeneticAlgorithm
 {
 	private GeneticAlgorithmParams params;
-	
 	
 	public GeneticAlgorithm() {
 		this.setParams(new GeneticAlgorithmParams());
@@ -24,6 +24,8 @@ public class GeneticAlgorithm
 		this.params = params;
 	}
 	
+	private Genome bestGenome;
+	
 	/**
 	 * 
 	 * @param genome
@@ -38,13 +40,16 @@ public class GeneticAlgorithm
 			double[] fitnessScores = fitnessTester.scoreFitness(population, params.getFitnessMethod());
 			/* elite selection */
 			Genome[] elites = eliteSelection(population, fitnessScores);
+			System.out.println("elites: "+Arrays.toString(elites));
 			/* mutation */
 			Genome[] mutations = mutations(elites);
+			System.out.println("mutations: "+Arrays.toString(mutations));
 			/* cross over */
 			Genome[] crossovers = crossover(elites);
 			/* repopulation */
 			repopulate(population, elites, mutations, crossovers);
 		}
+		setBestGenome(fitnessTester.getBestGenome(population));
 	}
 	
 	private void populate(Genome[] population, GenomeImpl subject) { //TODO
@@ -74,7 +79,7 @@ public class GeneticAlgorithm
 				fG.setProbility(probability);
 			}
 			//generate random number between 0 and 1
-			double randomNum = RandomNumberGenerator.genIntBetweenInterval(0, 1);
+			double randomNum = RandomNumberGenerator.genDoubleBetweenInterval(0, 1);
 			//find the genome with the probability closest to the random number & add it to list
 			for(int i=0; i<fitnessGenomes.size(); i++) {
 				float lower = fitnessGenomes.get(i).getProbabilityOfSelection();
@@ -98,11 +103,11 @@ public class GeneticAlgorithm
 		//apply mutations
 		for(int i=0; i<mutations.length; i++) {
 			//get a random elite & copy it
-			int randomEliteIndex = RandomNumberGenerator.genIntBetweenInterval(0, elites.length); //TODO may break
+			int randomEliteIndex = RandomNumberGenerator.genIntBetweenInterval(0, elites.length-1); //TODO may break
 			Genome randomElite = new Genome(elites[randomEliteIndex]);
 			//apply random mutations
+			double randomMutation = RandomNumberGenerator.genDoubleBetweenInterval(-0.01, 0.01);
 			for(int j=0; j<randomElite.getGenes().size(); j++) {
-				double randomMutation = RandomNumberGenerator.genDoubleBetweenInterval(-0.01, 0.01);
 				randomElite.getGenes().set(j, randomElite.getGenes().get(j)+randomMutation);
 			}
 			mutations[i] = randomElite;
@@ -126,7 +131,14 @@ public class GeneticAlgorithm
 			else if (i<elites.length+mutations.length+crossovers.length)
 				population[i] = crossovers[i-elites.length-mutations.length];
 	}
-	
+
+	public Genome getBestGenome() {
+		return bestGenome;
+	}
+	public void setBestGenome(Genome bestGenome) {
+		this.bestGenome = bestGenome;
+	}
+
 	class FitnessGenome implements Comparable<FitnessGenome> {
 		Genome genome;
 		double fitness;

@@ -19,15 +19,15 @@ public class GeneticAlgorithmParams
 	private FitnessMethod fitnessMethod;
 	
 	public GeneticAlgorithmParams() {
-		this.setPercentCrossOver(0.0f);
+		this.setPercentCrossOver(0f);
 		this.setPercentMutation(80f);
 		this.setPercentElite(20f);
-		this.setNumGenerations(100);
-		this.setPopulationSize(100);
+		this.setNumGenerations(200);
+		this.setPopulationSize(50);
 		this.setFitnessTheshold(0.2);
 		this.setEliteFavoritismCoeff(0.667f);
 		this.setAnnealingFactor(0.8f);
-		this.setFitnessMethod(FitnessMethod.SIMULATED_ANNEALING);
+		this.setFitnessMethod(FitnessMethod.NN_HEURISTIC);
 	}
 	public GeneticAlgorithmParams(float crossOverAmount, float mutationAmount,
 			float eliteAmount, int numGenerations, int populationSize, double fitnessTheshold,

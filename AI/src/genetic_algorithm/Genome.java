@@ -143,6 +143,15 @@ public class Genome
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		if(obj == this) return true;
+		if(obj instanceof Genome)
+			if(((Genome)obj).genes.equals(this.genes))
+				return true;
+		return false;
+	}
+	
+	@Override
 	public String toString() {
 		return genes+"";
 	}

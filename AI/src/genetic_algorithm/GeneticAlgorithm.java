@@ -28,7 +28,7 @@ public class GeneticAlgorithm
 	
 	/**
 	 * 
-	 * @param genome
+	 * @param g
 	 */
 	public void apply(GenomeImpl subject, FitnessTester fitnessTester) {
 		Genome[] population = new Genome[params.getPopulationSize()];
@@ -40,96 +40,160 @@ public class GeneticAlgorithm
 			double[] fitnessScores = fitnessTester.scoreFitness(population, params.getFitnessMethod());
 			/* elite selection */
 			Genome[] elites = eliteSelection(population, fitnessScores);
-			System.out.println("elites: "+Arrays.toString(elites));
+			//System.out.println("elites: "+Arrays.toString(elites));
+			//System.out.println(elites.length);
 			/* mutation */
 			Genome[] mutations = mutations(elites);
-			System.out.println("mutations: "+Arrays.toString(mutations));
+			//System.out.println(mutations.length);
+			//System.out.println("mutations: "+Arrays.toString(mutations));
 			/* cross over */
 			Genome[] crossovers = crossover(elites);
 			/* repopulation */
-			repopulate(population, elites, mutations, crossovers);
+			population = repopulate(population, elites, mutations, crossovers);
+			//System.out.println("POP"+Arrays.toString(population));
 		}
 		setBestGenome(fitnessTester.getBestGenome(population));
 	}
 	
-	private void populate(Genome[] population, GenomeImpl subject) { //TODO
+	private Genome[] repopulate(Genome[] population, Genome[] elites, Genome[] mutations, Genome[] crossovers) {
+		population = new Genome[params.getPopulationSize()];
+		for(int i=0; i<population.length; i++)
+			if (i<elites.length) {
+				population[i] = elites[i];
+				//System.out.println(elites[i]+"elite");
+			}
+			else if (i<elites.length+mutations.length) {
+				population[i] = mutations[i-elites.length];
+				//System.out.println(mutations[i-elites.length]+"mut");
+			}
+			else if (i<elites.length+mutations.length+crossovers.length)
+				population[i] = crossovers[i-elites.length-mutations.length];
+		return population;
+	}
+	private void populate(Genome[] population, GenomeImpl subject) {
 		GenomeImpl[] others = subject.genOthers(params.getPopulationSize());
 		for(int i=0; i<population.length; i++) {
 			population[i] = Genome.convertTo(others[i]);
 		}
 	}
 	
-	//TODO implement diversity
-	private Genome[] eliteSelection(Genome[] population, double[] fitnessScores) {
-		ArrayList<FitnessGenome> fitnessGenomes = new ArrayList<FitnessGenome>();
-		for(int i=0; i<params.getPopulationSize(); i++) 
-			fitnessGenomes.add(new FitnessGenome(population[i], fitnessScores[i]));
-		Genome[] elites = new Genome[Math.round(params.getPopulationSize()*params.getPercentElite()/100)];
-		
-		for(int a=0; a<elites.length; a++) {
-			Collections.sort(fitnessGenomes); //rank by raw fitness
-			//calculate the probability of selection for each genome
-			for(int i=0; i<fitnessGenomes.size(); i++) {
-				FitnessGenome fG = fitnessGenomes.get(i);
-				float sumPrevious = 0f;
-				for(int j=0; j<i; j++) {
-					sumPrevious += fitnessGenomes.get(j).getProbabilityOfSelection();
-				}
-				float probability = params.getEliteFavoritismCoeff()*(1-sumPrevious);
-				fG.setProbility(probability);
+	private float findVectorDistance(Genome g1, Genome g2) {
+		ArrayList<Double> genes1 = g1.getGenes();
+		ArrayList<Double> genes2 = g2.getGenes();
+		float sum = 0f;
+		for(Double d : genes1) {
+			for(Double d2 : genes2) {
+				sum += Math.abs(d2-d);
 			}
-			//generate random number between 0 and 1
-			double randomNum = RandomNumberGenerator.genDoubleBetweenInterval(0, 1);
-			//find the genome with the probability closest to the random number & add it to list
-			for(int i=0; i<fitnessGenomes.size(); i++) {
-				float lower = fitnessGenomes.get(i).getProbabilityOfSelection();
-				float upper;
-				if(i == fitnessGenomes.size()-1)
-					upper = 1f;
-				else
-					upper = fitnessGenomes.get(i+1).getProbabilityOfSelection();
+		}
+		return sum;
+	}
+	
+	private Genome[] eliteSelection(Genome[] population, double[] fitnessScores) {
+		//create elites array
+		Genome[] elites = new Genome[(int)Math.floor(params.getPopulationSize()*params.getPercentElite()/100)*2];
+		//create a genome extension & add the population to it
+		ArrayList<GenomeExt> genomes = new ArrayList<GenomeExt>();
+		for(int i=0; i<params.getPopulationSize(); i++) {
+			GenomeExt gExt = new GenomeExt();
+			gExt.setGenomeID(i);
+			gExt.setG(population[i]);
+			gExt.setRawFitness(fitnessScores[i]);
+			genomes.add(gExt);
+		}
+		//sort by raw fitness
+		genomes.sort(new FitnessScoreComparator());
+		//set fitness ranks
+		for(int i=0; i<genomes.size(); i++) {
+			GenomeExt gExt = genomes.get(i);
+			gExt.setFitnessRank(i+1);
+		}
+		
+		/* fill elites array */
+		for(int a=0; a<elites.length; a++) {
+			//calculate diversity score
+			for(int i=0; i<genomes.size(); i++) {
+				GenomeExt gExt = genomes.get(i);
+				float dist = 0f;
+				for(int j=0; j<genomes.size(); j++) {
+					dist += findVectorDistance(gExt.getG(), genomes.get(j).getG());
+				}
+				dist /= genomes.size();
+				gExt.setDiversityScore(dist);
+			}
+			//sort by diversity score
+			genomes.sort(new DiversityScoreComparator());
+			for(int i=0; i<genomes.size(); i++) {
+				GenomeExt gExt = genomes.get(i);
+				gExt.setDiversityRank(i+1);
+			}
+			//calculate combined rank
+			for(int i=0; i<genomes.size(); i++) {
+				GenomeExt gExt = genomes.get(i);
+				gExt.setCombinedRank(gExt.getFitnessRank()+gExt.getDiversityRank());
+			}
+			//sort by combined rank
+			genomes.sort(new CombinedRankComparator());
+			//calculate probability of selection for the combined rank
+			for(int i=0; i<genomes.size(); i++) {
+				GenomeExt gExt = genomes.get(i);
+				double sumPrevious = 0f;
+				for(int j=0; j<i; j++) {
+					sumPrevious += genomes.get(j).getProbSelCR();
+				}
+				double probability = params.getEliteFavoritismCoeff()*(1-sumPrevious);
+				gExt.setProbSelCR(probability);
+			}
+			//find the elite genome
+			double randomNum = RandomNumberGenerator.genDoubleBetweenInterval(0, 1); 
+			double prevUpper = 0.0;
+			for(int i=0; i<genomes.size(); i++) {
+				double lower = prevUpper;
+				double upper = prevUpper + genomes.get(i).getProbSelCR();
 				if (randomNum<=upper && randomNum>=lower) {
-					elites[a] = fitnessGenomes.get(i).genome;
-					fitnessGenomes.remove(i);
+					elites[a] = genomes.remove(i).getG();
 					break;
 				}
+				prevUpper = upper;
 			}
-		} //elite for
+		} //end elites
 		return elites;
 	}
 	
 	private Genome[] mutations(Genome[] elites) {
-		Genome[] mutations = new Genome[Math.round(params.getPopulationSize()*params.getPercentMutation()/100)];
+		Genome[] mutations = new Genome[(int)Math.floor(params.getPopulationSize()*params.getPercentMutation()/100)*2];
 		//apply mutations
 		for(int i=0; i<mutations.length; i++) {
 			//get a random elite & copy it
-			int randomEliteIndex = RandomNumberGenerator.genIntBetweenInterval(0, elites.length-1); //TODO may break
+			int randomEliteIndex = RandomNumberGenerator.genIntBetweenInterval(0, elites.length-1);
 			Genome randomElite = new Genome(elites[randomEliteIndex]);
 			//apply random mutations
-			double randomMutation = RandomNumberGenerator.genDoubleBetweenInterval(-0.01, 0.01);
+			int r = RandomNumberGenerator.genIntBetweenInterval(0, 2);
 			for(int j=0; j<randomElite.getGenes().size(); j++) {
-				randomElite.getGenes().set(j, randomElite.getGenes().get(j)+randomMutation);
+				double randomMutation = RandomNumberGenerator.genDoubleBetweenInterval(0.0001, 0.1);
+				double randomCoeff = RandomNumberGenerator.genDoubleBetweenInterval(0.9, 1.1);
+				switch(r) {
+				case 0: 
+					randomElite.getGenes().set(j, randomElite.getGenes().get(j)-randomMutation);
+					break;
+				case 1:
+					randomElite.getGenes().set(j, randomElite.getGenes().get(j)+randomMutation);
+					break;
+				case 2:
+					randomElite.getGenes().set(j, randomElite.getGenes().get(j)*randomCoeff);
+					break;
+				}
 			}
 			mutations[i] = randomElite;
 		}
 		return mutations;
 	}
+	
 	//TODO
 	private Genome[] crossover(Genome[] elites) {
-		Genome[] crossovers = new Genome[Math.round(params.getPopulationSize()*params.getPercentCrossOver()/100)];
+		Genome[] crossovers = new Genome[Math.round(params.getPopulationSize()*params.getPercentCrossOver()/100)*2];
 		
 		return crossovers;
-	}
-	
-	private void repopulate(Genome[] population, Genome[] elites, Genome[] mutations, Genome[] crossovers) {
-		population = new Genome[params.getPopulationSize()];
-		for(int i=0; i<population.length; i++)
-			if (i<elites.length)
-				population[i] = elites[i];
-			else if (i<elites.length+mutations.length)
-				population[i] = mutations[i-elites.length];
-			else if (i<elites.length+mutations.length+crossovers.length)
-				population[i] = crossovers[i-elites.length-mutations.length];
 	}
 
 	public Genome getBestGenome() {
@@ -137,32 +201,5 @@ public class GeneticAlgorithm
 	}
 	public void setBestGenome(Genome bestGenome) {
 		this.bestGenome = bestGenome;
-	}
-
-	class FitnessGenome implements Comparable<FitnessGenome> {
-		Genome genome;
-		double fitness;
-		float probabilityOfSelection;
-		public FitnessGenome(Genome genome, double fitness) {
-			this.genome = genome;
-			this.fitness = fitness;
-		}
-		
-		public void setProbility(float prob) {
-			this.probabilityOfSelection = prob;
-		}
-		public float getProbabilityOfSelection() {
-			return probabilityOfSelection;
-		}
-		
-		@Override
-		public int compareTo(FitnessGenome fG) { //TODO may be backwards
-			if (fitness<fG.fitness)
-				return -10;
-			else if (fitness>fG.fitness)
-				return 10;
-			else
-				return 0;
-		}
 	}
 }

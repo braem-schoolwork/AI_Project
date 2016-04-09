@@ -34,11 +34,12 @@ public class NNFitnessTester implements FitnessTester
 				DoubleMatrix thisTupleError = MatrixFunctions.pow(expectedOutputVec.sub(actualOutputVec), 2);
 				thisTupleError.mmuli(0.5);
 				errorVec = errorVec.addRowVector(thisTupleError);
+				/*System.out.println("inputs: "+inputVec);
+				System.out.println("output: "+expectedOutputVec);
+				System.out.println("act: "+actualOutputVec);
+				System.out.println("error: "+errorVec);*/
 			}
-			for(int j=0; j<errorVec.columns; j++) {
-				errorVec.put(0,j,errorVec.get(0,j)/trainingData.getData().size());
-			}
-			fitnessScores[i] = MatrixFunctionWrapper.avgValues(errorVec);
+			fitnessScores[i] = 15-MatrixFunctionWrapper.avgValues(errorVec);
 		}
 		return fitnessScores;
 	}

@@ -106,7 +106,7 @@ public class SBP
 			}
 			
 			/* Calculate error */
-			DoubleMatrix error = calculateError(trainingData);
+			DoubleMatrix error = ErrorCalculator.calculateError(trainingData, trainee);
 
 			/* save best network so far to disk */
 			if(!firstEpoch) {
@@ -250,21 +250,5 @@ public class SBP
 		trainee.applyWjbiasUpdate(deltaWjbias);
 		//delta Wjs
 		trainee.applyWjsUpdate(deltaWjs);
-	}
-	
-	private DoubleMatrix calculateError(TrainingData trainingData) {
-		DoubleMatrix errorVec = DoubleMatrix.zeros(1, trainingData.getData().get(0).getOutputs().columns);
-		for(TrainingTuple tt : trainingData.getData()) {
-			DoubleMatrix inputVec = tt.getInputs();
-			DoubleMatrix expectedOutputVec = tt.getOutputs();
-			DoubleMatrix actualOutputVec = trainee.feedForward(inputVec);
-			DoubleMatrix thisTupleError = MatrixFunctions.pow(expectedOutputVec.sub(actualOutputVec), 2);
-			thisTupleError.mmuli(0.5);
-			errorVec = errorVec.addRowVector(thisTupleError);
-		}
-		for(int i=0; i<errorVec.columns; i++) {
-			errorVec.put(0,i,errorVec.get(0,i)/trainingData.getData().size());
-		}
-		return errorVec;
 	}
 }

@@ -51,7 +51,7 @@ public class ChoiceWindow extends JFrame {
 	 */
 	public ChoiceWindow() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 534, 424);
+		setBounds(100, 100, 534, 487);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -102,7 +102,19 @@ public class ChoiceWindow extends JFrame {
 			}
 		});
 		btnRunJunitTests.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		btnRunJunitTests.setBounds(103, 262, 264, 71);
+		btnRunJunitTests.setBounds(103, 339, 264, 71);
 		contentPane.add(btnRunJunitTests);
+		
+		JButton btnRunGeneticAlgorithm = new JButton("Run Genetic Algorithm");
+		btnRunGeneticAlgorithm.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				GAChoiceWindow window = new GAChoiceWindow();
+				window.enable();
+				thisFrame.dispose();
+			}
+		});
+		btnRunGeneticAlgorithm.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		btnRunGeneticAlgorithm.setBounds(77, 257, 309, 71);
+		contentPane.add(btnRunGeneticAlgorithm);
 	}
 }

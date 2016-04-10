@@ -1,16 +1,19 @@
 package genetic_algorithm;
 
-import java.util.Arrays;
-
 import org.jblas.DoubleMatrix;
-import org.jblas.MatrixFunctions;
 
 import matrix_wrapper.MatrixFunctionWrapper;
 import neural_network.NeuralNetwork;
 import neural_network.NeuralNetworkParams;
+import training_algorithms.ErrorCalculator;
 import training_data.TrainingData;
 import training_data.TrainingTuple;
 
+/**
+ * 
+ * @author braem
+ * @version 1.0
+ */
 public class NNFitnessTester implements FitnessTester
 {
 	private TrainingData trainingData;
@@ -26,19 +29,7 @@ public class NNFitnessTester implements FitnessTester
 		for(int i=0; i<fitnessScores.length; i++) {
 			Genome subject = population[i];
 			NeuralNetwork NN = Genome.toNN(subject, NNparams);
-			DoubleMatrix errorVec = DoubleMatrix.zeros(1, trainingData.getData().get(0).getOutputs().columns);
-			for(TrainingTuple tt : trainingData.getData()) {
-				DoubleMatrix inputVec = tt.getInputs();
-				DoubleMatrix expectedOutputVec = tt.getOutputs();
-				DoubleMatrix actualOutputVec = NN.feedForward(inputVec);
-				DoubleMatrix thisTupleError = MatrixFunctions.pow(expectedOutputVec.sub(actualOutputVec), 2);
-				thisTupleError.mmuli(0.5);
-				errorVec = errorVec.addRowVector(thisTupleError);
-				/*System.out.println("inputs: "+inputVec);
-				System.out.println("output: "+expectedOutputVec);
-				System.out.println("act: "+actualOutputVec);
-				System.out.println("error: "+errorVec);*/
-			}
+			DoubleMatrix errorVec = ErrorCalculator.calculateError(trainingData, NN);
 			fitnessScores[i] = 15-MatrixFunctionWrapper.avgValues(errorVec);
 		}
 		return fitnessScores;

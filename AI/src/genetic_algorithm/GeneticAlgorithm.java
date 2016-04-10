@@ -1,8 +1,6 @@
 package genetic_algorithm;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 import random_gen.RandomNumberGenerator;
 
@@ -31,6 +29,8 @@ public class GeneticAlgorithm
 	 * @param g
 	 */
 	public void apply(GenomeImpl subject, FitnessTester fitnessTester) {
+		if(params.getPercentCrossOver()+params.getPercentElite()+params.getPercentMutation() != 100f)
+			throw new IllegalGAParamsException("Crossover|Elite|Mutation percentages do not add up to 100%");
 		Genome[] population = new Genome[params.getPopulationSize()];
 		/* populate */
 		populate(population, subject);

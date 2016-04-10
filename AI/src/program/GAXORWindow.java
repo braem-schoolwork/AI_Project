@@ -213,6 +213,7 @@ public class GAXORWindow extends JFrame {
 					btnFeedForward.setEnabled(true);
 					
 				} catch(Exception ex) {
+					ex.printStackTrace();
 					lblInvalidParameters.setVisible(true);
 				}
 			}

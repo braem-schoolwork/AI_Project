@@ -26,11 +26,16 @@ public class NNFitnessTester implements FitnessTester
 	@Override
 	public double[] scoreFitness(Genome[] population, FitnessMethod method) { //TODO
 		double[] fitnessScores = new double[population.length];
-		for(int i=0; i<fitnessScores.length; i++) {
-			Genome subject = population[i];
-			NeuralNetwork NN = Genome.toNN(subject, NNparams);
-			DoubleMatrix errorVec = ErrorCalculator.calculateError(trainingData, NN);
-			fitnessScores[i] = 15-MatrixFunctionWrapper.avgValues(errorVec);
+		switch(method) {
+		case NN_HEURISTIC:
+			for(int i=0; i<fitnessScores.length; i++) {
+				Genome subject = population[i];
+				NeuralNetwork NN = Genome.toNN(subject, NNparams);
+				DoubleMatrix errorVec = ErrorCalculator.calculateError(trainingData, NN);
+				fitnessScores[i] = 15-MatrixFunctionWrapper.avgValues(errorVec);
+			}
+			break;
+		default: break;
 		}
 		return fitnessScores;
 	}

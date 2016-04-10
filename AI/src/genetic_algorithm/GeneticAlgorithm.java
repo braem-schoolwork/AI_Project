@@ -4,9 +4,16 @@ import java.util.ArrayList;
 
 import random_gen.RandomNumberGenerator;
 
+/**
+ * Basic Genetic Algorithm
+ * 
+ * @author braem
+ * @version 1.0
+ */
 public class GeneticAlgorithm
 {
 	private GeneticAlgorithmParams params;
+	private Genome bestGenome;
 	
 	public GeneticAlgorithm() {
 		this.setParams(new GeneticAlgorithmParams());
@@ -21,12 +28,18 @@ public class GeneticAlgorithm
 	public void setParams(GeneticAlgorithmParams params) {
 		this.params = params;
 	}
-	
-	private Genome bestGenome;
+	public Genome getBestGenome() {
+		return bestGenome;
+	}
+	public void setBestGenome(Genome bestGenome) {
+		this.bestGenome = bestGenome;
+	}
 	
 	/**
+	 * Applies the Genetic Algorithm given a subject of which to base it and a FitnessTester object
 	 * 
-	 * @param g
+	 * @param subject			subject of which to base the Algorithm around
+	 * @param fitnessTester		FitnessTester object that tests the fitness of genomes
 	 */
 	public void apply(GenomeImpl subject, FitnessTester fitnessTester) {
 		if(params.getPercentCrossOver()+params.getPercentElite()+params.getPercentMutation() != 100f)
@@ -46,8 +59,8 @@ public class GeneticAlgorithm
 			Genome[] mutations = mutations(elites);
 			//System.out.println(mutations.length);
 			//System.out.println("mutations: "+Arrays.toString(mutations));
-			/* cross over */
-			Genome[] crossovers = crossover(elites);
+			/* cross over  */
+			Genome[] crossovers = crossover(population, elites);
 			/* repopulation */
 			population = repopulate(population, elites, mutations, crossovers);
 			//System.out.println("POP"+Arrays.toString(population));
@@ -55,6 +68,14 @@ public class GeneticAlgorithm
 		setBestGenome(fitnessTester.getBestGenome(population));
 	}
 	
+	/**
+	 * repopulate the population
+	 * @param population
+	 * @param elites		genomes from elite selection
+	 * @param mutations		genomes from mutation
+	 * @param crossovers	genomes from crossover
+	 * @return				new population
+	 */
 	private Genome[] repopulate(Genome[] population, Genome[] elites, Genome[] mutations, Genome[] crossovers) {
 		population = new Genome[params.getPopulationSize()];
 		for(int i=0; i<population.length; i++)
@@ -70,6 +91,12 @@ public class GeneticAlgorithm
 				population[i] = crossovers[i-elites.length-mutations.length];
 		return population;
 	}
+	
+	/**
+	 * populates the population by generating GenomeImpls and converting them into genomes
+	 * @param population	Genome population
+	 * @param subject		subject of which to generate similar GenomeImpl's
+	 */
 	private void populate(Genome[] population, GenomeImpl subject) {
 		GenomeImpl[] others = subject.genOthers(params.getPopulationSize());
 		for(int i=0; i<population.length; i++) {
@@ -77,6 +104,12 @@ public class GeneticAlgorithm
 		}
 	}
 	
+	/**
+	 * helper function to find the vector distance between two genomes
+	 * @param g1
+	 * @param g2
+	 * @return
+	 */
 	private float findVectorDistance(Genome g1, Genome g2) {
 		ArrayList<Double> genes1 = g1.getGenes();
 		ArrayList<Double> genes2 = g2.getGenes();
@@ -89,6 +122,12 @@ public class GeneticAlgorithm
 		return sum;
 	}
 	
+	/**
+	 * Method to select the elites from the population pool
+	 * @param population		Genome population
+	 * @param fitnessScores		corresponding fitness scores of each genome
+	 * @return					elite genomes
+	 */
 	private Genome[] eliteSelection(Genome[] population, double[] fitnessScores) {
 		//create elites array
 		Genome[] elites = new Genome[(int)Math.floor(params.getPopulationSize()*params.getPercentElite()/100)*2];
@@ -160,6 +199,11 @@ public class GeneticAlgorithm
 		return elites;
 	}
 	
+	/**
+	 * Method to generate mutations from the elites
+	 * @param elites	elite genomes
+	 * @return			mutated genomes
+	 */
 	private Genome[] mutations(Genome[] elites) {
 		Genome[] mutations = new Genome[(int)Math.floor(params.getPopulationSize()*params.getPercentMutation()/100)*2];
 		//apply mutations
@@ -189,17 +233,37 @@ public class GeneticAlgorithm
 		return mutations;
 	}
 	
-	//TODO
-	private Genome[] crossover(Genome[] elites) {
+	/**
+	 * Method to preform crossover on the elite genomes
+	 * @param population	Genome population
+	 * @param elites		elite genomes
+	 * @return				crossover genomes
+	 */
+	private Genome[] crossover(Genome[] population, Genome[] elites) {
 		Genome[] crossovers = new Genome[Math.round(params.getPopulationSize()*params.getPercentCrossOver()/100)*2];
-		
+		for(int i=0; i<crossovers.length; i++) {
+			//get 2 random elites
+			int randomEliteIndex1 = RandomNumberGenerator.genIntBetweenInterval(0, elites.length-1);
+			int randomEliteIndex2 = RandomNumberGenerator.genIntBetweenInterval(0, elites.length-1);
+			//make sure elites arent the same
+			if(randomEliteIndex1 == randomEliteIndex2) { //collision detection
+				randomEliteIndex2++;
+				randomEliteIndex2 %= (elites.length-1);
+			}
+			Genome elite1 = elites[randomEliteIndex1];
+			Genome elite2 = elites[randomEliteIndex2];
+			//pick the child's genes based on a random boolean
+			ArrayList<Double> childGenes = new ArrayList<Double>();
+			for(int j=0; j<elite1.getGenes().size(); j++) {
+				boolean randomBool = RandomNumberGenerator.genRandomBoolean();
+				if(randomBool) //use elite1 gene
+					childGenes.add(elite1.getGenes().get(j));
+				else //use elite2 gene
+					childGenes.add(elite2.getGenes().get(j));	
+			}
+			Genome childGenome = new Genome(childGenes);
+			crossovers[i] = childGenome;
+		}
 		return crossovers;
-	}
-
-	public Genome getBestGenome() {
-		return bestGenome;
-	}
-	public void setBestGenome(Genome bestGenome) {
-		this.bestGenome = bestGenome;
 	}
 }

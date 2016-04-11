@@ -45,7 +45,7 @@ public class Phase1Experiment implements Experiment
 				content.addAll(RubiksCubeTrainingDataGenerator.genFileTrainingData(cubes, moves));
 			}
 		}
-		ExperimentIO.writeToFile(content, fileName);
+		ExperimentIO.writeToFileTrunc(content, fileName);
 		fileName = fileName.substring(0, fileName.length()-4);
 	}
 	
@@ -68,6 +68,6 @@ public class Phase1Experiment implements Experiment
 	
 	@Override
 	public String toString() {
-		return "Phase1";
+		return "Phase 1";
 	}
 }

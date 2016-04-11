@@ -1,5 +1,11 @@
 package genetic_algorithm;
 
+/**
+ * Extension, or wrapper, for a Genome to be used in the Genetic Algorithm
+ * 
+ * @author braem
+ * @version 1.0
+ */
 class GenomeExt
 {
 	private int genomeID;

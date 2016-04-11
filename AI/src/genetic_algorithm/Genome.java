@@ -8,7 +8,7 @@ import neural_network.NeuralNetwork;
 import neural_network.NeuralNetworkParams;
 
 /**
- * 
+ * Genome Datastructure for use in the Genetic Algorithm with conversion methods
  * 
  * @author braemen
  * @version 1.0
@@ -39,10 +39,30 @@ public class Genome
 		this.genes = genes;
 	}
 	
-	public static Genome convertTo(GenomeImpl g) {
-		if(g instanceof NeuralNetwork) 
-			return fromNN((NeuralNetwork)g);
+	/**
+	 * Converts a GenomeImpl object to a Genome
+	 * @param obj	incoming GenomeImpl object
+	 * @return		Genome from object from conversion
+	 */
+	public static Genome convertTo(GenomeImpl obj) {
+		if(obj instanceof NeuralNetwork) 
+			return fromNN((NeuralNetwork)obj);
 					
+		return null; //not supported
+	}
+	
+	/**
+	 * Converts a Genome to a GenomeImpl object
+	 * @param subject	GenomeImpl subject to base the conversion on
+	 * @param genome	incoming Genome
+	 * @return			GenomeImpl object from conversion
+	 */
+	public static GenomeImpl convertFrom(GenomeImpl subject, Genome genome) {
+		if(subject instanceof NeuralNetwork) {
+			NeuralNetwork NN = (NeuralNetwork)subject;
+			return toNN(genome, NN.getParams());
+		}
+		
 		return null; //not supported
 	}
 	
@@ -51,7 +71,7 @@ public class Genome
 	 * @param NN	incoming neural network
 	 * @return		incoming neural network as a genome
 	 */
-	public static Genome fromNN(NeuralNetwork NN) {
+	private static Genome fromNN(NeuralNetwork NN) {
 		ArrayList<Double> genes = new ArrayList<Double>();
 
 		//add the Wji matrix values
@@ -79,14 +99,12 @@ public class Genome
 	}
 	
 	/**
-	 * 
+	 * Converts a genome to a neural network with use of a NeuralNetworkParams object
 	 * @param genome
-	 * @param inputLayerSize
-	 * @param hiddenLayerSizes
-	 * @param outputLayerSize
+	 * @param params
 	 * @return
 	 */
-	public static NeuralNetwork toNN(Genome genome, NeuralNetworkParams params) {
+	private static NeuralNetwork toNN(Genome genome, NeuralNetworkParams params) {
 		int inputLayerSize = params.getInputLayerSize();
 		ArrayList<Integer> hiddenLayerSizes = params.getHiddenLayerSizes();
 		int outputLayerSize = params.getOutputLayerSize();

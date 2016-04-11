@@ -45,7 +45,7 @@ public class GAChoiceWindow extends JFrame {
 	public GAChoiceWindow() {
 		setTitle("Genetic Algorithms");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 416, 211);
+		setBounds(100, 100, 416, 268);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -67,6 +67,17 @@ public class GAChoiceWindow extends JFrame {
 		btnRunOnRubiks.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		btnRunOnRubiks.setBounds(10, 78, 347, 56);
 		contentPane.add(btnRunOnRubiks);
+		
+		JButton btnBack = new JButton("back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ChoiceWindow window = new ChoiceWindow();
+				window.enable();
+				thisFrame.dispose();
+			}
+		});
+		btnBack.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnBack.setBounds(120, 145, 105, 35);
+		contentPane.add(btnBack);
 	}
-
 }

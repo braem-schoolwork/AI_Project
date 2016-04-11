@@ -2,6 +2,11 @@ package genetic_algorithm;
 
 import java.util.Comparator;
 
+/**
+ * Comparator to sort a Genome extension by raw fitness score
+ * @author braem
+ * @version 1.0
+ */
 class FitnessScoreComparator implements Comparator<GenomeExt>
 {
 

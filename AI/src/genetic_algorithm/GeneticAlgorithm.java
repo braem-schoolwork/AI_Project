@@ -13,7 +13,11 @@ import random_gen.RandomNumberGenerator;
 public class GeneticAlgorithm
 {
 	private GeneticAlgorithmParams params;
-	private Genome bestGenome;
+	private GenomeImpl bestGenomeImpl;
+	private double bestFitness;
+	private ArrayList<Double> bestFitnesses = new ArrayList<Double>();
+	private ArrayList<Double> avgFitnesses = new ArrayList<Double>();
+	private ArrayList<Double> worstFitnesses = new ArrayList<Double>();
 	
 	public GeneticAlgorithm() {
 		this.setParams(new GeneticAlgorithmParams());
@@ -22,17 +26,27 @@ public class GeneticAlgorithm
 		this.setParams(params);
 	}
 
+	/* getters & setters */
 	public GeneticAlgorithmParams getParams() {
 		return params;
 	}
 	public void setParams(GeneticAlgorithmParams params) {
 		this.params = params;
 	}
-	public Genome getBestGenome() {
-		return bestGenome;
+	public GenomeImpl getBestGenomeImpl() {
+		return bestGenomeImpl;
 	}
-	public void setBestGenome(Genome bestGenome) {
-		this.bestGenome = bestGenome;
+	public double getBestFitness() {
+		return bestFitness;
+	}
+	public ArrayList<Double> getBestFitnesses() {
+		return bestFitnesses;
+	}
+	public ArrayList<Double> getAvgFitnesses() {
+		return avgFitnesses;
+	}
+	public ArrayList<Double> getWorstFitnesses() {
+		return worstFitnesses;
 	}
 	
 	/**
@@ -51,21 +65,41 @@ public class GeneticAlgorithm
 		for(int currentGen=0; currentGen<params.getNumGenerations(); currentGen++) {
 			/* fitness testing */
 			double[] fitnessScores = fitnessTester.scoreFitness(population, params.getFitnessMethod());
+			addFitnessInfo(fitnessScores);
 			/* elite selection */
 			Genome[] elites = eliteSelection(population, fitnessScores);
-			//System.out.println("elites: "+Arrays.toString(elites));
-			//System.out.println(elites.length);
 			/* mutation */
 			Genome[] mutations = mutations(elites);
-			//System.out.println(mutations.length);
-			//System.out.println("mutations: "+Arrays.toString(mutations));
 			/* cross over  */
 			Genome[] crossovers = crossover(population, elites);
 			/* repopulation */
 			population = repopulate(population, elites, mutations, crossovers);
-			//System.out.println("POP"+Arrays.toString(population));
 		}
-		setBestGenome(fitnessTester.getBestGenome(population));
+		Genome bestGenome = fitnessTester.getBestGenome(population);
+		double[] fitnessScore = fitnessTester.scoreFitness(new Genome[] { bestGenome }, params.getFitnessMethod());
+		bestGenomeImpl = Genome.convertFrom(subject, bestGenome);
+		bestFitness = fitnessScore[0];
+	}
+	
+	/**
+	 * Adds the fitness information for a single generation.
+	 * That is, the best, worst, and average fitnesses in that generation.
+	 * @param fitnessScores
+	 */
+	private void addFitnessInfo(double[] fitnessScores) {
+		double sum = 0;
+		double best = 0;
+		double worst = Double.MAX_VALUE;
+		for(double d : fitnessScores) {
+			if(d > best)
+				best = d;
+			if(d < worst)
+				worst = d;
+			sum += d;
+		}
+		bestFitnesses.add(best);
+		avgFitnesses.add(sum/fitnessScores.length);
+		worstFitnesses.add(worst);
 	}
 	
 	/**
@@ -81,11 +115,9 @@ public class GeneticAlgorithm
 		for(int i=0; i<population.length; i++)
 			if (i<elites.length) {
 				population[i] = elites[i];
-				//System.out.println(elites[i]+"elite");
 			}
 			else if (i<elites.length+mutations.length) {
 				population[i] = mutations[i-elites.length];
-				//System.out.println(mutations[i-elites.length]+"mut");
 			}
 			else if (i<elites.length+mutations.length+crossovers.length)
 				population[i] = crossovers[i-elites.length-mutations.length];
@@ -130,7 +162,7 @@ public class GeneticAlgorithm
 	 */
 	private Genome[] eliteSelection(Genome[] population, double[] fitnessScores) {
 		//create elites array
-		Genome[] elites = new Genome[(int)Math.floor(params.getPopulationSize()*params.getPercentElite()/100)*2];
+		Genome[] elites = new Genome[(int)Math.floor(params.getPopulationSize()*params.getPercentElite()/100)];
 		//create a genome extension & add the population to it
 		ArrayList<GenomeExt> genomes = new ArrayList<GenomeExt>();
 		for(int i=0; i<params.getPopulationSize(); i++) {
@@ -160,7 +192,7 @@ public class GeneticAlgorithm
 				dist /= genomes.size();
 				gExt.setDiversityScore(dist);
 			}
-			//sort by diversity score
+			//calculate diversity rank & sort by diversity score
 			genomes.sort(new DiversityScoreComparator());
 			for(int i=0; i<genomes.size(); i++) {
 				GenomeExt gExt = genomes.get(i);
@@ -205,7 +237,7 @@ public class GeneticAlgorithm
 	 * @return			mutated genomes
 	 */
 	private Genome[] mutations(Genome[] elites) {
-		Genome[] mutations = new Genome[(int)Math.floor(params.getPopulationSize()*params.getPercentMutation()/100)*2];
+		Genome[] mutations = new Genome[(int)Math.floor(params.getPopulationSize()*params.getPercentMutation()/100)];
 		//apply mutations
 		for(int i=0; i<mutations.length; i++) {
 			//get a random elite & copy it
@@ -240,7 +272,7 @@ public class GeneticAlgorithm
 	 * @return				crossover genomes
 	 */
 	private Genome[] crossover(Genome[] population, Genome[] elites) {
-		Genome[] crossovers = new Genome[Math.round(params.getPopulationSize()*params.getPercentCrossOver()/100)*2];
+		Genome[] crossovers = new Genome[Math.round(params.getPopulationSize()*params.getPercentCrossOver()/100)];
 		for(int i=0; i<crossovers.length; i++) {
 			//get 2 random elites
 			int randomEliteIndex1 = RandomNumberGenerator.genIntBetweenInterval(0, elites.length-1);

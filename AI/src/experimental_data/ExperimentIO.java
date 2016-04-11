@@ -32,7 +32,7 @@ public class ExperimentIO
 	private final static String SBPPARAMS_SERNAME = "BestSBPparams.ser";
 	private final static String ERRORS_SERNAME = "BestErrors.ser";
 	
-	static boolean writeToFile(List<String> lines, String filename) {
+	static boolean writeToFileTrunc(List<String> lines, String filename) {
 		for(int i=0; i<lines.size(); i++) 
 			for(int j=0; j<lines.size(); j++)
 				if(lines.get(i).equals(lines.get(j)))
@@ -45,6 +45,17 @@ public class ExperimentIO
 			return false;
 		}
 	}
+	
+	static boolean writeToFile(List<String> lines, String filename) {
+		Path path = Paths.get(filename);
+		try {
+			Files.write(path, lines, ENCODING);
+			return true;
+		} catch (IOException e) {
+			return false;
+		}
+	}
+	
 	static void serializeNNparams(ArrayList<NeuralNetworkParams> NNparams) {
 		try {
 			FileOutputStream fos = new FileOutputStream(NNPARAMS_SERNAME);

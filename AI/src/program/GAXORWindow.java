@@ -10,8 +10,7 @@ import org.jblas.DoubleMatrix;
 
 import genetic_algorithm.GeneticAlgorithm;
 import genetic_algorithm.GeneticAlgorithmParams;
-import genetic_algorithm.Genome;
-import genetic_algorithm.NNFitnessTester;
+import neural_network.NNFitnessTester;
 import neural_network.NeuralNetwork;
 import training_algorithms.ErrorCalculator;
 import training_data.TrainingData;
@@ -28,6 +27,13 @@ import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+/**
+ * Window to run a genetic algorithm on a 2-2-1 w/ bias Neural Network
+ * for the XOR problem
+ * 
+ * @author braem
+ * @version 1.0
+ */
 public class GAXORWindow extends JFrame {
 
 	/**
@@ -35,6 +41,7 @@ public class GAXORWindow extends JFrame {
 	 */
 	private static final long serialVersionUID = -1589915785894380780L;
 	private JPanel contentPane;
+	private JFrame thisFrame = this;
 	private JTextField crossoverTF;
 	private JTextField mutationTF;
 	private JTextField eliteTF;
@@ -173,7 +180,7 @@ public class GAXORWindow extends JFrame {
 			}
 		});
 		btnFeedForward.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnFeedForward.setBounds(240, 152, 273, 51);
+		btnFeedForward.setBounds(240, 152, 273, 46);
 		btnFeedForward.setEnabled(false);
 		contentPane.add(btnFeedForward);
 		
@@ -205,9 +212,8 @@ public class GAXORWindow extends JFrame {
 					NeuralNetwork NN = new NeuralNetwork();
 					NN.init();
 					TrainingData td = XORTrainingDataGenerator.gen();
-					GA.apply(NN, new NNFitnessTester(td, NN.getParams()));
-					Genome resultGenome = GA.getBestGenome();
-					NeuralNetwork resultNN = Genome.toNN(resultGenome, NN.getParams());
+					GA.apply(NN, new NNFitnessTester(td, NN));
+					NeuralNetwork resultNN = (NeuralNetwork) GA.getBestGenomeImpl();
 					currentNN = resultNN;
 					nnErrorTF.setText(""+ErrorCalculator.calculateError(trainingData, currentNN));
 					btnFeedForward.setEnabled(true);
@@ -231,5 +237,17 @@ public class GAXORWindow extends JFrame {
 		mutationTF.setText("80");
 		eliteTF.setText("20");
 		eliteFavoritismTF.setText("0.667");
+		
+		JButton btnBack = new JButton("back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GAChoiceWindow window = new GAChoiceWindow();
+				window.enable();
+				thisFrame.dispose();
+			}
+		});
+		btnBack.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnBack.setBounds(425, 209, 90, 23);
+		contentPane.add(btnBack);
 	}
 }

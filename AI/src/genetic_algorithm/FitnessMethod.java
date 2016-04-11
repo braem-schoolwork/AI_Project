@@ -3,7 +3,7 @@ package genetic_algorithm;
 /**
  * Enum for the different fitness methods
  * 
- * @author b	raemen
+ * @author braemen
  * @version 1.0
  */
 public enum FitnessMethod

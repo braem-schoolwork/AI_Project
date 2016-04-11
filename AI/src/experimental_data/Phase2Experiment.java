@@ -129,7 +129,7 @@ public class Phase2Experiment implements Experiment
 			firstPass = false;
 		}
 		contents.add(0, firstRow);
-		ExperimentIO.writeToFile(contents, fileName);
+		ExperimentIO.writeToFileTrunc(contents, fileName);
 	}
 	
 	private static void setupTuples() {
@@ -159,6 +159,6 @@ public class Phase2Experiment implements Experiment
 
 	@Override
 	public String toString() {
-		return "Phase2";
+		return "Phase 2";
 	}
 }

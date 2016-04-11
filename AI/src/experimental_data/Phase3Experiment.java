@@ -51,7 +51,6 @@ public class Phase3Experiment implements Experiment
 	private static double defaultLR = 0.01;
 	private static double defaultMR = 0.01;
 	private static int defaultHiddenLayerSizes = 36;
-	volatile boolean finished = true;
 	
 	private static final int AMOUNT_OF_PARAMS = 5;
 	
@@ -103,9 +102,8 @@ public class Phase3Experiment implements Experiment
 				sbp.apply(td);
 				DoubleMatrix error = sbp.getError();
 				NNSBPparams.add(new NNSBPParam(error, NNparams, sbpParams));
-				System.out.println("e"+e);
-				System.out.println("ti"+ti);
-				if(firstPass) firstRow += ","+ti;
+				if(firstPass)
+					firstRow += ","+ti;
 				row += ","+MatrixFunctionWrapper.avgValues(error);
 			}
 			contents.add(row);
@@ -115,7 +113,7 @@ public class Phase3Experiment implements Experiment
 		contents.add("With HLS = "+defaultHiddenLayerSizes);
 		contents.add("LR = "+defaultLR);
 		contents.add("MR = "+defaultMR);
-		ExperimentIO.writeToFile(contents, fileName);
+		ExperimentIO.writeToFileTrunc(contents, fileName);
 	}
 	
 	private static void runGeneralExp(TrainingData trainingData, double outerStart, double outerEnd, double outerIncrease,
@@ -167,7 +165,7 @@ public class Phase3Experiment implements Experiment
 			contents.add("With Learning Rate = "+defaultLR);
 		else if(descStr.equals("LR|MR"))
 			contents.add("With HLS = "+defaultHiddenLayerSizes);
-		ExperimentIO.writeToFile(contents, fileName);
+		ExperimentIO.writeToFileTrunc(contents, fileName);
 	}
 	
 	/**
@@ -269,7 +267,7 @@ public class Phase3Experiment implements Experiment
 	
 	@Override
 	public String toString() {
-		return "Phase3";
+		return "Phase 3";
 	}
 	
 	class NNSBPParam implements Comparable<NNSBPParam> {

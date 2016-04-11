@@ -1,15 +1,17 @@
-package genetic_algorithm;
+package neural_network;
 
 import org.jblas.DoubleMatrix;
 
+import genetic_algorithm.FitnessMethod;
+import genetic_algorithm.FitnessTester;
+import genetic_algorithm.Genome;
 import matrix_wrapper.MatrixFunctionWrapper;
-import neural_network.NeuralNetwork;
-import neural_network.NeuralNetworkParams;
 import training_algorithms.ErrorCalculator;
 import training_data.TrainingData;
 import training_data.TrainingTuple;
 
 /**
+ * Fitness tester heuristic for Neural Networks
  * 
  * @author braem
  * @version 1.0
@@ -17,10 +19,11 @@ import training_data.TrainingTuple;
 public class NNFitnessTester implements FitnessTester
 {
 	private TrainingData trainingData;
-	private NeuralNetworkParams NNparams;
-	public NNFitnessTester(TrainingData trainingData, NeuralNetworkParams NNparams) {
+	private NeuralNetwork subject;
+	
+	public NNFitnessTester(TrainingData trainingData, NeuralNetwork subject) {
 		this.trainingData = trainingData;
-		this.NNparams = NNparams;
+		this.subject = subject;
 	}
 	
 	@Override
@@ -29,11 +32,13 @@ public class NNFitnessTester implements FitnessTester
 		switch(method) {
 		case NN_HEURISTIC:
 			for(int i=0; i<fitnessScores.length; i++) {
-				Genome subject = population[i];
-				NeuralNetwork NN = Genome.toNN(subject, NNparams);
-				DoubleMatrix errorVec = ErrorCalculator.calculateError(trainingData, NN);
-				fitnessScores[i] = 15-MatrixFunctionWrapper.avgValues(errorVec);
+				Genome genome = population[i];
+				NeuralNetwork NN = (NeuralNetwork) Genome.convertFrom(subject, genome);
+				DoubleMatrix errorVec = ErrorCalculator.calculateError(trainingData, NN); //calculate error like in SBP
+				fitnessScores[i] = (trainingData.getData().size()*4)-MatrixFunctionWrapper.avgValues(errorVec);
 			}
+			break;
+		case RUBIKSCUBE_NN_HEURISTIC:
 			break;
 		default: break;
 		}
@@ -45,7 +50,7 @@ public class NNFitnessTester implements FitnessTester
 		double bestScore = Double.MAX_VALUE;
 		Genome bestGenome = null;
 		for(int i=0; i<genomes.length; i++) {
-			NeuralNetwork NN = Genome.toNN(genomes[i], NNparams);
+			NeuralNetwork NN = (NeuralNetwork) Genome.convertFrom(this.subject, genomes[i]);
 			double feedAvg = 0;
 			for(TrainingTuple tt : trainingData.getData()) {
 				double netScore = MatrixFunctionWrapper.avgValues(NN.feedForward(tt.getInputs()));

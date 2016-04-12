@@ -51,8 +51,8 @@ public class GATest {
 			exp.runExperiment(".csv", ExperimentSize.SMALL);
 		}
 		td = TrainingDataGenerator.genFromFile();
-		System.out.println(td);
 		GA.apply(NN, new NNFitnessTester(td, NN));
 		assertTrue(GA.getBestFitness() >= 0);
 	}
+	
 }

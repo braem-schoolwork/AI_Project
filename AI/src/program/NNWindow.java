@@ -49,8 +49,9 @@ public class NNWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public NNWindow() {
+		setTitle("Neural Networks");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 673, 328);
+		setBounds(100, 100, 673, 355);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -91,5 +92,17 @@ public class NNWindow extends JFrame {
 		btnTrainNetworkFor.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		btnTrainNetworkFor.setBounds(15, 170, 602, 61);
 		contentPane.add(btnTrainNetworkFor);
+		
+		JButton btnBack = new JButton("back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ChoiceWindow window = new ChoiceWindow();
+				window.enable();
+				thisFrame.dispose();
+			}
+		});
+		btnBack.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		btnBack.setBounds(270, 242, 89, 52);
+		contentPane.add(btnBack);
 	}
 }

@@ -9,6 +9,9 @@ import javax.swing.border.EmptyBorder;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
+import genetic_algorithm.ComparatorTest;
+import genetic_algorithm.ConversionTest;
+import genetic_algorithm.GATest;
 import neural_network.NNTest;
 import rubiks.MoveTest;
 import rubiks.RubiksCubeTest;
@@ -67,6 +70,12 @@ public class RunJUnitTestsWindow extends JFrame {
 		else
 			System.out.println("Tests Failed");
 	}
+	private void printTestResults(Result r1, Result r2, Result r3) {
+		if(r1.getFailureCount() == 0 && r2.getFailureCount() == 0 && r3.getFailureCount() == 0)
+			System.out.println("Tests Passed");
+		else
+			System.out.println("Tests Failed");
+	}
 	
 	/**
 	 * Create the frame.
@@ -74,7 +83,7 @@ public class RunJUnitTestsWindow extends JFrame {
 	public RunJUnitTestsWindow() {
 		setTitle("Run JUnit Tests");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 687, 349);
+		setBounds(100, 100, 675, 290);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -88,7 +97,7 @@ public class RunJUnitTestsWindow extends JFrame {
 			}
 		});
 		btnRunSbpTests.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnRunSbpTests.setBounds(15, 16, 295, 62);
+		btnRunSbpTests.setBounds(10, 11, 295, 62);
 		contentPane.add(btnRunSbpTests);
 		
 		JButton btnRunNnTests = new JButton("Run NN Tests");
@@ -98,7 +107,7 @@ public class RunJUnitTestsWindow extends JFrame {
 			}
 		});
 		btnRunNnTests.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnRunNnTests.setBounds(315, 16, 295, 62);
+		btnRunNnTests.setBounds(315, 11, 295, 62);
 		contentPane.add(btnRunNnTests);
 		
 		JButton btnRunRubiksTests = new JButton("Run Rubik's Tests");
@@ -108,7 +117,7 @@ public class RunJUnitTestsWindow extends JFrame {
 			}
 		});
 		btnRunRubiksTests.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnRunRubiksTests.setBounds(15, 86, 295, 62);
+		btnRunRubiksTests.setBounds(10, 84, 295, 62);
 		contentPane.add(btnRunRubiksTests);
 		
 		JButton btnRunSearchTests = new JButton("Run Search Tests");
@@ -118,7 +127,7 @@ public class RunJUnitTestsWindow extends JFrame {
 			}
 		});
 		btnRunSearchTests.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnRunSearchTests.setBounds(315, 86, 295, 62);
+		btnRunSearchTests.setBounds(315, 84, 295, 62);
 		contentPane.add(btnRunSearchTests);
 		
 		JButton btnBack = new JButton("back");
@@ -130,7 +139,17 @@ public class RunJUnitTestsWindow extends JFrame {
 			}
 		});
 		btnBack.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnBack.setBounds(156, 154, 295, 62);
+		btnBack.setBounds(315, 157, 295, 62);
 		contentPane.add(btnBack);
+		
+		JButton btnRunGATests = new JButton("Run GA Tests");
+		btnRunGATests.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				printTestResults(junit.run(ComparatorTest.class), junit.run(GATest.class), junit.run(ConversionTest.class));
+			}
+		});
+		btnRunGATests.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		btnRunGATests.setBounds(10, 157, 295, 62);
+		contentPane.add(btnRunGATests);
 	}
 }

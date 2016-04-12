@@ -27,8 +27,10 @@ import neural_network.NeuralNetworkIO;
 import neural_network.NeuralNetworkParams;
 import rubiks.IllegalDepthException;
 import rubiks.Move;
+import rubiks.MoveParams;
 import rubiks.Perturber;
 import rubiks.RubiksCube;
+import training_algorithms.ErrorCalculator;
 import training_algorithms.SBP;
 import training_algorithms.SBPParams;
 import training_data.RubiksCubeTrainingDataGenerator;
@@ -105,6 +107,8 @@ public class RCNNWindow extends JFrame {
 	
 	private Move recommendedMove = null;
 	private JButton btnLoadNetworkFrom;
+	private JButton btnRun;
+	private JLabel lblTrainingError;
 
 	/**
 	 * Launch the application.
@@ -120,6 +124,25 @@ public class RCNNWindow extends JFrame {
 				}
 			}
 		});
+	}
+	
+	public void setNeuralNetwork(NeuralNetwork NN, TrainingData trainingData) {
+		this.NN = NN;
+		chckbxTrainedNetwork.setSelected(true);
+		chckbxGeneratedTrainingData.setSelected(true);
+		chckbxLoadedTrainingData.setSelected(true);
+		btnFeedForward.setEnabled(true);
+		trainingErrorTF.setText(""+ErrorCalculator.calculateError(trainingData, NN));
+		btnGenerateRubiksCube.setEnabled(false);
+		btnLoadTrainingData.setEnabled(false);
+		hiddenLayerSizesTF.setEditable(false);
+		this.learningRateTF.setEditable(false);
+		this.momentumRateTF.setEditable(false);
+		this.epochsTF.setEditable(false);
+		this.trainingIterationsTF.setEditable(false);
+		this.errorThresholdTF.setEditable(false);
+		this.btnRun.setEnabled(false);
+		this.btnLoadNetworkFrom.setEnabled(false);
 	}
 
 	private String buildString(byte[][] arr, int face, String perspective) {
@@ -521,7 +544,7 @@ public class RCNNWindow extends JFrame {
 		trainingIterationsTF.setBounds(1054, 373, 244, 29);
 		contentPane.add(trainingIterationsTF);
 		
-		JButton btnRun = new JButton("Train Network");
+		btnRun = new JButton("Train Network");
 		btnRun.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if(trainingData == null) {
@@ -580,7 +603,7 @@ public class RCNNWindow extends JFrame {
 		errorThresholdTF.setBounds(1054, 413, 244, 29);
 		contentPane.add(errorThresholdTF);
 		
-		JLabel lblTrainingError = new JLabel("Training Error:");
+		lblTrainingError = new JLabel("Training Error:");
 		lblTrainingError.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		lblTrainingError.setBounds(492, 576, 163, 29);
 		contentPane.add(lblTrainingError);
@@ -633,8 +656,16 @@ public class RCNNWindow extends JFrame {
 				DoubleMatrix inputVector = RubiksCubeTrainingDataGenerator.rubiksCubeToInputVector(cube);
 				DoubleMatrix outputVector = NN.feedForward(inputVector);
 				recommendedMove = RubiksCubeTrainingDataGenerator.outputVectorToMove(outputVector);
-				ffTF.setText(""+recommendedMove);
-				btnApplyRecommendedMove.setEnabled(true);
+				MoveParams mp = recommendedMove.getMoveParams();
+				if(mp.getSliceNum() == -1 || mp.getDirection() == null || mp.getAxis() == null) {
+					ffTF.setText("NN is confused!");
+					btnApplyRecommendedMove.setEnabled(false);
+				}
+				else {
+					recommendedMove = RubiksCubeTrainingDataGenerator.outputVectorToMove(outputVector);
+					ffTF.setText(""+recommendedMove);
+					btnApplyRecommendedMove.setEnabled(true);
+				}
 			}
 		});
 		btnFeedForward.setFont(new Font("Tahoma", Font.PLAIN, 25));

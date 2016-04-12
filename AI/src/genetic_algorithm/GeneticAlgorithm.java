@@ -65,7 +65,9 @@ public class GeneticAlgorithm
 		for(int currentGen=0; currentGen<params.getNumGenerations(); currentGen++) {
 			/* fitness testing */
 			double[] fitnessScores = fitnessTester.scoreFitness(population, params.getFitnessMethod());
-			addFitnessInfo(fitnessScores);
+			/* check for a fitness below threshold */
+			if(isBelowThreshold(fitnessScores, subject, population))
+				return;
 			/* elite selection */
 			Genome[] elites = eliteSelection(population, fitnessScores);
 			/* mutation */
@@ -82,15 +84,23 @@ public class GeneticAlgorithm
 	}
 	
 	/**
-	 * Adds the fitness information for a single generation.
+	 * Checks if a fitness score is below the threshold
+	 * Also adds the fitness information for a single generation.
 	 * That is, the best, worst, and average fitnesses in that generation.
 	 * @param fitnessScores
+	 * @param subject
+	 * @param population
+	 * @return					whether a Genome was found with fitness under the fitness threshold
 	 */
-	void addFitnessInfo(double[] fitnessScores) {
+	boolean isBelowThreshold(double[] fitnessScores, GenomeImpl subject, Genome[] population) {
+		int index = -1;
 		double sum = 0;
 		double best = 0;
 		double worst = Double.MAX_VALUE;
-		for(double d : fitnessScores) {
+		for(int i=0; i<fitnessScores.length; i++) {
+			double d = fitnessScores[i];
+			if(d > params.getFitnessTheshold())
+				index = i;
 			if(d > best)
 				best = d;
 			if(d < worst)
@@ -100,6 +110,12 @@ public class GeneticAlgorithm
 		bestFitnesses.add(best);
 		avgFitnesses.add(sum/fitnessScores.length);
 		worstFitnesses.add(worst);
+		if(index != -1) {
+			bestGenomeImpl = Genome.convertFrom(subject, population[index]);
+			bestFitness = fitnessScores[index];
+			return true;
+		}
+		return false;
 	}
 	
 	/**

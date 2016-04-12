@@ -45,7 +45,7 @@ public class GAChoiceWindow extends JFrame {
 	public GAChoiceWindow() {
 		setTitle("Genetic Algorithms");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 416, 268);
+		setBounds(100, 100, 401, 313);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -64,6 +64,13 @@ public class GAChoiceWindow extends JFrame {
 		contentPane.add(btnNewButton);
 		
 		JButton btnRunOnRubiks = new JButton("Run on Rubik's Cube");
+		btnRunOnRubiks.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GARCNNWindow window = new GARCNNWindow();
+				window.enable();
+				thisFrame.dispose();
+			}
+		});
 		btnRunOnRubiks.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		btnRunOnRubiks.setBounds(10, 78, 347, 56);
 		contentPane.add(btnRunOnRubiks);
@@ -76,8 +83,20 @@ public class GAChoiceWindow extends JFrame {
 				thisFrame.dispose();
 			}
 		});
-		btnBack.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		btnBack.setBounds(120, 145, 105, 35);
+		btnBack.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnBack.setBounds(127, 212, 105, 35);
 		contentPane.add(btnBack);
+		
+		JButton btnCreateNn = new JButton("Run on a custom NN");
+		btnCreateNn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GenericGAWindow window = new GenericGAWindow();
+				window.enable();
+				thisFrame.dispose();
+			}
+		});
+		btnCreateNn.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		btnCreateNn.setBounds(10, 145, 347, 56);
+		contentPane.add(btnCreateNn);
 	}
 }

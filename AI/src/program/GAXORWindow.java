@@ -12,6 +12,7 @@ import genetic_algorithm.GeneticAlgorithm;
 import genetic_algorithm.GeneticAlgorithmParams;
 import neural_network.NNFitnessTester;
 import neural_network.NeuralNetwork;
+import neural_network.NeuralNetworkIO;
 import training_algorithms.ErrorCalculator;
 import training_data.TrainingData;
 import training_data.TrainingTuple;
@@ -52,6 +53,7 @@ public class GAXORWindow extends JFrame {
 	private TrainingData trainingData = null;
 	private NeuralNetwork currentNN = null;
 	private JTextField feedForwardResultTF;
+	private JTextField fitnessThreshTF;
 
 	/**
 	 * Launch the application.
@@ -79,7 +81,7 @@ public class GAXORWindow extends JFrame {
 	public GAXORWindow() {
 		setTitle("Genetic Algorithm on XOR NN");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 576, 295);
+		setBounds(100, 100, 626, 355);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -137,6 +139,7 @@ public class GAXORWindow extends JFrame {
 		contentPane.add(lblGeneration);
 		
 		genTF = new JTextField();
+		genTF.setText("50");
 		genTF.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		genTF.setColumns(10);
 		genTF.setBounds(119, 141, 99, 23);
@@ -148,6 +151,7 @@ public class GAXORWindow extends JFrame {
 		contentPane.add(lblPopulationSize);
 		
 		popsizeTF = new JTextField();
+		popsizeTF.setText("100");
 		popsizeTF.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		popsizeTF.setColumns(10);
 		popsizeTF.setBounds(119, 175, 99, 23);
@@ -180,7 +184,7 @@ public class GAXORWindow extends JFrame {
 			}
 		});
 		btnFeedForward.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnFeedForward.setBounds(240, 152, 273, 46);
+		btnFeedForward.setBounds(240, 152, 275, 46);
 		btnFeedForward.setEnabled(false);
 		contentPane.add(btnFeedForward);
 		
@@ -208,16 +212,16 @@ public class GAXORWindow extends JFrame {
 					GAparams.setNumGenerations(Integer.parseInt(genTF.getText()));
 					GAparams.setPopulationSize(Integer.parseInt(popsizeTF.getText()));
 					GAparams.setEliteFavoritismCoeff(Float.parseFloat(eliteFavoritismTF.getText()));
+					GAparams.setFitnessTheshold(Double.parseDouble(fitnessThreshTF.getText()));
 					GeneticAlgorithm GA = new GeneticAlgorithm(GAparams);
 					NeuralNetwork NN = new NeuralNetwork();
 					NN.init();
-					TrainingData td = XORTrainingDataGenerator.gen();
-					GA.apply(NN, new NNFitnessTester(td, NN));
+					GA.apply(NN, new NNFitnessTester(trainingData, NN));
 					NeuralNetwork resultNN = (NeuralNetwork) GA.getBestGenomeImpl();
 					currentNN = resultNN;
 					nnErrorTF.setText(""+ErrorCalculator.calculateError(trainingData, currentNN));
 					btnFeedForward.setEnabled(true);
-					
+					lblInvalidParameters.setVisible(false);
 				} catch(Exception ex) {
 					ex.printStackTrace();
 					lblInvalidParameters.setVisible(true);
@@ -229,6 +233,7 @@ public class GAXORWindow extends JFrame {
 		contentPane.add(btnTrainOnXor);
 		
 		feedForwardResultTF = new JTextField();
+		feedForwardResultTF.setEditable(false);
 		feedForwardResultTF.setBounds(408, 112, 107, 29);
 		contentPane.add(feedForwardResultTF);
 		feedForwardResultTF.setColumns(10);
@@ -247,7 +252,41 @@ public class GAXORWindow extends JFrame {
 			}
 		});
 		btnBack.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		btnBack.setBounds(425, 209, 90, 23);
+		btnBack.setBounds(10, 277, 90, 23);
 		contentPane.add(btnBack);
+		
+		JLabel label = new JLabel("Fitness Threshold:");
+		label.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		label.setBounds(10, 243, 133, 23);
+		contentPane.add(label);
+		
+		fitnessThreshTF = new JTextField();
+		fitnessThreshTF.setText("15.99");
+		fitnessThreshTF.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		fitnessThreshTF.setColumns(10);
+		fitnessThreshTF.setBounds(153, 243, 99, 23);
+		contentPane.add(fitnessThreshTF);
+		
+		JButton btnWriteNetworkTo = new JButton("Write Network to .txt File");
+		btnWriteNetworkTo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(currentNN != null)
+					NeuralNetworkIO.writeNetworkToFile(currentNN);
+			}
+		});
+		btnWriteNetworkTo.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnWriteNetworkTo.setBounds(262, 209, 253, 23);
+		contentPane.add(btnWriteNetworkTo);
+		
+		JButton btnSerializeNetwork = new JButton("Serialize Network");
+		btnSerializeNetwork.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(currentNN != null)
+					NeuralNetworkIO.writeNetwork(currentNN);
+			}
+		});
+		btnSerializeNetwork.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnSerializeNetwork.setBounds(262, 243, 253, 23);
+		contentPane.add(btnSerializeNetwork);
 	}
 }

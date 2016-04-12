@@ -1,7 +1,6 @@
 package genetic_algorithm;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.jblas.DoubleMatrix;
 

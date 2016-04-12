@@ -24,7 +24,7 @@ public class GeneticAlgorithmParams
 		this.setPercentElite(20f);
 		this.setNumGenerations(200);
 		this.setPopulationSize(50);
-		this.setFitnessTheshold(0.2);
+		this.setFitnessTheshold(Double.MAX_VALUE);
 		this.setEliteFavoritismCoeff(0.667f);
 		this.setAnnealingFactor(0.8f);
 		this.setFitnessMethod(FitnessMethod.NN_HEURISTIC);

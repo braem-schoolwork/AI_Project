@@ -1,6 +1,7 @@
 package genetic_algorithm;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.jblas.DoubleMatrix;
 
@@ -73,7 +74,6 @@ public class Genome
 	 */
 	private static Genome fromNN(NeuralNetwork NN) {
 		ArrayList<Double> genes = new ArrayList<Double>();
-
 		//add the Wji matrix values
 		for(int i=0; i<NN.getWji().rows; i++)
 			for(int j=0; j<NN.getWji().columns; j++)
@@ -94,7 +94,6 @@ public class Genome
 		//add the Wkbias matrix values
 		for(int i=0; i<NN.getWkbias().columns; i++)
 			genes.add(NN.getWkbias().get(0,i));
-		
 		return new Genome(genes);
 	}
 	
@@ -108,11 +107,14 @@ public class Genome
 		int inputLayerSize = params.getInputLayerSize();
 		ArrayList<Integer> hiddenLayerSizes = params.getHiddenLayerSizes();
 		int outputLayerSize = params.getOutputLayerSize();
-		
+
 		int ctr = 0;
 		DoubleMatrix Wji = new DoubleMatrix(inputLayerSize, hiddenLayerSizes.get(0));
+		//System.out.println(genome.getGenes().size());
 		for(int i=0; i<Wji.rows; i++)
 			for(int j=0; j<Wji.columns; j++) {
+				//System.out.println(ctr);
+				//System.out.println(genome.getGenes().get(ctr));
 				Wji.put(i, j, genome.getGenes().get(ctr));
 				ctr++;
 			}
@@ -149,7 +151,7 @@ public class Genome
 			Wkbias.put(0, i, genome.getGenes().get(ctr));
 			ctr++;
 		}
-			
+		
 		NeuralNetwork NN = new NeuralNetwork(params);
 		NN.setWjbias(Wjbias);
 		NN.setWji(Wji);

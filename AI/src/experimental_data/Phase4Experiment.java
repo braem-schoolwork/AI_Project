@@ -110,7 +110,6 @@ public class Phase4Experiment implements Experiment
 	private void runMutCrossExp(int gen, int pop, float pElite, String filename, String fileExtension) {
 		List<String> contents = new ArrayList<String>();
 		String firstRow = "Mutation|Crossover";
-		boolean firstPass = true;
 		for(float pMutation=pMutationStart; pMutation<=pMutationEnd; pMutation+=pMutationIncrease) {
 			String row = pMutation+"";
 			for(float pCrossover=pCrossoverStart; pCrossover<=pCrossoverEnd; pCrossover+=pCrossoverIncrease) {
@@ -126,13 +125,10 @@ public class Phase4Experiment implements Experiment
 					GA.apply(NN, new NNFitnessTester(td, NN));
 					double fitness = GA.getBestFitness();
 					bestGAs.add(new GAFit(GA, fitness));
-					if(firstPass)
-						firstRow += ","+pCrossover;
 					row += ","+fitness;
 				}
 			}
 			contents.add(row);
-			firstPass = false;
 		}
 		contents.add(0, firstRow);
 		contents.add("With Generation# = "+gen);

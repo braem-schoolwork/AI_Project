@@ -69,4 +69,19 @@ public class NeuralNetworkParams implements Serializable
 		this.outputLayerSize = outputLayerSize;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(obj instanceof NeuralNetworkParams) {
+			NeuralNetworkParams p = (NeuralNetworkParams) obj;
+			boolean b = this.inputLayerSize == p.inputLayerSize;
+			b &= this.outputLayerSize == p.outputLayerSize;
+			b &= this.hiddenLayerSizes.equals(p.hiddenLayerSizes);
+			b &= this.bias == p.bias;
+			if(b)
+				return true;
+		}
+		return false;
+	}
+	
 }

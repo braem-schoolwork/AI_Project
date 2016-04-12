@@ -86,7 +86,7 @@ public class GeneticAlgorithm
 	 * That is, the best, worst, and average fitnesses in that generation.
 	 * @param fitnessScores
 	 */
-	private void addFitnessInfo(double[] fitnessScores) {
+	void addFitnessInfo(double[] fitnessScores) {
 		double sum = 0;
 		double best = 0;
 		double worst = Double.MAX_VALUE;
@@ -110,7 +110,7 @@ public class GeneticAlgorithm
 	 * @param crossovers	genomes from crossover
 	 * @return				new population
 	 */
-	private Genome[] repopulate(Genome[] population, Genome[] elites, Genome[] mutations, Genome[] crossovers) {
+	Genome[] repopulate(Genome[] population, Genome[] elites, Genome[] mutations, Genome[] crossovers) {
 		population = new Genome[params.getPopulationSize()];
 		for(int i=0; i<population.length; i++)
 			if (i<elites.length) {
@@ -129,7 +129,7 @@ public class GeneticAlgorithm
 	 * @param population	Genome population
 	 * @param subject		subject of which to generate similar GenomeImpl's
 	 */
-	private void populate(Genome[] population, GenomeImpl subject) {
+	void populate(Genome[] population, GenomeImpl subject) {
 		GenomeImpl[] others = subject.genOthers(params.getPopulationSize());
 		for(int i=0; i<population.length; i++) {
 			population[i] = Genome.convertTo(others[i]);
@@ -142,7 +142,7 @@ public class GeneticAlgorithm
 	 * @param g2
 	 * @return
 	 */
-	private float findVectorDistance(Genome g1, Genome g2) {
+	float findVectorDistance(Genome g1, Genome g2) {
 		ArrayList<Double> genes1 = g1.getGenes();
 		ArrayList<Double> genes2 = g2.getGenes();
 		float sum = 0f;
@@ -160,7 +160,7 @@ public class GeneticAlgorithm
 	 * @param fitnessScores		corresponding fitness scores of each genome
 	 * @return					elite genomes
 	 */
-	private Genome[] eliteSelection(Genome[] population, double[] fitnessScores) {
+	Genome[] eliteSelection(Genome[] population, double[] fitnessScores) {
 		//create elites array
 		Genome[] elites = new Genome[(int)Math.floor(params.getPopulationSize()*params.getPercentElite()/100)];
 		//create a genome extension & add the population to it
@@ -186,8 +186,9 @@ public class GeneticAlgorithm
 			for(int i=0; i<genomes.size(); i++) {
 				GenomeExt gExt = genomes.get(i);
 				float dist = 0f;
-				for(int j=0; j<genomes.size(); j++) {
-					dist += findVectorDistance(gExt.getG(), genomes.get(j).getG());
+				for(int j=0; j<elites.length; j++) {
+					if(elites[j] != null)
+						dist += findVectorDistance(gExt.getG(), genomes.get(j).getG());
 				}
 				dist /= genomes.size();
 				gExt.setDiversityScore(dist);
@@ -236,7 +237,7 @@ public class GeneticAlgorithm
 	 * @param elites	elite genomes
 	 * @return			mutated genomes
 	 */
-	private Genome[] mutations(Genome[] elites) {
+	Genome[] mutations(Genome[] elites) {
 		Genome[] mutations = new Genome[(int)Math.floor(params.getPopulationSize()*params.getPercentMutation()/100)];
 		//apply mutations
 		for(int i=0; i<mutations.length; i++) {
@@ -271,7 +272,7 @@ public class GeneticAlgorithm
 	 * @param elites		elite genomes
 	 * @return				crossover genomes
 	 */
-	private Genome[] crossover(Genome[] population, Genome[] elites) {
+	Genome[] crossover(Genome[] population, Genome[] elites) {
 		Genome[] crossovers = new Genome[Math.round(params.getPopulationSize()*params.getPercentCrossOver()/100)];
 		for(int i=0; i<crossovers.length; i++) {
 			//get 2 random elites

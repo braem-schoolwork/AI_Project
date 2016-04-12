@@ -176,7 +176,7 @@ public class NeuralNetwork implements SBPImpl, GenomeImpl, Serializable
 	public void setWkbias(DoubleMatrix Wkbias) { this.Wkbias = Wkbias; }
 	public void setWjs(ArrayList<DoubleMatrix> Wjs) { this.Wjs = Wjs; }
 
-	/**
+	/*
 	 * Initializes this neural network by creating the weight matrices with
 	 * dimensions determined by the neural network parameters set & filling
 	 * them with appropriate edge weights randomized between the intervals of
@@ -257,6 +257,23 @@ public class NeuralNetwork implements SBPImpl, GenomeImpl, Serializable
 			randomNetworks[i] = newNN;
 		}
 		return randomNetworks;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(obj instanceof NeuralNetwork) {
+			NeuralNetwork NN = (NeuralNetwork) obj;
+			boolean b = NN.params.equals(this.params);
+			b &= NN.Wjbias.equals(this.Wjbias);
+			b &= NN.Wkbias.equals(this.Wkbias);
+			b &= NN.Wjs.equals(this.Wjs);
+			b &= NN.Wji.equals(this.Wji);
+			b &= NN.Wkj.equals(this.Wkj);
+			if(b)
+				return true;
+		}
+		return false;
 	}
 	
 	@Override

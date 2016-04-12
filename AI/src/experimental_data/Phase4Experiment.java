@@ -208,20 +208,20 @@ public class Phase4Experiment implements Experiment
 	private static void setupParams(ExperimentSize size) {
 		switch(size) {
 		case SMALL:
-			genStart = 25;
-			genIncrease = 25;
+			genStart = 20;
+			genIncrease = 20;
 			genEnd = 100;
-			popStart = 25;
-			popIncrease = 25;
+			popStart = 20;
+			popIncrease = 20;
 			popEnd = 100;
 			pEliteStart = 10;
-			pEliteIncrease = 20;
+			pEliteIncrease = 10;
 			pEliteEnd = 50;
 			pMutationStart = 0;
-			pMutationIncrease = 20;
+			pMutationIncrease = 10;
 			pMutationEnd = 80;
 			pCrossoverStart = 0;
-			pCrossoverIncrease = 20;
+			pCrossoverIncrease = 10;
 			pCrossoverEnd = 80;
 			break;
 		case MEDIUM:

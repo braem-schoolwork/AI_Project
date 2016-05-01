@@ -17,31 +17,29 @@ import java.util.List;
 import org.jblas.DoubleMatrix;
 
 /**
- * Handles all the IO for the neural network
- * Serializes networks to files
+ * Handles all the IO for the Neural Network.
  * 
- * @author braem
+ * @author Braemen Stoltz
  * @version 1.0
  */
-
 public class NeuralNetworkIO
 {
-	private final static Charset ENCODING = StandardCharsets.UTF_8;
-	private final static String FILE_NAME = System.getProperty("user.dir")+"\\Network.txt";
-	private final static String SER_FILE_NAME = "Network.ser";
-	private final static String NEW_BEST_NETWORK_MSG = "New Best Neural Network Found!";
+	private final static Charset 	ENCODING 				= StandardCharsets.UTF_8;
+	private final static String 	FILE_NAME 				= System.getProperty("user.dir")+"\\Network.txt";
+	private final static String 	SER_FILE_NAME 			= "Network.ser";
+	private final static String 	NEW_BEST_NETWORK_MSG 	= "New Best Neural Network Found!";
 	
 	/**
 	 * Writes a neural network to a .txt file. Meant for human reading
 	 * @param NN incoming neural network
-	 * @return <\code> true if success <\code> false if failed
+	 * @return <code>true</code> if success <code>false</code> if failed
 	 */
 	public static boolean writeNetworkToFile(NeuralNetwork NN) {
 		List<String> contents = new ArrayList<String>();
 		contents.add("-Layer Sizes-");
 		contents.add("Input Layer Size: "+NN.getParams().getInputLayerSize());
-		contents.add("Hidden Layers: "+NN.getParams().getHiddenLayerSizes().size()); //list of hidden layer sizes
-		contents.add("Hidden Layer Sizes: "+NN.getParams().getHiddenLayerSizes()); //list of hidden layer sizes
+		contents.add("Hidden Layers: "+NN.getParams().getHiddenLayerSizes().size());
+		contents.add("Hidden Layer Sizes: "+NN.getParams().getHiddenLayerSizes());
 		contents.add("Output Layer Size: "+NN.getOutputLayerSize());
 		contents.add("");
 		contents.add("-Weight Matrices-");
@@ -49,7 +47,7 @@ public class NeuralNetworkIO
 		contents.add("Hidden Layers to bias matrices (Wjbias): "+NN.getWjbias());
 		contents.add("Output Layer to Hidden Layer n edge weights matrix (Wkj): "+NN.getWkj());
 		contents.add("Output Layer to bias matrix (Wkbias): "+NN.getWkbias());
-		contents.add("Hidden Layer i-1 to Hidden Layer i weight matrix (Wjs): "+NN.getWjs()); //matrices between hidden layers
+		contents.add("Hidden Layer i-1 to Hidden Layer i weight matrix (Wjs): "+NN.getWjs());
 		contents.add("");
 		contents.add("Error of this Network: "+NN.getError());
 		
@@ -62,7 +60,7 @@ public class NeuralNetworkIO
 	}
 	
 	/**
-	 * assumes the incoming network is the best network so far & overwrites
+	 * Overwrites the current neural network file
 	 */
 	public static void writeBestNetworkToFile() {
 		NeuralNetwork NN = readNetwork();
@@ -71,8 +69,9 @@ public class NeuralNetworkIO
 	}
 	
 	/**
-	 * Reads a network from a serialized class file
-	 * @return
+	 * Reads a neural network from a serialized class file
+	 * @return		the read neural network. Returns <code>null</code>
+	 * 				if there was no file found
 	 */
 	public static NeuralNetwork readNetwork() {
 		NeuralNetwork result = null;
@@ -90,8 +89,8 @@ public class NeuralNetworkIO
 	}
 	
 	/**
-	 * serializes a network to .ser file
-	 * @param NN incoming neural network
+	 * Serializes a neural network to .ser file
+	 * @param NN 	a neural network
 	 */
 	public static void writeNetwork(NeuralNetwork NN) {
 		try {
@@ -106,10 +105,14 @@ public class NeuralNetworkIO
 		}
 	}
 	
-	//check if this is the best network so far
+	/**
+	 * Checks if this is the best network so far
+	 * @param error		error to be checked
+	 * @return			<code>true</code> if the error was the lowest one found
+	 * 					<code>false</code> otherwise
+	 */
 	static boolean isBestNetworkSoFar(DoubleMatrix error) {
-		NeuralNetwork NN;
-		NN = readNetwork();
+		NeuralNetwork NN = readNetwork();
 		if(NN != null) {
 			boolean isLower = true;
 			for(int i=0; i<error.rows; i++)

@@ -1,9 +1,9 @@
 package genetic_algorithm;
 
 /**
- * Interface for a fitness tester used by the Genetic Algorithm
+ * Interface for a fitness tester used by the Genetic Algorithm.
  * 
- * @author braemen
+ * @author Braemen Stoltz
  * @version 1.0
  */
 public interface FitnessTester

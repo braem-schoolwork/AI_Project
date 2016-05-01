@@ -19,9 +19,9 @@ public class GATest {
 
 	@Test
 	public void NNTest() {
-		GeneticAlgorithmParams GAparams = new GeneticAlgorithmParams();
-		GeneticAlgorithm GA = new GeneticAlgorithm(GAparams);
-		NeuralNetwork NN = new NeuralNetwork();
+		GeneticAlgorithmParams 	GAparams 	= new GeneticAlgorithmParams();
+		GeneticAlgorithm 		GA 			= new GeneticAlgorithm(GAparams);
+		NeuralNetwork 			NN 			= new NeuralNetwork();
 		NN.init();
 		GA.apply(NN, new NNFitnessTester(XORTrainingDataGenerator.gen(), NN));
 		assertTrue(GA.getBestFitness() >= 0);
@@ -36,13 +36,13 @@ public class GATest {
 		GeneticAlgorithmParams GAparams = new GeneticAlgorithmParams();
 		GAparams.setNumGenerations(1);
 		GAparams.setPopulationSize(20);
-		GeneticAlgorithm GA = new GeneticAlgorithm(GAparams);
-		NeuralNetworkParams NNparams = new NeuralNetworkParams();
-		ArrayList<Integer> hls = new ArrayList<Integer>();
+		GeneticAlgorithm 	GA 			= new GeneticAlgorithm(GAparams);
+		NeuralNetworkParams NNparams 	= new NeuralNetworkParams();
+		ArrayList<Integer> 	hls 		= new ArrayList<Integer>();
 		hls.add(1);
-		NNparams.setHiddenLayerSizes(hls);
-		NNparams.setInputLayerSize(324);
-		NNparams.setOutputLayerSize(7);
+		NNparams.setHiddenLayerSizes	(hls);
+		NNparams.setInputLayerSize		(324);
+		NNparams.setOutputLayerSize		(7);
 		NeuralNetwork NN = new NeuralNetwork(NNparams);
 		NN.init();
 		TrainingData td = TrainingDataGenerator.genFromFile();

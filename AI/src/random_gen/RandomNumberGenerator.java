@@ -3,9 +3,9 @@ package random_gen;
 import java.util.Random;
 
 /**
- * Utility for generating random numbers
+ * Utility for generating random numbers.
  * 
- * @author braemen
+ * @author Braemen Stoltz
  * @version 1.0
  */
 public class RandomNumberGenerator

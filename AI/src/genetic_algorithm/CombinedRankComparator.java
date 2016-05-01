@@ -3,8 +3,9 @@ package genetic_algorithm;
 import java.util.Comparator;
 
 /**
- * Comparator to sort a Genome extension by combined rank
- * @author braem
+ * Comparator to sort a Genome extension by combined rank.
+ * 
+ * @author Braemen Stoltz
  * @version 1.0
  */
 class CombinedRankComparator implements Comparator<GenomeExt>

@@ -3,24 +3,22 @@ package search;
 import java.util.ArrayList;
 
 /**
- * interface to specify a search algorithm
+ * Interface to specify a search algorithm.
  * 
- * @author braem
+ * @author Braemen Stoltz
  * @version 1.0
  */
 public interface Search {
+	
 	/**
-	 * Searches startState, looking for a point where startState = goalState
+	 * Searches startState, looking for a point where the startState equals the goalState
 	 * while keeping track of path via parent updates in SearchListNode
 	 * 
-	 * @param startState
-	 * @param goalState
-	 * @return
+	 * @param startState	start state for the search
+	 * @param goalState		goal state for the search
+	 * @return				object in the goal state
 	 */
 	public Searchable search(Searchable startState, Searchable goalState);
 	
-	/**
-	 * @return path of searchable objects
-	 */
 	public ArrayList<Searchable> getPath();
 }

@@ -10,71 +10,59 @@ import random_gen.RandomNumberGenerator;
 import training_algorithms.SBPImpl;
 
 /**
- * A multilayered neural network
+ * A multilayered neural network.
  * 
- * @author braem
+ * @author Braemen Stoltz
  * @version 1.0
  */
-
 public class NeuralNetwork implements SBPImpl, GenomeImpl, Serializable
 {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private DoubleMatrix Wji;		//Weight matrices
-	private DoubleMatrix Wkj;
+	private static final long 		serialVersionUID = 1L;
+	private DoubleMatrix 			Wji;
+	private DoubleMatrix 			Wkj;
 	private ArrayList<DoubleMatrix> Wjbias;
-	private DoubleMatrix Wkbias;
+	private DoubleMatrix 			Wkbias;
 	private ArrayList<DoubleMatrix> Wjs;
-	private DoubleMatrix NETk;		//Nets stored in feedForward for SBP
+	private DoubleMatrix 			NETk;
 	private ArrayList<DoubleMatrix> NETjs;
 	private ArrayList<DoubleMatrix> ACTjs;
-	private Sigmoid sigmoidFunc;
-	private NeuralNetworkParams params;
-	private DoubleMatrix error;
+	private Sigmoid 				sigmoidFunc;
+	private NeuralNetworkParams 	params;
+	private DoubleMatrix 			error;
 	
-	public NeuralNetwork() { //initialize for basic XOR NN
-		params = new NeuralNetworkParams();
-		error = new DoubleMatrix(1, params.getOutputLayerSize());
-		error = error.fill(Double.MAX_VALUE);
-		NETjs = null;
-		ACTjs = null;
+	public NeuralNetwork() {
+		params 		= new NeuralNetworkParams();
+		error 		= new DoubleMatrix(1, params.getOutputLayerSize());
+		error 		= error.fill(Double.MAX_VALUE);
+		NETjs 		= null;
+		ACTjs 		= null;
 		sigmoidFunc = new Sigmoid(new SigmoidParams());
 	}
-	
 	public NeuralNetwork(NeuralNetworkParams params) {
 		this.params = params;
-		error = new DoubleMatrix(1, params.getOutputLayerSize());
-		error = error.fill(Double.MAX_VALUE);
-		NETjs = null;
-		ACTjs = null;
+		error 		= new DoubleMatrix(1, params.getOutputLayerSize());
+		error 		= error.fill(Double.MAX_VALUE);
+		NETjs 		= null;
+		ACTjs 		= null;
 		sigmoidFunc = new Sigmoid(new SigmoidParams());
 	}
 	public NeuralNetwork(NeuralNetworkParams params, Sigmoid sigmoidFunc) {
-		this.params = params;
-		error = new DoubleMatrix(1, params.getOutputLayerSize());
-		error = error.fill(Double.MAX_VALUE);
-		NETjs = null;
-		ACTjs = null;
-		this.sigmoidFunc = sigmoidFunc;
+		this.params 		= params;
+		error 				= new DoubleMatrix(1, params.getOutputLayerSize());
+		error 				= error.fill(Double.MAX_VALUE);
+		NETjs 				= null;
+		ACTjs 				= null;
+		this.sigmoidFunc 	= sigmoidFunc;
 	}
 	public NeuralNetwork(NeuralNetworkParams params, SigmoidParams sigParams) {
 		this.params = params;
-		error = new DoubleMatrix(1, params.getOutputLayerSize());
-		error = error.fill(Double.MAX_VALUE);
-		NETjs = null;
-		ACTjs = null;
+		error 		= new DoubleMatrix(1, params.getOutputLayerSize());
+		error 		= error.fill(Double.MAX_VALUE);
+		NETjs 		= null;
+		ACTjs 		= null;
 		sigmoidFunc = new Sigmoid(sigParams);
 	}
 	
-	
-	/**
-	 * Feeds an input vector through the network and produces an output vector
-	 * 
-	 * @param inputVector input vector
-	 * @return output vector of this network
-	 */
 	@Override
 	public DoubleMatrix feedForward(DoubleMatrix inputVector) {
 		if(NETjs != null)
@@ -84,9 +72,8 @@ public class NeuralNetwork implements SBPImpl, GenomeImpl, Serializable
 		double bias = params.getBias();
 		
 		/* HIDDEN LAYER */
-		//Hidden Net Matrix = inputVector*Wji + Wjbias*bias
-		NETjs = new ArrayList<DoubleMatrix>(); //NET values of each hidden layer
-		ACTjs = new ArrayList<DoubleMatrix>(); //ACT values of each hidden layer
+		NETjs = new ArrayList<DoubleMatrix>();
+		ACTjs = new ArrayList<DoubleMatrix>();
 		for(int i=0; i<params.getHiddenLayerSizes().size(); i++) {
 			DoubleMatrix hNetMatrix = new DoubleMatrix(1, params.getHiddenLayerSizes().get(i));
 			DoubleMatrix hActMatrix = new DoubleMatrix(hNetMatrix.rows, hNetMatrix.columns);
@@ -100,45 +87,25 @@ public class NeuralNetwork implements SBPImpl, GenomeImpl, Serializable
 		}
 		
 		/* OUTPUT LAYER */
-		//Output Net Matrix = hiddenActMatrix*Wkj + Wkbias*bias
 		DoubleMatrix outputNetMatrix = ACTjs.get(ACTjs.size()-1).mmul(Wkj).add(Wkbias.mul(bias));
 		NETk = outputNetMatrix;
 		
-		//Actual Output Matrix = tanh(outputNetMatrix*B)*A
 		DoubleMatrix outputActMatrix = applySigmoid(outputNetMatrix);
-		
-		//return actual output matrix
+
 		return outputActMatrix;
 	}
 	
-	/**
-	 * Takes a Matrix and applies the sigmoid function to every cell
-	 * @param inc incoming matrix
-	 * @return same matrix with the sigmoid function applied to every cell
-	 */
 	@Override
-	public DoubleMatrix applySigmoid(DoubleMatrix inc) {
-		return sigmoidFunc.apply(inc);
-	}
-	/**
-	 * Takes a mtrix and applies the derivative of the sigmoid function
-	 * to every cell
-	 * @param inc incoming matrix
-	 * @return same matrix with the derivative of the sigmoid function applied
-	 * to every cell
-	 */
+	public DoubleMatrix applySigmoid(DoubleMatrix inc) 		{ return sigmoidFunc.apply(inc); }
 	@Override
-	public DoubleMatrix applySigmoidDeriv(DoubleMatrix inc) {
-		return sigmoidFunc.applyDeriv(inc);
-	}
+	public DoubleMatrix applySigmoidDeriv(DoubleMatrix inc) { return sigmoidFunc.applyDeriv(inc); }
 	
-	/* update application */
 	@Override
-	public void applyWkjUpdate (DoubleMatrix Wkj) { this.Wkj.addi(Wkj); }
+	public void applyWkjUpdate (DoubleMatrix Wkj) 		{ this.Wkj.addi(Wkj); }
 	@Override
 	public void applyWkbiasUpdate (DoubleMatrix Wkbias) { this.Wkbias.addi(Wkbias); }
 	@Override
-	public void applyWjiUpdate (DoubleMatrix Wji) { this.Wji.addi(Wji); }
+	public void applyWjiUpdate (DoubleMatrix Wji) 		{ this.Wji.addi(Wji); }
 	@Override
 	public void applyWjbiasUpdate (ArrayList<DoubleMatrix> Wjbias) {
 		for(int i=0; i<Wjbias.size(); i++)
@@ -150,80 +117,71 @@ public class NeuralNetwork implements SBPImpl, GenomeImpl, Serializable
 			this.Wjs.get(i).addi(Wjs.get(i));
 	}
 
-	//getters
-	public int getOutputLayerSize() { return params.getOutputLayerSize(); }
-	public NeuralNetworkParams getParams() { return params; }
+	public int 						getOutputLayerSize() 	{ return params.getOutputLayerSize(); }
+	public NeuralNetworkParams 		getParams() 			{ return params; }
 	@Override
-	public DoubleMatrix getNETk() { return NETk; }
+	public DoubleMatrix 			getNETk() 				{ return NETk; }
 	@Override
-	public ArrayList<DoubleMatrix> getNETjs() { return NETjs; }
+	public ArrayList<DoubleMatrix> 	getNETjs() 				{ return NETjs; }
 	@Override
-	public DoubleMatrix getWkj() { return Wkj; }
+	public DoubleMatrix 			getWkj() 				{ return Wkj; }
 	@Override
-	public ArrayList<DoubleMatrix> getACTjs() { return ACTjs; }
+	public ArrayList<DoubleMatrix> 	getACTjs() 				{ return ACTjs; }
 	@Override
-	public ArrayList<DoubleMatrix> getWjs() { return Wjs; }
-	public DoubleMatrix getWji() { return Wji; }
-	public ArrayList<DoubleMatrix> getWjbias() { return Wjbias; }
-	public DoubleMatrix getWkbias() { return Wkbias; }
-	public DoubleMatrix getError() { return error; }
-	
-	//setters
-	public void setParams(NeuralNetworkParams params) { this.params = params; }
-	public void setWji(DoubleMatrix Wji) { this.Wji = Wji; }
-	public void setWjbias(ArrayList<DoubleMatrix> Wjbias) { this.Wjbias = Wjbias; }
-	public void setWkj(DoubleMatrix Wkj) { this.Wkj = Wkj; }
-	public void setWkbias(DoubleMatrix Wkbias) { this.Wkbias = Wkbias; }
-	public void setWjs(ArrayList<DoubleMatrix> Wjs) { this.Wjs = Wjs; }
+	public ArrayList<DoubleMatrix> 	getWjs() 				{ return Wjs; }
+	public DoubleMatrix 			getWji() 				{ return Wji; }
+	public ArrayList<DoubleMatrix> 	getWjbias() 			{ return Wjbias; }
+	public DoubleMatrix 			getWkbias() 			{ return Wkbias; }
+	public DoubleMatrix 			getError() 				{ return error; }
 
-	/*
-	 * Initializes this neural network by creating the weight matrices with
-	 * dimensions determined by the neural network parameters set & filling
-	 * them with appropriate edge weights randomized between the intervals of
-	 * -1/sqrt(d) and 1/sqrt(d) where d is the number of incoming neurons to a neuron
-	 */
+	public void setParams(NeuralNetworkParams params) 		{ this.params = params; }
+	public void setWji(DoubleMatrix Wji) 					{ this.Wji = Wji; }
+	public void setWjbias(ArrayList<DoubleMatrix> Wjbias) 	{ this.Wjbias = Wjbias; }
+	public void setWkj(DoubleMatrix Wkj) 					{ this.Wkj = Wkj; }
+	public void setWkbias(DoubleMatrix Wkbias) 				{ this.Wkbias = Wkbias; }
+	public void setWjs(ArrayList<DoubleMatrix> Wjs) 		{ this.Wjs = Wjs; }
+
 	@Override
 	public void init() {
-		//get the size parameters
-		int inputLayerSize = params.getInputLayerSize();
-		int numHiddenLayers = params.getHiddenLayerSizes().size();
-		int outputLayerSize = params.getOutputLayerSize();
-		ArrayList<Integer> hiddenLayerSizes = params.getHiddenLayerSizes();
+		int 				inputLayerSize 		= params.getInputLayerSize();
+		int 				numHiddenLayers 	= params.getHiddenLayerSizes().size();
+		int 				outputLayerSize 	= params.getOutputLayerSize();
+		ArrayList<Integer> 	hiddenLayerSizes 	= params.getHiddenLayerSizes();
+
+		Wji 	= new DoubleMatrix(inputLayerSize, hiddenLayerSizes.get(0));
+		Wkj 	= new DoubleMatrix(hiddenLayerSizes.get(hiddenLayerSizes.size()-1), outputLayerSize);
+		Wjbias 	= new ArrayList<DoubleMatrix>();
+		Wkbias 	= new DoubleMatrix(1, outputLayerSize);
+		Wjs 	= new ArrayList<DoubleMatrix>();
 		
-		//initialize the weight matrices/vectors
-		Wji = new DoubleMatrix(inputLayerSize, hiddenLayerSizes.get(0));
-		Wkj = new DoubleMatrix(hiddenLayerSizes.get(hiddenLayerSizes.size()-1), outputLayerSize);
-		Wjbias = new ArrayList<DoubleMatrix>();
-		Wkbias = new DoubleMatrix(1, outputLayerSize); //row vector
-		Wjs = new ArrayList<DoubleMatrix>(); //will be empty if num hidden layers = 1
-		for(int i=0; i<numHiddenLayers; i++) { //fill Wjbias'
+		for(int i=0; i<numHiddenLayers; i++) {
 			DoubleMatrix hiddenLayerToBias = new DoubleMatrix(1, hiddenLayerSizes.get(i));
 			for(int j=0; j<hiddenLayerToBias.rows; j++)
 				for(int k=0; k<hiddenLayerToBias.columns; k++)
 					hiddenLayerToBias.put(j, k, RandomNumberGenerator.genDoubleBetweenInterval(-1, 1));
 			Wjbias.add(hiddenLayerToBias);
 		}
-		for(int i=1; i<numHiddenLayers; i++) { //fill Wjs
-			int rows = hiddenLayerSizes.get(i-1);
-			int columns = hiddenLayerSizes.get(i);
-			double numNeurons = rows;
-			double leftCap = -1 / Math.sqrt(numNeurons);
-			double rightCap = leftCap*-1;
-			DoubleMatrix hiddenWeightsAtHi = new DoubleMatrix(rows, columns);
-			for(int j=0; j<hiddenWeightsAtHi.rows; j++) //fill the hidden matrix
+		for(int i=1; i<numHiddenLayers; i++) {
+			int 			rows 				= hiddenLayerSizes.get(i-1);
+			int 			columns 			= hiddenLayerSizes.get(i);
+			double 			numNeurons 			= rows;
+			double 			leftCap 			= -1 / Math.sqrt(numNeurons);
+			double 			rightCap 			= leftCap*-1;
+			DoubleMatrix 	hiddenWeightsAtHi 	= new DoubleMatrix(rows, columns);
+			for(int j=0; j<hiddenWeightsAtHi.rows; j++)
 				for(int k=0; k<hiddenWeightsAtHi.columns; k++)
 					hiddenWeightsAtHi.put(j, k, RandomNumberGenerator.genDoubleBetweenInterval(leftCap, rightCap));
 			Wjs.add(hiddenWeightsAtHi);
 		}
 		
 		//get the Wji and Wkj weight intervals
-		double WjiNumInputs = inputLayerSize + 1; //inputs neurons + bias neuron
-		double WjiLeftCap = -1 / Math.sqrt(WjiNumInputs);
-		double WjiRightCap = WjiLeftCap * -1;
-		double WkjNumInputs = hiddenLayerSizes.get(numHiddenLayers-1) + 1; //last hidden layer num neurons + bias
-		double WkjLeftCap = -1 / Math.sqrt(WkjNumInputs);
-		double WkjRightCap = WkjLeftCap * -1;
-		//fill with initial edge weights
+		double WjiNumInputs 	= inputLayerSize + 1;
+		double WjiLeftCap 		= -1 / Math.sqrt(WjiNumInputs);
+		double WjiRightCap 		= WjiLeftCap * -1;
+		double WkjNumInputs 	= hiddenLayerSizes.get(numHiddenLayers-1) + 1;
+		double WkjLeftCap 		= -1 / Math.sqrt(WkjNumInputs);
+		double WkjRightCap 		= WkjLeftCap * -1;
+		
 		for(int i=0; i<Wji.rows; i++)
 			for(int j=0; j<Wji.columns; j++)
 				Wji.put(i, j, RandomNumberGenerator.genDoubleBetweenInterval(WjiLeftCap, WjiRightCap));
@@ -236,9 +194,7 @@ public class NeuralNetwork implements SBPImpl, GenomeImpl, Serializable
 	}
 	
 	@Override
-	public void setError(DoubleMatrix error) {
-		this.error = error;
-	}
+	public void setError(DoubleMatrix error) { this.error = error; }
 	
 	@Override
 	public void saveToDisk(DoubleMatrix error) {
@@ -263,8 +219,8 @@ public class NeuralNetwork implements SBPImpl, GenomeImpl, Serializable
 	public boolean equals(Object obj) {
 		if(this == obj) return true;
 		if(obj instanceof NeuralNetwork) {
-			NeuralNetwork NN = (NeuralNetwork) obj;
-			boolean b = NN.params.equals(this.params);
+			NeuralNetwork 	NN 	= (NeuralNetwork) obj;
+			boolean 		b 	= NN.params.equals(this.params);
 			b &= NN.Wjbias.equals(this.Wjbias);
 			b &= NN.Wkbias.equals(this.Wkbias);
 			b &= NN.Wjs.equals(this.Wjs);
@@ -277,7 +233,5 @@ public class NeuralNetwork implements SBPImpl, GenomeImpl, Serializable
 	}
 	
 	@Override
-	public String toString() {
-		return Wji+"\n"+Wjs+"\n"+Wkj+"\n"+Wjbias+"\n"+Wkbias;
-	}
+	public String toString() { return Wji+"\n"+Wjs+"\n"+Wkj+"\n"+Wjbias+"\n"+Wkbias; }
 }

@@ -5,7 +5,7 @@ import org.jblas.DoubleMatrix;
 /**
  * Container for a training tuple
  * 
- * @author braemen
+ * @author Braemen Stoltz
  * @version 1.0
  */
 public class TrainingTuple
@@ -18,24 +18,16 @@ public class TrainingTuple
 		this.outputs = answers;
 	}
 	
-	public DoubleMatrix getInputs() {
-		return inputs;
-	}
-	public DoubleMatrix getOutputs() {
-		return outputs;
-	}
-	
-	public void setInputs(DoubleMatrix inputs) {
-		this.inputs = inputs;
-	}
-	public void setOutputs(DoubleMatrix outputs) {
-		this.outputs = outputs;
-	}
+	public DoubleMatrix getInputs() 						{ return inputs; }
+	public DoubleMatrix getOutputs() 						{ return outputs; }
+	public void 		setInputs(DoubleMatrix inputs) 		{ this.inputs = inputs; }
+	public void 		setOutputs(DoubleMatrix outputs) 	{ this.outputs = outputs; }
 	
 	@Override
 	public String toString() {
-		String input = (""+inputs).replace("0", "").replace(".", "");
-		String output = (""+outputs).replace("0", "").replace(".", "");
+		String input 	= (""+inputs).replace("0", "").replace(".", "");
+		String output 	= (""+outputs).replace("0", "").replace(".", "");
+		
 		return input +" | "+ output;
 	}
 }

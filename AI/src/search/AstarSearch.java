@@ -7,19 +7,16 @@ import data_structures.HashSet;
 import data_structures.PriorityQueue;
 
 /**
- * Performs an A* Search on an object implementing Searchable 
+ * Performs an A* Search on an object implementing Searchable.
  * 
- * @author braem
+ * @author Braemen Stoltz
  * @version 1.0
  */
 public class AstarSearch implements Search {
+	private ArrayList<Searchable> 	path 		= null;
+	private boolean 				searched 	= false;
 	
-	private ArrayList<Searchable> path;
-	private boolean searched = false;
-	
-	public AstarSearch() {
-		path = new ArrayList<Searchable>();
-	}
+	public AstarSearch() { path = new ArrayList<Searchable>(); }
 	
 	@Override
 	public ArrayList<Searchable> getPath() {
@@ -33,37 +30,31 @@ public class AstarSearch implements Search {
 	public Searchable search(Searchable startState, Searchable goalState)
 	{
 		path.clear();
-		//queue for objects to be searched
-		PriorityQueue<SearchListNode> openList = new PriorityQueue<SearchListNode>();
-		//set for objects that have already been searched
-		HashSet<SearchListNode> closedList = new HashSet<SearchListNode>();
-		//array for the children generated
-		Searchable[] childList;
+		PriorityQueue<SearchListNode> 	openList 			= new PriorityQueue<SearchListNode>();
+		HashSet<SearchListNode> 		closedList 			= new HashSet<SearchListNode>();
+		Searchable[] 					childList;
+		SearchListNode 					startingListNode 	= new SearchListNode(null, startState, 0);
 		
-		SearchListNode startingListNode = new SearchListNode(null, startState, 0);
-		openList.add(startingListNode); //add start state to the queue of objects to be searched
+		openList.add(startingListNode);
 		while(!openList.peek().getSearchableObj().equals(goalState))
 		{
-			SearchListNode current = openList.poll(); //get & remove minimum element
+			SearchListNode current = openList.poll();
 			closedList.add(current);
 			
-			childList = current.getSearchableObj().genChildren(); //generate child nodes
+			childList = current.getSearchableObj().genChildren();
 			
-			//search the children
 			for(Searchable child : childList) {
-				SearchListNode childNode = new SearchListNode(current, child, 1+current.getGVal());
-				boolean addChild = true;
-				/* consider closedList */
-				SearchListNode matchingElem = (SearchListNode)closedList.containsRef(childNode);
+				SearchListNode 	childNode 		= new SearchListNode(current, child, 1+current.getGVal());
+				boolean 		addChild 		= true;
+				SearchListNode 	matchingElem 	= (SearchListNode)closedList.containsRef(childNode);
+				
 				if(matchingElem != null) {
 					addChild = false;
-					//consider if it's cheaper to go this way
 					if(childNode.getGVal() < matchingElem.getGVal()) {
 						closedList.remove(matchingElem);
 						addChild = true;
 					}
 				}
-				/* consider openList */
 				if(addChild) {
 					matchingElem = openList.containsRef(childNode);
 					if(matchingElem != null) {
@@ -74,22 +65,18 @@ public class AstarSearch implements Search {
 						}
 					}
 				}
-				
-				/* if we should add it, just do it already */
 				if(addChild) {
 					openList.add(childNode);
 				}
 			}//enhanced for
 		}//while
-		searched = true; //completed search
-		backTrace(startingListNode, openList.peek()); //backtrace nodes
-		
-		return openList.peek().getSearchableObj(); // return result of search
-		
+		searched = true;
+		backTrace(startingListNode, openList.peek());
+		return openList.peek().getSearchableObj();
 	} //A*
 	
 	/**
-	 * back-tracks from the end node to the start node, creating a path of nodes
+	 * back-tracks from the end node to the start node, creating a path of nodes.
 	 * 
 	 * @param startNode		starting node to back trace to
 	 * @param endNode		ending node to start the back trace
@@ -106,11 +93,10 @@ public class AstarSearch implements Search {
 					isStartState = true;
 					nodes.add(0, parentNode);
 				}
-				else {
+				else
 					nodes.add(0, parentNode);
-				}
 			}
-		}//end if
+		}
 		for(SearchListNode sln : nodes)
 			path.add(sln.getSearchableObj());
 	}

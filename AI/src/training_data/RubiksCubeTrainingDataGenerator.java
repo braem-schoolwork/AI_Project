@@ -13,26 +13,26 @@ import rubiks.MoveParams;
 import rubiks.RubiksCube;
 
 /**
- * Generator for rubik's cube related training data
+ * Generator for rubik's cube related training data.
  * 
- * @author braemen
+ * @author Braemen Stoltz
  * @version 1.0
  */
 public class RubiksCubeTrainingDataGenerator
 {
 	/**
-	 * Generates file training data from rubik's cubes and moves
+	 * Generates file training data from rubik's cubes and moves.
 	 * 
-	 * @param cubes			List of rubik's cubes
-	 * @param moves			List of moves corresponding to each rubik's cube
-	 * @return				File contents
+	 * @param cubes			list of rubik's cubes
+	 * @param moves			list of moves corresponding to each rubik's cube
+	 * @return				file contents
 	 */
 	public static List<String> genFileTrainingData(List<RubiksCube> cubes, List<Move> moves) {
-		List<String> content = new ArrayList<String>();
-		HashSet<String> contentSet = new HashSet<String>();
-		for(int i=0; i<cubes.size(); i++) {
+		List<String> 	content 	= new ArrayList<String>();
+		HashSet<String> contentSet 	= new HashSet<String>();
+		
+		for(int i=0; i<cubes.size(); i++)
 			content.add(genCubeTrainingData(cubes.get(i)) +"|"+ genMoveTrainingData(moves.get(i)));
-		}
 		contentSet.addAll(content);
 		content.clear();
 		content.addAll(contentSet);
@@ -40,32 +40,33 @@ public class RubiksCubeTrainingDataGenerator
 	}
 	
 	/**
-	 * Generates a TrainingData object from a files contents
+	 * Generates a TrainingData object from a files contents.
 	 * 
-	 * @param trainingDataStrs			incoming file contents
-	 * @return							TrainingData from trainingDataStrs
+	 * @param trainingDataStrs			file contents
+	 * @return							a corresponding training data set from the file contents
 	 */
 	public static TrainingData fileContentsToTrainingData(List<String> trainingDataStrs) {
 		List<TrainingTuple> tuples = new ArrayList<TrainingTuple>();
 		for(String tupleStr : trainingDataStrs) {
-			DoubleMatrix inputs = new DoubleMatrix(1, 36); //I/O vectors
-			DoubleMatrix outputs = new DoubleMatrix(1, 7);
-			String[] rCMoveTupleStrs = tupleStr.split("|"); //split RC from Move
-			String rCStr = rCMoveTupleStrs[0]; //RC
-			String moveStr = rCMoveTupleStrs[1]; //Move
-			String[] rCStrs = rCStr.split(","); //get each RC value
-			String[] moveStrs = moveStr.split(","); //get each Move value
-			for(int i=0; i<inputs.columns; i++) { //put RC values into input vector
-				String inputStr = rCStrs[i];
-				double input = Double.parseDouble(inputStr);
+			DoubleMatrix 	inputs 			= new DoubleMatrix(1, 36);
+			DoubleMatrix 	outputs 		= new DoubleMatrix(1, 7);
+			String[] 		rCMoveTupleStrs = tupleStr.split("|");
+			String 			rCStr 			= rCMoveTupleStrs[0];
+			String 			moveStr 		= rCMoveTupleStrs[1];
+			String[] 		rCStrs 			= rCStr.split(",");
+			String[] 		moveStrs 		= moveStr.split(",");
+			
+			for(int i=0; i<inputs.columns; i++) {
+				String inputStr 	= rCStrs[i];
+				double input 		= Double.parseDouble(inputStr);
 				inputs.put(0, i, input);
 			}
-			for(int i=0; i<outputs.columns; i++) { //put Move values into output vector
-				String outputStr = moveStrs[i];
-				double output = Double.parseDouble(outputStr);
+			for(int i=0; i<outputs.columns; i++) {
+				String outputStr 	= moveStrs[i];
+				double output 		= Double.parseDouble(outputStr);
 				outputs.put(0, i, output);
 			}
-			//add this training tuple to the data
+			
 			TrainingTuple trainingTuple = new TrainingTuple(inputs, outputs);
 			tuples.add(trainingTuple);
 		}
@@ -73,53 +74,50 @@ public class RubiksCubeTrainingDataGenerator
 	}
 	
 	/**
-	 * Generates a move given a training data output vector
+	 * Generates a move given a training data output vector.
 	 * 
 	 * @param outputVector			vector of outputs from neural network
-	 * @return						Move corresponding to the outputVector
+	 * @return						move corresponding to the outputVector
 	 */
 	public static Move outputVectorToMove(DoubleMatrix outputVector) {
-		int sliceNum = -1;
-		Axis axis = null;
-		Direction dir = null;
-		double sliceBit0 = Math.round(outputVector.get(0, 0));
-		double sliceBit1 = Math.round(outputVector.get(0, 1));
-		double sliceBit2 = Math.round(outputVector.get(0, 2));
+		int 		sliceNum 	= -1;
+		Axis 		axis 		= null;
+		Direction 	dir 		= null;
 		
-		double axisBit0 = Math.round(outputVector.get(0, 3));
-		double axisBit1 = Math.round(outputVector.get(0, 4));
-		double axisBit2 = Math.round(outputVector.get(0, 5));
+		double sliceBit0 	= Math.round(outputVector.get(0, 0));
+		double sliceBit1 	= Math.round(outputVector.get(0, 1));
+		double sliceBit2 	= Math.round(outputVector.get(0, 2));
+		double axisBit0 	= Math.round(outputVector.get(0, 3));
+		double axisBit1 	= Math.round(outputVector.get(0, 4));
+		double axisBit2 	= Math.round(outputVector.get(0, 5));
+		double dirBit 		= Math.round(outputVector.get(0, 6));
 		
-		double dirBit = Math.round(outputVector.get(0, 6));
+		if(sliceBit0 >= 0.0) 		sliceNum = 2;
+		else if(sliceBit1 >= 0.0) 	sliceNum = 1;
+		else if(sliceBit2 >= 0.0) 	sliceNum = 0;
 		
-		if(sliceBit0 >= 0.0) sliceNum = 2;
-		else if(sliceBit1 >= 0.0) sliceNum = 1;
-		else if(sliceBit2 >= 0.0) sliceNum = 0;
+		if(axisBit0 >= 0.0) 		axis = Axis.Z;
+		else if(axisBit1 >= 0.0) 	axis = Axis.Y;
+		else if(axisBit2 >= 0.0) 	axis = Axis.X;
 		
-		if(axisBit0 >= 0.0) axis = Axis.Z;
-		else if(axisBit1 >= 0.0) axis = Axis.Y;
-		else if(axisBit2 >= 0.0) axis = Axis.X;
+		if(dirBit >= 0.0) 			dir = Direction.CCW;
+		else if(dirBit < 0.0) 		dir = Direction.CW;
 		
-		if(dirBit >= 0.0) dir = Direction.CCW;
-		else if(dirBit < 0.0) dir = Direction.CW;
-		
-		MoveParams moveParams = new MoveParams(sliceNum, axis, dir);
-		Move move = new Move(moveParams);
+		MoveParams moveParams 		= new MoveParams(sliceNum, axis, dir);
+		Move move 					= new Move(moveParams);
 		return move;
 	}
 	
 	/**
-	 * Creates an input vector from a rubik's cube to be fed into a neural network
+	 * Creates an input vector from a rubik's cube to be fed into a neural network.
 	 * 
-	 * @param rubiksCube		incoming rubik's cube
-	 * @return					vector to input into NN
+	 * @param rubiksCube		rubik's cube
+	 * @return					vector to input into a neural network
 	 */
 	public static DoubleMatrix rubiksCubeToInputVector(RubiksCube rubiksCube) {
-		//color*colorsOnFace*faces
-		// 6*9*6
-		String dataStr = genCubeTrainingData(rubiksCube);
-		String[] dataStrArr = dataStr.split("[,]+");
-		DoubleMatrix inputVec = new DoubleMatrix(1, dataStrArr.length);
+		String 			dataStr 	= genCubeTrainingData(rubiksCube);
+		String[] 		dataStrArr 	= dataStr.split("[,]+");
+		DoubleMatrix 	inputVec 	= new DoubleMatrix(1, dataStrArr.length);
 		for(int i=0; i<dataStrArr.length; i++) {
 			double data = Double.parseDouble(dataStrArr[i]);
 			inputVec.put(0, i, data);
@@ -129,8 +127,8 @@ public class RubiksCubeTrainingDataGenerator
 	
 	/* helper function */
 	private static String genCubeTrainingData(RubiksCube rubiksCube) {
-		byte[][][] cube = rubiksCube.getCube();
-		String rtnStr = "";
+		byte[][][] 	cube 	= rubiksCube.getCube();
+		String 		rtnStr 	= "";
 		for(int i=0; i<cube.length; i++) {
 			for(int j=0; j<cube[i].length; j++) {
 				for(int k=0; k<cube[i][j].length; k++) {
@@ -149,47 +147,49 @@ public class RubiksCubeTrainingDataGenerator
 	
 	/* helper function */
 	private static String genMoveTrainingData(Move move) {
-		MoveParams params = move.getMoveParams();
-		String rtnStr = "";
+		MoveParams 	params 	= move.getMoveParams();
+		String 		rtnStr 	= "";
+		
 		switch(params.getSliceNum()) {
-		case 0: 
-			rtnStr += "-1,-1,1"; break;
-		case 1:
-			rtnStr += "-1,1,-1"; break;
-		case 2:
-			rtnStr += "1,-1,-1"; break;
+			case 0: 
+				rtnStr += "-1,-1,1"; break;
+			case 1:
+				rtnStr += "-1,1,-1"; break;
+			case 2:
+				rtnStr += "1,-1,-1"; break;
 		}
 		rtnStr += ",";
 		switch(params.getAxis()) {
-		case X:
-			rtnStr += "-1,-1,1"; break;
-		case Y:
-			rtnStr += "-1,1,-1"; break;
-		case Z:
-			rtnStr += "1,-1,-1"; break;
+			case X:
+				rtnStr += "-1,-1,1"; break;
+			case Y:
+				rtnStr += "-1,1,-1"; break;
+			case Z:
+				rtnStr += "1,-1,-1"; break;
 		}
 		rtnStr += ",";
-		if(params.getDirection().equals(Direction.CW)) rtnStr += -1;
-		else rtnStr += 1;
+		if(params.getDirection().equals(Direction.CW))	rtnStr += -1;
+		else 											rtnStr += 1;
+		
 		return rtnStr;
 	}
 	
 	/* helper function */
 	private static String colorToBits(byte color) {
 		switch(color) {
-		case 'G':
-			return "-1,-1,-1,-1,-1,1";
-		case 'B':
-			return "-1,-1,-1,-1,1,-1";
-		case 'Y':
-			return "-1,-1,-1,1,-1,-1";
-		case 'W':
-			return "-1,-1,1,-1,-1,-1";
-		case 'O':
-			return "-1,1,-1,-1,-1,-1";
-		case 'R':
-			return "1,-1,-1,-1,-1,-1";
-		default: return null;
+			case 'G':
+				return "-1,-1,-1,-1,-1,1";
+			case 'B':
+				return "-1,-1,-1,-1,1,-1";
+			case 'Y':
+				return "-1,-1,-1,1,-1,-1";
+			case 'W':
+				return "-1,-1,1,-1,-1,-1";
+			case 'O':
+				return "-1,1,-1,-1,-1,-1";
+			case 'R':
+				return "1,-1,-1,-1,-1,-1";
+			default: return null;
 		}
 	}
 }

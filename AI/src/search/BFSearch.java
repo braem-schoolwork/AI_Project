@@ -8,9 +8,9 @@ import java.util.Queue;
 import data_structures.HashSet;
 
 /**
- * Performs a Breadth-First Search on an object implementing Searchable 
+ * Performs a Breadth-First Search on an object implementing Searchable.
  * 
- * @author braem
+ * @author Braemen Stoltz
  * @version 1.0
  */
 public class BFSearch implements Search
@@ -18,9 +18,7 @@ public class BFSearch implements Search
 	private ArrayList<Searchable> path;
 	private boolean searched = false;
 	
-	public BFSearch() {
-		path = new ArrayList<Searchable>();
-	}
+	public BFSearch() { path = new ArrayList<Searchable>(); }
 	
 	@Override
 	public ArrayList<Searchable> getPath() {
@@ -30,70 +28,57 @@ public class BFSearch implements Search
 			return null;
 	}
 	
+	@Override
 	public Searchable search(Searchable startState, Searchable goalState)
 	{
 		path.clear();
-		//queue for objects to be searched
-		Queue<SearchListNode> openList = new LinkedList<SearchListNode>();
-		//queue for objects that have already been searched
-		HashSet<SearchListNode> closedList = new HashSet<SearchListNode>();
-		Searchable[] childList; //array for the generated children
+		Queue<SearchListNode> 	openList 			= new LinkedList<SearchListNode>();
+		HashSet<SearchListNode> closedList 			= new HashSet<SearchListNode>();
+		Searchable[] 			childList;
+		SearchListNode 			startingListNode 	= new SearchListNode(null, startState, 0);
 		
-		SearchListNode startingListNode = new SearchListNode(null, startState, 0);
-		openList.add(startingListNode); //add start state to the queue of objects to be searched
-		//search loop
+		openList.add(startingListNode);
 		while(!openList.isEmpty())
 		{
-			SearchListNode current = openList.poll(); //get the next unexplored obj
-			closedList.add(current); //explored this
-			
-			//check if current state is a goal state
+			SearchListNode current = openList.poll();
+			closedList.add(current);
+
 			if(current.getSearchableObj().equals(goalState)) {
-				backTrace(startingListNode, current); //backtrace steps taken
-				searched = true; //done search
+				backTrace(startingListNode, current);
+				searched = true;
 				return current.getSearchableObj();
 			}
-			
-			//generate every possible object adjacent to this object
+
 			childList = current.getSearchableObj().genChildren();
-			
-			//search every adjacent object
+
 			for(Searchable child : childList) {
 				SearchListNode childNode = new SearchListNode(current, child, 1+current.getGVal());
 				boolean addChild = true;
-				
-				//check the items that have been searched
-				for(SearchListNode item : openList) //O(n)
-					//if we find the same item, dont bother searching it
+
+				for(SearchListNode item : openList)
 					if(childNode.equals(item)) {
 						addChild = false;
 						openList.remove(item);
 						break;
 					}
-				
-				if(addChild) { //if we should add the child
-					//check the set of items to be searched
+				if(addChild) {
 					SearchListNode matchingElem = (SearchListNode)closedList.containsRef(childNode);
-					//if we find the same item, dont bother searching it
 					if(matchingElem != null) {
 						addChild = false;
 						closedList.remove(matchingElem);
 					}
 				}
-				
-				//if we should add the child
 				if(addChild) {
-					openList.add(childNode); //add it to the queue of items to be searched
+					openList.add(childNode);
 				}
 				
 			}//foreach child
 		}//while openList
-		
-		return null; //search failed
+		return null;
 	}//end search
 	
 	/**
-	 * back-tracks from the end node to the start node, creating a path of nodes
+	 * back-tracks from the end node to the start node, creating a path of nodes.
 	 * 
 	 * @param startNode		starting node to back trace to
 	 * @param endNode		ending node to start the back trace
@@ -110,14 +95,12 @@ public class BFSearch implements Search
 					isStartState = true;
 					nodes.add(0, parentNode);
 				}
-				else {
+				else
 					nodes.add(0, parentNode);
-				}
 			}
-		}//end if
+		}
 		for(SearchListNode sln : nodes)
 			path.add(sln.getSearchableObj());
 	}
-	
 }
 

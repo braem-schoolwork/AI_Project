@@ -15,24 +15,24 @@ public class ConversionTest {
 	public void test() {
 		NeuralNetwork NN = new NeuralNetwork();
 		NN.init();
-		Genome g = Genome.convertTo(NN);
-		NeuralNetwork NN2 = (NeuralNetwork) Genome.convertFrom(NN, g);
+		Genome 			g 	= Genome.convertTo(NN);
+		NeuralNetwork 	NN2 = (NeuralNetwork) Genome.convertFrom(NN, g);
 		assertTrue(NN2.equals(NN));
 	}
 	
 	@Test
 	public void test2() {
-		NeuralNetworkParams NNparams = new NeuralNetworkParams();
-		ArrayList<Integer> hls = new ArrayList<Integer>();
+		NeuralNetworkParams NNparams 	= new NeuralNetworkParams();
+		ArrayList<Integer> 	hls 		= new ArrayList<Integer>();
 		hls.add(36);
 		hls.add(67);
-		NNparams.setHiddenLayerSizes(hls);
-		NNparams.setInputLayerSize(20);
-		NNparams.setOutputLayerSize(400);
+		NNparams.setHiddenLayerSizes	(hls);
+		NNparams.setInputLayerSize		(20);
+		NNparams.setOutputLayerSize		(400);
 		NeuralNetwork NN = new NeuralNetwork(NNparams);
 		NN.init();
-		Genome g = Genome.convertTo(NN);
-		NeuralNetwork NN2 = (NeuralNetwork) Genome.convertFrom(NN, g);
+		Genome 			g 	= Genome.convertTo(NN);
+		NeuralNetwork 	NN2 = (NeuralNetwork) Genome.convertFrom(NN, g);
 		assertTrue(NN2.equals(NN));
 	}
 	

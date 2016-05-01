@@ -1,9 +1,9 @@
 package genetic_algorithm;
 
 /**
- * Enum for the different fitness methods
+ * Enum for the different fitness methods.
  * 
- * @author braemen
+ * @author Braemen Stoltz
  * @version 1.0
  */
 public enum FitnessMethod

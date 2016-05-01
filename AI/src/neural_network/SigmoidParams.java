@@ -3,20 +3,16 @@ package neural_network;
 import java.io.Serializable;
 
 /**
- * Parameters for the Sigmoid Function
+ * Parameters for the Sigmoid Function.
  * 
- * @author braem
+ * @author Braemen Stoltz
  * @version 1.0
  */
 public class SigmoidParams implements Serializable
 {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5549357125056479039L;
-	
-	private double A;
-	private double B;
+	private static final long 	serialVersionUID = 5549357125056479039L;
+	private double 				A;
+	private double 				B;
 	
 	public SigmoidParams() {
 		setA(1.716);
@@ -27,16 +23,8 @@ public class SigmoidParams implements Serializable
 		this.setB(B);
 	}
 	
-	public double getB() {
-		return B;
-	}
-	public void setB(double b) {
-		B = b;
-	}
-	public double getA() {
-		return A;
-	}
-	public void setA(double a) {
-		A = a;
-	}
+	public double 	getB() 			{ return B; }
+	public void 	setB(double b) 	{ B = b; }
+	public double 	getA() 			{ return A; }
+	public void 	setA(double a) 	{ A = a; }
 }

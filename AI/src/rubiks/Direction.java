@@ -1,9 +1,9 @@
 package rubiks;
 
 /**
- * Enum for direction of rubik's cube move
+ * Enum for direction of rubik's cube move.
  * 
- * @author braem
+ * @author Braemen Stoltz
  * @version 1.0
  */
 public enum Direction {

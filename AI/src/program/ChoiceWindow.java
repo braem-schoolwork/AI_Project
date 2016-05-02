@@ -21,9 +21,7 @@ public class ChoiceWindow extends JFrame
 	private JFrame 				thisFrame 			= this;
 	private JPanel 				contentPane 		= new JPanel();
 
-	public void enable() {
-		this.setVisible(true);
-	}
+	public void enable() { this.setVisible(true); }
 	
 	public ChoiceWindow() {
 		setTitle				("Main Window");

@@ -1,9 +1,9 @@
 package program;
 
 /**
- * Start of GUI for Rubik's Cube
+ * Start of GUI for Rubik's Cube.
  * 
- * @author braem
+ * @author Braemen Stoltz
  * @version 1.0
  */
 

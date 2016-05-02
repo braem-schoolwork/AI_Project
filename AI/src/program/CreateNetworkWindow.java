@@ -58,9 +58,7 @@ public class CreateNetworkWindow extends JFrame
 	private TrainingData 	trainingData 	= null;
 	private NeuralNetwork 	NN 				= null;
 	
-	public void enable() {
-		this.setVisible(true);
-	}
+	public void enable() { this.setVisible(true); }
 	
 	public CreateNetworkWindow() {
 		setDefaultCloseOperation	(JFrame.EXIT_ON_CLOSE);

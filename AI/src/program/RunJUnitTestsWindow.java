@@ -1,7 +1,5 @@
 package program;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -24,39 +22,18 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 /**
+ * Window to run JUnit tests from the program.
  * 
- * 
- * @author braemen
+ * @author Braemen Stoltz
  * @version 1.0
  */
-public class RunJUnitTestsWindow extends JFrame {
+public class RunJUnitTestsWindow extends JFrame
+{
+	private static final long 	serialVersionUID 	= -3673237110135893130L;
+	private JPanel 				contentPane			= new JPanel();
+	private JFrame 				thisFrame 			= this;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3673237110135893130L;
-	private JPanel contentPane;
-	private JFrame thisFrame = this;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					RunJUnitTestsWindow frame = new RunJUnitTestsWindow();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	
-	public void enable() {
-		this.setVisible(true);
-	}
+	public void enable() { this.setVisible(true); }
 
 	private void printTestResults(Result r) {
 		if(r.getFailureCount() == 0)
@@ -77,60 +54,59 @@ public class RunJUnitTestsWindow extends JFrame {
 			System.out.println("Tests Failed");
 	}
 	
-	/**
-	 * Create the frame.
-	 */
 	public RunJUnitTestsWindow() {
-		setTitle("Run JUnit Tests");
+		setTitle				("Run JUnit Tests");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 675, 290);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		JUnitCore junit = new JUnitCore();
+		setBounds				(100, 100, 675, 290);
+		contentPane.setBorder	(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout	(null);
+		setContentPane			(contentPane);
 		
-		JButton btnRunSbpTests = new JButton("Run SBP Tests");
+		JUnitCore 	junit 				= new JUnitCore();
+		JButton 	btnRunSbpTests 		= new JButton("Run SBP Tests");
+		JButton 	btnRunNnTests 		= new JButton("Run NN Tests");
+		JButton 	btnRunRubiksTests 	= new JButton("Run Rubik's Tests");
+		JButton 	btnRunSearchTests 	= new JButton("Run Search Tests");
+		JButton 	btnBack 			= new JButton("back");
+		JButton 	btnRunGATests 		= new JButton("Run GA Tests");
+		
+		btnRunSbpTests.setFont		(new Font("Tahoma", Font.PLAIN, 24));
+		btnRunSbpTests.setBounds	(10, 11, 295, 62);
+		btnRunNnTests.setFont		(new Font("Tahoma", Font.PLAIN, 24));
+		btnRunNnTests.setBounds		(315, 11, 295, 62);
+		btnRunRubiksTests.setFont	(new Font("Tahoma", Font.PLAIN, 24));
+		btnRunRubiksTests.setBounds	(10, 84, 295, 62);
+		btnRunSearchTests.setFont	(new Font("Tahoma", Font.PLAIN, 24));
+		btnRunSearchTests.setBounds	(315, 84, 295, 62);
+		btnBack.setFont				(new Font("Tahoma", Font.PLAIN, 24));
+		btnBack.setBounds			(315, 157, 295, 62);
+		btnRunGATests.setFont		(new Font("Tahoma", Font.PLAIN, 24));
+		btnRunGATests.setBounds		(10, 157, 295, 62);
+		
 		btnRunSbpTests.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				printTestResults(junit.run(SBPTest.class));
 			}
 		});
-		btnRunSbpTests.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnRunSbpTests.setBounds(10, 11, 295, 62);
-		contentPane.add(btnRunSbpTests);
 		
-		JButton btnRunNnTests = new JButton("Run NN Tests");
 		btnRunNnTests.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				printTestResults(junit.run(NNTest.class));
 			}
 		});
-		btnRunNnTests.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnRunNnTests.setBounds(315, 11, 295, 62);
-		contentPane.add(btnRunNnTests);
 		
-		JButton btnRunRubiksTests = new JButton("Run Rubik's Tests");
 		btnRunRubiksTests.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				printTestResults(junit.run(RubiksCubeTest.class), junit.run(MoveTest.class));
 			}
 		});
-		btnRunRubiksTests.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnRunRubiksTests.setBounds(10, 84, 295, 62);
-		contentPane.add(btnRunRubiksTests);
 		
-		JButton btnRunSearchTests = new JButton("Run Search Tests");
 		btnRunSearchTests.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				printTestResults(junit.run(AstarSearchTest.class), junit.run(BFSearchTest.class));
 			}
 		});
-		btnRunSearchTests.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnRunSearchTests.setBounds(315, 84, 295, 62);
-		contentPane.add(btnRunSearchTests);
 		
-		JButton btnBack = new JButton("back");
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ChoiceWindow window = new ChoiceWindow();
@@ -138,18 +114,18 @@ public class RunJUnitTestsWindow extends JFrame {
 				window.enable();
 			}
 		});
-		btnBack.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnBack.setBounds(315, 157, 295, 62);
-		contentPane.add(btnBack);
 		
-		JButton btnRunGATests = new JButton("Run GA Tests");
 		btnRunGATests.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				printTestResults(junit.run(ComparatorTest.class), junit.run(GATest.class), junit.run(ConversionTest.class));
 			}
 		});
-		btnRunGATests.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		btnRunGATests.setBounds(10, 157, 295, 62);
+
+		contentPane.add(btnRunSbpTests);
+		contentPane.add(btnRunNnTests);
+		contentPane.add(btnRunRubiksTests);
+		contentPane.add(btnRunSearchTests);
+		contentPane.add(btnBack);
 		contentPane.add(btnRunGATests);
 	}
 }

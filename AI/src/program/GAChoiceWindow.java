@@ -1,7 +1,5 @@
 package program;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -10,48 +8,42 @@ import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class GAChoiceWindow extends JFrame {
+/**
+ * Window for selecting what the user wants to do with genetic algorithms.
+ * 
+ * @author Braemen Stoltz
+ * @version 1.0
+ */
+public class GAChoiceWindow extends JFrame
+{
+	private static final long 	serialVersionUID 	= -2716082525654016415L;
+	private JPanel 				contentPane 		= new JPanel();
+	private JFrame 				thisFrame 			= this;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2716082525654016415L;
-	private JPanel contentPane;
-	private JFrame thisFrame = this;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					GAChoiceWindow frame = new GAChoiceWindow();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	public void enable() {
-		this.setVisible(true);
-	}
+	public void enable() { this.setVisible(true); }
 	
-	/**
-	 * Create the frame.
-	 */
 	public GAChoiceWindow() {
-		setTitle("Genetic Algorithms");
+		setTitle				("Genetic Algorithms");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 401, 313);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
+		setBounds				(100, 100, 401, 313);
+		contentPane.setBorder	(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout	(null);
+		setContentPane			(contentPane);
 		
-		JButton btnNewButton = new JButton("Run on XOR");
+		JButton btnNewButton 	= new JButton("Run on XOR");
+		JButton btnRunOnRubiks 	= new JButton("Run on Rubik's Cube");
+		JButton btnBack 		= new JButton("back");
+		JButton btnCreateNn 	= new JButton("Run on a custom NN");
+		
+		btnNewButton.setFont	(new Font("Tahoma", Font.PLAIN, 25));
+		btnNewButton.setBounds	(10, 11, 347, 56);
+		btnRunOnRubiks.setFont	(new Font("Tahoma", Font.PLAIN, 25));
+		btnRunOnRubiks.setBounds(10, 78, 347, 56);
+		btnBack.setFont			(new Font("Tahoma", Font.PLAIN, 20));
+		btnBack.setBounds		(127, 212, 105, 35);
+		btnCreateNn.setFont		(new Font("Tahoma", Font.PLAIN, 25));
+		btnCreateNn.setBounds	(10, 145, 347, 56);
+		
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GAXORWindow window = new GAXORWindow();
@@ -59,11 +51,7 @@ public class GAChoiceWindow extends JFrame {
 				thisFrame.dispose();
 			}
 		});
-		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		btnNewButton.setBounds(10, 11, 347, 56);
-		contentPane.add(btnNewButton);
 		
-		JButton btnRunOnRubiks = new JButton("Run on Rubik's Cube");
 		btnRunOnRubiks.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				GARCNNWindow window = new GARCNNWindow();
@@ -71,11 +59,7 @@ public class GAChoiceWindow extends JFrame {
 				thisFrame.dispose();
 			}
 		});
-		btnRunOnRubiks.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		btnRunOnRubiks.setBounds(10, 78, 347, 56);
-		contentPane.add(btnRunOnRubiks);
 		
-		JButton btnBack = new JButton("back");
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ChoiceWindow window = new ChoiceWindow();
@@ -83,11 +67,7 @@ public class GAChoiceWindow extends JFrame {
 				thisFrame.dispose();
 			}
 		});
-		btnBack.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnBack.setBounds(127, 212, 105, 35);
-		contentPane.add(btnBack);
 		
-		JButton btnCreateNn = new JButton("Run on a custom NN");
 		btnCreateNn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				GenericGAWindow window = new GenericGAWindow();
@@ -95,8 +75,10 @@ public class GAChoiceWindow extends JFrame {
 				thisFrame.dispose();
 			}
 		});
-		btnCreateNn.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		btnCreateNn.setBounds(10, 145, 347, 56);
+
+		contentPane.add(btnNewButton);
+		contentPane.add(btnRunOnRubiks);
+		contentPane.add(btnBack);
 		contentPane.add(btnCreateNn);
 	}
 }

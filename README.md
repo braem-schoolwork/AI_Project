@@ -9,7 +9,7 @@ January 2016 Semester @ UNBC
 * Stochastic Back Propagation Algorithm
 * Genetic Algorithm
 
-The idea is to have the A\* search algorithm search for moves that solve the cube at a specific scramble depth, generating training data for a neural network. That is, perturb a Rubik's Cube *n* moves, then have A\* search the solution space, log the moves A\* takes, then train a neural network on the move data. Genetic algorithms were implemented, but did not preform as well as neural networks. 
+The idea is to have the A\* search algorithm search for moves that solve any sized Rubik's Cube at a specific scramble depth, generating training data of which is used to train a multilayered neural network to solve that cube. That is, perturb an *n* sided Rubik's Cube *k* moves, then have A\* search the solution space, log the moves A\* takes, then train a neural network on the move data. Genetic algorithms were implemented, but did not preform as well as neural networks. 
 
 
 ##Usage
